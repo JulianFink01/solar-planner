@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, List} from 'react-native-paper';
+import {  Appbar, Divider, List} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -41,7 +41,9 @@ function Roofs({navigation, changeTab}: StackScreenProps): React.JSX.Element {
                        left={() => <List.Icon icon="home-roof" />} 
                        right={() => <ActionContainer deleteAction 
                                                      editAction 
-                                                     editIcon='account-edit'/>}/>
+                                                     editIcon='pencil'/>}/>
+          <Divider />
+                                         
           </List.Section>
         </ScrollView>
     </View>

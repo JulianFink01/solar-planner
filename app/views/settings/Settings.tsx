@@ -11,7 +11,7 @@ import { DEFAULT_LANGUAGE } from '../../style/GlobalConstants';
 import AppBar from '../../componentes/appBar/AppBar';
 import { GlobalStyles } from '../../style/GlobalStyle';
 
-const languages = [ // Language List
+const languages = [ 
  { code: 'en', label: t('languages:en') },
  { code: 'de', label: t('languages:de') },
 ];
@@ -44,7 +44,7 @@ function Settings({navigation, changeTab}: StackScreenProps): React.JSX.Element 
                 key={currentLang.code}
                 onPress={() => {
                 changeLang(currentLang.code);
-                  i18n.changeLanguage(currentLang.code); // it will change the language through out the app.
+                  i18n.changeLanguage(currentLang.code); 
                 }}
                 title={currentLang.label} />
             );
