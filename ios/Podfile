@@ -29,6 +29,7 @@ target 'SolarSystem' do
   config = use_native_modules!
 
   use_react_native!(
+    :hermes_enabled => false,
     :path => config[:reactNativePath],
     # Enables Flipper.
     #
