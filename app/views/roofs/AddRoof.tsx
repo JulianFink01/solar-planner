@@ -10,8 +10,9 @@ import {  Appbar, List} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
+import { StackScreenProps } from '@react-navigation/stack';
 
-function AddRoof(): React.JSX.Element {
+function AddRoof({navigation}: StackScreenProps): React.JSX.Element {
 
   const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
@@ -20,7 +21,7 @@ function AddRoof(): React.JSX.Element {
   return (  
 
     <View style={{flex: 1}}>
-      <AppBar title={t('roofs:add_roof')}>
+      <AppBar title={t('roofs:add_roof')} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
       </AppBar>
       
       <View style={GlobalStyles.siteContainer}>

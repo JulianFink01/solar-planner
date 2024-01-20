@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, List} from 'react-native-paper';
+import {  Appbar, Divider, List} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -28,8 +28,6 @@ function Users({navigation}: StackNavigationProp): React.JSX.Element {
     <View style={GlobalStyles.pageWrapper}>
       <AppBar title={t('users:title')}>
         <Appbar.Action icon={'account-plus'} onPress={addUser} />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
-        <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
       </AppBar>
       
       <View style={GlobalStyles.siteContainer}>
@@ -38,7 +36,9 @@ function Users({navigation}: StackNavigationProp): React.JSX.Element {
           bounces={false}
         >
             <List.Section>
-              <List.Item style={{paddingRight: 0}} title="User 1" left={() => <List.Icon icon="account" />} right={() => <ActionContainer deleteAction editAction editIcon='account-edit'/>}/>
+              <List.Item style={{paddingRight: 0}} title="User 1" left={() => <List.Icon icon="account" />} right={() => <ActionContainer deleteAction editAction editIcon='account-edit' onEdit={() =>  navigation.navigate(ROUTES.USER.ADD_USER, {firstName: 'JOHN', lastName: 'CENA'})}/>}/>
+              <Divider />
+              <List.Item style={{paddingRight: 0}} title="User 2" left={() => <List.Icon icon="account" />} right={() => <ActionContainer deleteAction editAction editIcon='account-edit' onEdit={() =>  navigation.navigate(ROUTES.USER.ADD_USER, {firstName: 'Peter', lastName: 'weis'})}/>}/>
             </List.Section>
           </ScrollView>
       </View>

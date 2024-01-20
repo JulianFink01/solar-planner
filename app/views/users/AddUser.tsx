@@ -13,8 +13,9 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { CONTAINER_PADDING } from '../../style/GlobalConstants';
 import { ThemeDark } from '../../themes/ThemeDark';
 
-function AddUser({navigation}: StackScreenProps): React.JSX.Element {
+function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
 
+  
   const { t } = useTranslation();
 
   const [firstName, setFirstName] = React.useState("");
@@ -28,8 +29,24 @@ function AddUser({navigation}: StackScreenProps): React.JSX.Element {
   const [streetNumber, setStreetNumber] = React.useState("");
   const [notes, setNotes] = React.useState("");
 
+  const [appTitle, setAppTitle] = React.useState(t('users:add_user'));
+
 
   const labelSize = 'labelMedium';
+
+  React.useEffect(() => {
+    if(route.params != null){
+      setAppTitle(t('users:edit_user'));
+
+      if(route.params?.firstName != null){
+        setFirstName(route.params.firstName);
+      }
+      
+      if(route.params?.lastName != null){
+        setLastName(route.params.lastName);
+      }
+    }
+  }, [route.params]);
 
   function reset(){
     setFirstName('');
@@ -46,7 +63,7 @@ function AddUser({navigation}: StackScreenProps): React.JSX.Element {
 
   return (  
     <View style={{flex: 1}}>
-      <AppBar title={t('users:add_user')} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
+      <AppBar title={appTitle} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
         
       </AppBar>
       

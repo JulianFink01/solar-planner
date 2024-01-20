@@ -28,8 +28,6 @@ function Roofs({navigation, changeTab}: StackScreenProps): React.JSX.Element {
     <View style={GlobalStyles.pageWrapper}>
     <AppBar title={t('roofs:title')}>
       <Appbar.Action icon={'plus'} onPress={addRoof} />
-      <Appbar.Action icon="magnify" onPress={() => {}} />
-      <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
     </AppBar>
     
     <View style={GlobalStyles.siteContainer}>
