@@ -13,7 +13,7 @@ import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ROUTES } from '../../componentes/navigtation/Routes';
 
-function Roofs({navigation}: StackScreenProps): React.JSX.Element {
+function Roofs({navigation, changeTab}: StackScreenProps): React.JSX.Element {
 
 
   const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
@@ -25,7 +25,7 @@ function Roofs({navigation}: StackScreenProps): React.JSX.Element {
   }
 
   return (
-    <View style={{flex: 1}}>
+    <View style={GlobalStyles.pageWrapper}>
     <AppBar title={t('roofs:title')}>
       <Appbar.Action icon={'plus'} onPress={addRoof} />
       <Appbar.Action icon="magnify" onPress={() => {}} />

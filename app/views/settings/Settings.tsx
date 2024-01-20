@@ -18,14 +18,14 @@ const languages = [ // Language List
 
 
 
-function Settings({navigation}: StackScreenProps): React.JSX.Element {
+function Settings({navigation, changeTab}: StackScreenProps): React.JSX.Element {
 
   const { t, i18n } = useTranslation();
   const [lang, changeLang] = React.useState(DEFAULT_LANGUAGE);
   const selectedLanguageCode = i18n.language;
 
   return (
-    <View style={{flex: 1}}>
+    <View style={GlobalStyles.pageWrapper}>
        <AppBar title={t('settings:title')}>
       </AppBar>
 

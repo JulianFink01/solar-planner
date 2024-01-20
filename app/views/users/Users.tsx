@@ -20,12 +20,12 @@ function Users({navigation}: StackNavigationProp): React.JSX.Element {
   const { t } = useTranslation();
 
   function addUser(){
-    navigation.navigate(ROUTES.ROOF.HOME);
+    navigation.navigate(ROUTES.USER.ADD_USER);
   }
 
   return (  
 
-    <View style={{flex: 1}}>
+    <View style={GlobalStyles.pageWrapper}>
       <AppBar title={t('users:title')}>
         <Appbar.Action icon={'account-plus'} onPress={addUser} />
         <Appbar.Action icon="magnify" onPress={() => {}} />

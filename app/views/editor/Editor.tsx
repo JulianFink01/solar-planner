@@ -12,14 +12,14 @@ import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
 
-function Editor({navigation}: StackScreenProps): React.JSX.Element {
+function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
 
   const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
 
   const { t } = useTranslation();
 
   return (
-    <View style={{flex: 1}}>
+    <View style={GlobalStyles.pageWrapper}>
     <AppBar title={t('editor:title')}>
       <Appbar.Action icon={'account-plus'} onPress={() => {}} />
       <Appbar.Action icon="magnify" onPress={() => {}} />
@@ -32,7 +32,7 @@ function Editor({navigation}: StackScreenProps): React.JSX.Element {
         bounces={false}
       >
         <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" left={() => <Avatar.Icon size={50} {...props} icon="home-roof" />} />
+          <Card.Title title="Card Title" subtitle="Card Subtitle" left={() => <Avatar.Icon size={50} icon="home-roof" />} />
           <Card.Content>
             <Text variant="titleLarge">Card title</Text>
             <Text variant="bodyMedium">Card content</Text>

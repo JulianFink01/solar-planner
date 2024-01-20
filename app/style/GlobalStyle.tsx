@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { CONTAINER_PADDING } from "./GlobalConstants";
+import { ThemeDark } from "../themes/ThemeDark";
 
 export const GlobalStyles =  StyleSheet.create({
     container: {
@@ -17,5 +18,9 @@ export const GlobalStyles =  StyleSheet.create({
     },
     align_right: {
         justifyContent: 'flex-end'
+    },
+    pageWrapper: {
+        flex: 1,
+        backgroundColor: ThemeDark.colors.background
     }
 });
