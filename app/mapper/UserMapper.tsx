@@ -7,7 +7,6 @@ export class UserMapper {
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                birthDate: user.birthDate,
                 eMail: user.eMail,
                 phoneNumber: user.phoneNumber,
                 placeOfResidence: user.placeOfResidence,

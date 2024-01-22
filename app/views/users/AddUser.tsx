@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TextInput as NativeTextInput,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -26,7 +28,7 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
   
   const errorSnackBar = React.useRef<any>(null);
 
-  const user = route.params?.userId ? useObject(User, new Realm.BSON.UUID(route.params?.userId)): null;
+  const user = route.params?.user?.id ? useObject(User, new Realm.BSON.UUID(route.params?.user?.id)): null;
   const realm = useRealm();
 
   const [firstName, setFirstName] = React.useState("");
@@ -95,7 +97,7 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
     placeOfResidence?.length > 0&& 
     zipCode?.length > 0 && 
     street?.length > 0 && 
-    streetNumber?.length > 0;
+    streetNumber?.length > 0     ;
 
     if(!valid){
       errorSnackBar.current.present(t('common:error:required_fields'));
@@ -156,127 +158,131 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
     }
   }
 
-  return (  
-    <View style={{flex: 1}}>
-      <AppBar title={appTitle} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
-        
-      </AppBar>
-      
-      <View style={GlobalStyles.siteContainer}>
-        <ScrollView
-          style={{flex: 1}}
-          contentContainerStyle={styles.rowContainer}
-          bounces={false}
-        >
-            <View style={{...styles.rowContainer, width: '55%'}}>
-              <Text
-                style={styles.section}
-                variant={labelSize} 
-                >{t('users:personal_data')}</Text>
+  return (  <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{flex: 1}}
+              >
+                <View style={{flex: 1}}>
+                  <AppBar title={appTitle} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
+                    
+                  </AppBar>
+                  
+                  <View style={GlobalStyles.siteContainer}>
+                    <ScrollView
+                      style={{flex: 1}}
+                      contentContainerStyle={styles.rowContainer}
+                      bounces={false}
+                    >
+                        <View style={{...styles.rowContainer, width: '55%'}}>
+                          <Text
+                            style={styles.section}
+                            variant={labelSize} 
+                            >{t('users:personal_data')}</Text>
 
-                <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:firstName')}
-                  value={firstName}
-                  onChangeText={setFirstName}
-                />
-                <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:lastName')}
-                  value={lastName}
-                  onChangeText={setLastName}
-                />
+                            <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:firstName')}
+                              value={firstName}
+                              onChangeText={setFirstName}
+                            />
+                            <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:lastName')}
+                              value={lastName}
+                              onChangeText={setLastName}
+                            />
 
-                <Text
-                  style={styles.section}
-                  variant={labelSize}>
-                    {t('users:contacting_information')}
-                  </Text>
+                            <Text
+                              style={styles.section}
+                              variant={labelSize}>
+                                {t('users:contacting_information')}
+                              </Text>
 
-                <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:email')}
-                  value={eMail}
-                  onChangeText={setEMail}
-                />
+                            <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:email')}
+                              value={eMail}
+                              onChangeText={setEMail}
+                            />
 
-                <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:phone_number')}
-                  value={phoneNumber}
-                  onChangeText={setPhoneNumber}
-                />
+                            <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:phone_number')}
+                              value={phoneNumber}
+                              onChangeText={setPhoneNumber}
+                            />
 
 
-                <Text
-                  style={styles.section}
-                  variant={labelSize}
-                >{t('users:address_data')}</Text>
+                            <Text
+                              style={styles.section}
+                              variant={labelSize}
+                            >{t('users:address_data')}</Text>
 
-              <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:place_of_residence')}
-                  value={placeOfResidence}
-                  onChangeText={setPlaceOfResidence}
-                />
+                          <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:place_of_residence')}
+                              value={placeOfResidence}
+                              onChangeText={setPlaceOfResidence}
+                            />
 
-                <TextInput
-                  style={styles.inputContainer}
-                  label={t('users:zip_code')}
-                  value={zipCode}
-                  onChangeText={setZipCode}
-                />
+                            <TextInput
+                              style={styles.inputContainer}
+                              label={t('users:zip_code')}
+                              value={zipCode}
+                              onChangeText={setZipCode}
+                            />
 
-                <TextInput
-                  style={{...styles.inputContainer, marginBottom: 0}}
-                  label={t('users:street')}
-                  value={street}
-                  onChangeText={setStreet}
-                />
+                            <TextInput
+                              style={{...styles.inputContainer, marginBottom: 0}}
+                              label={t('users:street')}
+                              value={street}
+                              onChangeText={setStreet}
+                            />
 
-              <TextInput
-                  style={{...styles.inputContainer, marginBottom: 0}}
-                  label={t('users:street_number')}
-                  value={streetNumber}
-                  onChangeText={setStreetNumber}
-                />
-            </View>
-              
-            <View style={{width: '45%', alignItems: 'flex-end'}}>
-            <Text variant={labelSize} >
-                    {t('users:notes')}
-                  </Text>
-            
-            <NativeTextInput
-                  style={styles.notesContainer}
-                  value={notes}
-                  multiline
-                  onChangeText={setNotes}
-                />      
-            </View>
+                          <TextInput
+                              style={{...styles.inputContainer, marginBottom: 0}}
+                              label={t('users:street_number')}
+                              value={streetNumber}
+                              onChangeText={setStreetNumber}
+                            />
+                        </View>
+                          
+                        <View style={{width: '45%', alignItems: 'flex-end'}}>
+                        <Text variant={labelSize} >
+                                {t('users:notes')}
+                              </Text>
+                        
+                        <NativeTextInput
+                              style={styles.notesContainer}
+                              value={notes}
+                              multiline
+                              onChangeText={setNotes}
+                            />      
+                        </View>
 
-          <View style={styles.buttonContainer}>
-            <Button icon="format-clear" 
-                    mode="contained"
-                    style={styles.button}
-                    buttonColor={ThemeDark.colors.error}
-                    onPress={reset}>
-              {t('common:reset')}
-            </Button>
+                      <View style={styles.buttonContainer}>
+                        <Button icon="format-clear" 
+                                mode="contained"
+                                style={styles.button}
+                                buttonColor={ThemeDark.colors.error}
+                                onPress={reset}>
+                          {t('common:reset')}
+                        </Button>
 
-            <Button icon="account-sync" 
-                    mode="contained"
-                    style={styles.button}
-                    buttonColor={ThemeDark.colors.inverseSurface}
-                    onPress={submit}>
-              {t('common:save')}
-            </Button>
-          </View>
-        </ScrollView>
-        <ErrorSnackbar ref={errorSnackBar} />
-      </View>
-    </View>
-  );
+                        <Button icon="account-sync" 
+                                mode="contained"
+                                style={styles.button}
+                                buttonColor={ThemeDark.colors.inverseSurface}
+                                onPress={submit}>
+                          {t('common:save')}
+                        </Button>
+                      </View>
+                    </ScrollView>
+                    <ErrorSnackbar ref={errorSnackBar} />
+                  </View>
+                </View>
+                </KeyboardAvoidingView>
+              );
 }
 
 const styles = StyleSheet.create({

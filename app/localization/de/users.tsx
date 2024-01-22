@@ -18,4 +18,6 @@ export default {
     no_data: 'Es wurde noch kein Benutzer erstellt.\nBitte erstellen Sie einen um weiter zu gehen.',
     add_user_success: 'Der Benutzer wurde hinzugefügt!',
     edit_user_success: 'Der Benutzer wurde bearbeitet!',
+    delete_user_title: 'Benutzer löschen',
+    delete_user_prompt: 'Sind sie sicher das Sie den Benutzer {{user}} löschen möchten?'
 }

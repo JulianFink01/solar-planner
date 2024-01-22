@@ -8,6 +8,8 @@
 import * as React from 'react';
 import {
   AppRegistry,
+  KeyboardAvoidingView,
+  Platform,
   StatusBar,
   StyleSheet,
   useColorScheme,

@@ -18,4 +18,6 @@ export default {
     no_data: 'There is not yet a User configured.\nPlease add a User to continue.',
     add_user_success: 'User added succesfully!',
     edit_user_success: 'The user was edited successfully!',
+    delete_user_title: 'Delete User?',
+    delete_user_prompt: 'Are you sure that you want to delte the user {{user}}?'
 }

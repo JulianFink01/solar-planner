@@ -6,22 +6,44 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, Divider, List} from 'react-native-paper';
+import {  Appbar, Chip, Divider, List} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ROUTES } from '../../componentes/navigtation/Routes';
+import { UserMinimal } from '../../models/UserMinimal';
 
-function Roofs({navigation, changeTab}: StackScreenProps): React.JSX.Element {
+function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
 
+  const [user, setUser] = React.useState<UserMinimal | null>();
 
-  const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
+  React.useEffect(() => {
+    setUser(route?.params?.user);
+  }, [route]);
 
   const {t} = useTranslation();
 
   function addRoof(){
       navigation.navigate(ROUTES.ROOF.ADD_ROUTE);
+  }
+
+  function FilterRow(){
+
+    if(!user){
+      return <></>
+    }
+
+    function clearUser(){
+      setUser(null);
+    }
+
+    return(<View style={{alignSelf: 'flex-start', display: 'flex'}}>
+              <Chip 
+                icon='human-male'
+                onClose={clearUser}
+               >{user.firstName} {user.lastName}</Chip>
+           </View>);
   }
 
   return (
@@ -31,8 +53,9 @@ function Roofs({navigation, changeTab}: StackScreenProps): React.JSX.Element {
     </AppBar>
     
     <View style={GlobalStyles.siteContainer}>
+      <FilterRow />  
       <ScrollView
-        style={{flex: 1}}
+        style={{flex: 1, width: '100%'}}
         bounces={false}
       >
           <List.Section>

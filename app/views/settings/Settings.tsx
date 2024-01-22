@@ -3,7 +3,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, DefaultTheme, List, Text } from 'react-native-paper';
+import { List, MD3Colors, Text } from 'react-native-paper';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ThemeDark } from '../../themes/ThemeDark';
@@ -11,18 +11,20 @@ import { DEFAULT_LANGUAGE } from '../../constants/GlobalConstants';
 import AppBar from '../../componentes/appBar/AppBar';
 import { GlobalStyles } from '../../style/GlobalStyle';
 
-const languages = [ 
- { code: 'en', label: t('languages:en') },
- { code: 'de', label: t('languages:de') },
-];
-
-
 
 function Settings({navigation, changeTab}: StackScreenProps): React.JSX.Element {
 
   const { t, i18n } = useTranslation();
   const [lang, changeLang] = React.useState(DEFAULT_LANGUAGE);
   const selectedLanguageCode = i18n.language;
+  const [languages, setLanguages] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    setLanguages([ 
+      { code: 'en', label: t('languages:en') },
+      { code: 'de', label: t('languages:de') },
+     ]);
+  }, []);
 
   return (
     <View style={GlobalStyles.pageWrapper}>
@@ -30,28 +32,28 @@ function Settings({navigation, changeTab}: StackScreenProps): React.JSX.Element 
       </AppBar>
 
       <View style={GlobalStyles.siteContainer}>
-        <Text variant='labelLarge' style={{color: ThemeDark.colors.outline}}>{t('settings:general')}</Text>
-        <List.AccordionGroup>
-          <List.Accordion title={t('settings:change_language')} id="1">
-            {languages.map((currentLang, i) => {
+        
+        <List.Section style={{width: '100%'}}>
+        <Text variant='labelLarge' style={{color: ThemeDark.colors.primary, width: '100%'}}>{t('settings:change_language')}</Text>
+
+          {languages.map((currentLang, i) => {
             
             const selectedLanguage = currentLang.code === selectedLanguageCode;
         
             return (
-              <List.Item 
-                titleStyle={{color: selectedLanguage ? ThemeDark.colors.inverseSurface : ThemeDark.colors.secondary, 
-                            fontWeight: selectedLanguage ? '600' : '400'}}
-                key={currentLang.code}
-                onPress={() => {
-                changeLang(currentLang.code);
-                  i18n.changeLanguage(currentLang.code); 
-                }}
-                title={currentLang.label} />
+              <List.Item
+                  titleStyle={{color: selectedLanguage ? ThemeDark.colors.primary : ThemeDark.colors.secondary, fontWeight: selectedLanguage ? '600' : '400'}}
+                  key={currentLang.code}
+                  onPress={() => {
+                    changeLang(currentLang.code);
+                      i18n.changeLanguage(currentLang.code); 
+                    }}
+                  title={currentLang.label}
+                  left={() => <List.Icon color={selectedLanguage ? ThemeDark.colors.primary : ''} icon="book" />}
+                />
             );
             })}
-          </List.Accordion>
-        
-        </List.AccordionGroup>
+        </List.Section>
       </View>
     </View>
   );
