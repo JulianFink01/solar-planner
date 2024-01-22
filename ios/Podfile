@@ -27,7 +27,7 @@ end
 
 target 'SolarSystem' do
   config = use_native_modules!
-
+  
   use_react_native!(
     :hermes_enabled => false,
     :path => config[:reactNativePath],
@@ -40,12 +40,13 @@ target 'SolarSystem' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'SolarSystemTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+
 
   post_install do |installer|
+      
+    installer.pods_project.build_configurations.each do |config|
+        config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,

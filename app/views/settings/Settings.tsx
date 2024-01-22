@@ -7,7 +7,7 @@ import {  Appbar, DefaultTheme, List, Text } from 'react-native-paper';
 import { t } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { ThemeDark } from '../../themes/ThemeDark';
-import { DEFAULT_LANGUAGE } from '../../style/GlobalConstants';
+import { DEFAULT_LANGUAGE } from '../../constants/GlobalConstants';
 import AppBar from '../../componentes/appBar/AppBar';
 import { GlobalStyles } from '../../style/GlobalStyle';
 

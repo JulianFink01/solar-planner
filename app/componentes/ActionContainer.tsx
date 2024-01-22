@@ -4,9 +4,9 @@ import { IconButton, List, MD3Colors } from "react-native-paper";
 
 interface Props {
     editAction?: boolean,
-    onEdit?: () => {},
+    onEdit?: Function,
+    onDelete?: Function,
     deleteAction?: boolean,
-    onDelete?: () => {},
     editIcon: string,
     deleteIcon: string
 }
@@ -22,11 +22,11 @@ function ActionContainer(props: Props): React.JSX.Element {
                                         size={20}
                                         onPress={props?.onEdit}
                                     />}
-             {props?.editAction && <IconButton
+             {props?.deleteAction && <IconButton
                                         icon={props.deleteIcon}
                                         iconColor={MD3Colors.error30}
                                         size={20}
-                                        onPress={props.onDelete}
+                                        onPress={props?.onDelete}
                                     />}
         </View>
     );

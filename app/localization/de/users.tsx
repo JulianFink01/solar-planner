@@ -6,7 +6,7 @@ export default {
     lastName: 'Nachname',
     birthDate: 'Geburtstag',
     place_of_residence: 'Wohnort',
-    streee: 'Strasse',
+    street: 'Strasse',
     street_number: 'Nummer', 
     zip_code: 'Postleitzahl',
     notes: 'Notizen',
@@ -14,5 +14,8 @@ export default {
     phone_number: 'Telefon Nummer',
     personal_data: 'Persönliche Daten',
     contacting_information: 'Kontatktinformationen',
-    address_data: 'Address Daten'
+    address_data: 'Address Daten',
+    no_data: 'Es wurde noch kein Benutzer erstellt.\nBitte erstellen Sie einen um weiter zu gehen.',
+    add_user_success: 'Der Benutzer wurde hinzugefügt!',
+    edit_user_success: 'Der Benutzer wurde bearbeitet!',
 }

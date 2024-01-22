@@ -20,16 +20,19 @@ import AppBar from './app/componentes/appBar/AppBar';
 import { ThemeDark } from './app/themes/ThemeDark';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './app/componentes/navigtation/StackNavigator';
-
+import {RealmProvider} from '@realm/react';
+import { User } from './app/models/User';
 
  export default function Main() {
   return (
     <SafeAreaView style={{flex: 1}}>
       <PaperProvider theme={ThemeDark}>
-        <NavigationContainer>
-          <StatusBar hidden={false}/>
-          <StackNavigator></StackNavigator>
-         </NavigationContainer>
+        <RealmProvider schema={[User]} schemaVersion={8}>
+          <NavigationContainer>
+            <StatusBar hidden={false}/>
+            <StackNavigator></StackNavigator>
+          </NavigationContainer>
+         </RealmProvider>
       </PaperProvider>
     </SafeAreaView>
   );
