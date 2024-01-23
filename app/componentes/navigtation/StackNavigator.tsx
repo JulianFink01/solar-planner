@@ -25,7 +25,7 @@ function StackNavigator(): React.JSX.Element {
       initialRouteName={ROUTES.NAVIGATOR.HOME}
     >
       <Stack.Screen options={{cardStyle: styles.cardStyle}} name={ROUTES.NAVIGATOR.HOME} component={Navigation} />
-      <Stack.Screen options={{cardStyle: styles.cardStyle}} name={ROUTES.ROOF.ADD_ROUTE} component={AddRoof} />
+      <Stack.Screen options={{cardStyle: styles.cardStyle}} name={ROUTES.ROOF.ADD_ROOF} component={AddRoof} />
       <Stack.Screen options={{cardStyle: styles.cardStyle, }} name={ROUTES.USER.ADD_USER} component={AddUser} />
     </Stack.Navigator>
   );

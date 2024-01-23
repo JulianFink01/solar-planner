@@ -1,4 +1,20 @@
 export default {
     title: 'Roofs',
-    add_roof: 'Add roof'
+    add_roof: 'Add roof',
+    edit_roof: 'Edit roof',
+    no_data: 'There is not yet a Roof configured.\nPlease add a Roof to continue.',
+    add_roof_success: 'Roof added succesfully!',
+    edit_roof_success: 'The roof was edited successfully!',
+    delete_roof_title: 'Delete Roof?',
+    delete_roof_prompt: 'Are you sure that you want to delete this roof?',
+    width: 'Width',
+    height: 'Height',
+    user: 'User',
+    street: 'Street',
+    stree_number: 'Number', 
+    zip_code: 'Zip Code',
+    city: 'City',
+    notes: 'Notes',
+    address_data: 'Address data',
+    generell_data: 'Generell Data',
 };

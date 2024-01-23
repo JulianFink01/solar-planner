@@ -28,7 +28,7 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
   
   const errorSnackBar = React.useRef<any>(null);
 
-  const user = route.params?.user?.id ? useObject(User, new Realm.BSON.UUID(route.params?.user?.id)): null;
+  const user = route.params?.user?._id ? useObject(User, new Realm.BSON.UUID(route.params?.user?._id)): null;
   const realm = useRealm();
 
   const [firstName, setFirstName] = React.useState("");

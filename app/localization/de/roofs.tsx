@@ -1,4 +1,20 @@
 export default {
     title: 'Dächer',
-    add_roof: 'Dach hinzufügen'
+    add_roof: 'Dach hinzufügen',
+    edit_roof: 'Dach bearbeiten',
+    no_data: 'Es wurde noch kein Dach konfiguriert.\nBitte erstellen Sie eines um weiter zu gehen.',
+    add_roof_success: 'Das Dach wurde hinzugefügt!',
+    edit_roof_success: 'Das Dach wurde bearbeitet!',
+    delete_roof_title: 'Dach löschen',
+    delete_roof_prompt: 'Sind sie sicher das Sie dieses Dach löschen möchten?',
+    width: 'Breite',
+    height: 'Höhe',
+    user: 'Benutzer',
+    street: 'Strasse',
+    street_number: 'Nummer', 
+    zip_code: 'Postleitzahl',
+    city: 'Stadt',
+    notes: 'Notizen',
+    generell_data: 'Generelle Daten',
+    address_data: 'Address Daten',
 };

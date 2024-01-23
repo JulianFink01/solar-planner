@@ -1,5 +1,5 @@
 
 export default {
     HOME: 'roofs',
-    ADD_ROUTE: 'add_rufe'   
+    ADD_ROOF: 'add_roof'   
 }

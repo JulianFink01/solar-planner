@@ -25,7 +25,7 @@ function NoDataPlaceholder({onPress, message, navigation, icon}: StackNavigation
                         onPress={onPress}
                     />
                 </View>
-                <Text variant="bodyMedium" style={{marginTop: 2 * CONTAINER_PADDING, textAlign: 'center'}}>{t('users:no_data')}</Text>
+                <Text variant="bodyMedium" style={{marginTop: 2 * CONTAINER_PADDING, textAlign: 'center'}}>{message}</Text>
             </View>
     )
  }

@@ -24,12 +24,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import StackNavigator from './app/componentes/navigtation/StackNavigator';
 import {RealmProvider} from '@realm/react';
 import { User } from './app/models/User';
+import { Roof } from './app/models/Roof';
 
  export default function Main() {
   return (
     <SafeAreaView style={{flex: 1}}>
       <PaperProvider theme={ThemeDark}>
-        <RealmProvider schema={[User]} schemaVersion={8}>
+        <RealmProvider schema={[User, Roof]} schemaVersion={9}>
           <NavigationContainer>
             <StatusBar hidden={false}/>
             <StackNavigator></StackNavigator>

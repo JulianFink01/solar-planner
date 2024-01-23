@@ -16,25 +16,21 @@ import {PAGE_EVENTS} from '../../constants/PageEvent';
 import {useQuery} from '@realm/react';
 import { User } from '../../models/User';
 import {useRealm} from '@realm/react';
-import { UserMapper } from '../../mapper/UserMapper';
 import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
 import SuccessSnackbar from '../../componentes/SuccessSnackbar';
-import ErrorSnackbar from '../../componentes/ErrorSnackbar';
 import { UserMinimal } from '../../models/UserMinimal';
 import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { ThemeDark } from '../../themes/ThemeDark';
 
 function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
 
-  const snackbBar = React.useRef<any>(null);
+  const [deletePromptVisible, setDeletePromptVisible]= React.useState(false);
+  const [userToDelete, setUserToDelete] = React.useState<User | null>(null);
 
   const { t } = useTranslation();
   const realm = useRealm();
-
+  const snackbBar = React.useRef<any>(null);
   const users = useQuery(User);
-
-  const [deletePromptVisible, setDeletePromptVisible]= React.useState(false);
-  const [userToDelete, setUserToDelete] = React.useState<User | null>(null);
 
   React.useEffect(() => {
     if(route?.params?.prevEvent === PAGE_EVENTS.USER.ADD_USER_SUCCESS){
@@ -86,7 +82,10 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
       
       <View style={GlobalStyles.siteContainer}>
       
-      {users.length === 0 && <NoDataPlaceholder icon="account-plus" onPress={addUser} />}
+      {users.length === 0 && <NoDataPlaceholder 
+                                icon="account-plus" 
+                                onPress={addUser} 
+                                message={t('users:no_data')}/>}
         <ScrollView
           style={{flex: 1, width: '100%'}}
           bounces={false}
