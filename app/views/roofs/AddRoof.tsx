@@ -11,34 +11,37 @@ import {
 } from 'react-native';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
-import { Appbar, Button, Snackbar, Text, TextInput } from 'react-native-paper';
+import { Appbar, Button, Chip, Snackbar, Text, TextInput } from 'react-native-paper';
 import { StackScreenProps } from '@react-navigation/stack';
 import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { ThemeDark } from '../../themes/ThemeDark';
-import {useObject, useRealm} from '@realm/react';
+import {useObject, useQuery, useRealm} from '@realm/react';
 import { User } from '../../models/User';
 import Realm from 'realm';
 import { ROUTES } from '../../componentes/navigtation/Routes';
 import { PAGE_EVENTS } from '../../constants/PageEvent';
 import ErrorSnackbar from '../../componentes/ErrorSnackbar';
 import { Roof } from '../../models/Roof';
-import { UserMinimal } from '../../models/UserMinimal';
-import { RoofMinimal } from '../../models/RoofMinimal';
+import { UserMinimal } from '../../mapper/UserMinimal';
+import { RoofMinimal } from '../../mapper/RoofMinimal';
 
 
 function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
   
   const errorSnackBar = React.useRef<any>(null);
 
-  const roof = route.params?.roof?._id ? useObject(Roof, new Realm.BSON.UUID(route.params?.roof?._id)): null;
-  const initialUser = route.params?.user ?? null;
+  const roofId = route?.params?.roof?._id;
+  const userId = route.params?.user?._id;
+
+  const roof = roofId ? useObject(Roof, new Realm.BSON.UUID(roofId)): null;
+  const initialUser = userId ? useObject(User, new Realm.BSON.UUID(userId)): null;
 
   const realm = useRealm();
   const { t } = useTranslation();
 
   const [width, setWidth] = React.useState<string>('');
   const [height, setHeight] = React.useState<string>('');
-  const [user, setUser] = React.useState<UserMinimal | null>(initialUser);
+  const [user, setUser] = React.useState<UserMinimal | null>(UserMinimal.map(initialUser));
   const [zipCode, setZipCode] = React.useState(""); 
   const [street, setStreet] = React.useState("");
   const [streetNumber, setStreetNumber] = React.useState("");
@@ -109,52 +112,69 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
 
   function submit(){
    if(valid()){
-    if(editMode){
-      edit();
-    } else {
-      create();
+      if(editMode){
+        edit();
+      } else {
+        create();
+      }
     }
    }
-  }
 
-  function create() {
+  const create = () => {
+
+    const userMin = UserMinimal.map(initialUser);
     realm.write(() => {
-      
-      realm.create(Roof, {
-        _id: new Realm.BSON.UUID(),
-        width: parseFloat(width),
-        height: parseFloat(height),
-        //userId: new Realm.BSON.UUID(user?._id),
-        userId: new Realm.BSON.UUID('14e956b4-2001-4028-84da-23bd1011e9e6'), // Julian fink
-        zipCode: zipCode,
-        street: street,
-        streetNumber: streetNumber,
-        city: city,
-        notes: notes
-      });
+    
+      if(initialUser){
+        const roof = realm.create(Roof, {
+          _id: new Realm.BSON.UUID(),
+          width: parseFloat(width),
+          height: parseFloat(height),
+          zipCode: zipCode,
+          street: street,
+          streetNumber: streetNumber,
+          city: city,
+          notes: notes,
+        });
+        initialUser.roofs.push(roof);
+     }
     });
+  
     reset();
-    navigation.navigate(ROUTES.ROOF.HOME, {prevEvent: PAGE_EVENTS.ROOF.ADD_ROOF_SUCCESS});
+    navigation.navigate(ROUTES.ROOF.HOME, {prevEvent: PAGE_EVENTS.ROOF.ADD_ROOF_SUCCESS, user: userMin});
   }
 
   function edit(){
-    if(roofInitialState != null){    
-      if(roof != null){
-          realm.write(() => {
-            roof.width = parseFloat(width);
-            roof.height = parseFloat(height);
-            roof.userId = new Realm.BSON.UUID(initialUser._id);
-            roof.zipCode = zipCode;
-            roof.street = street;
-            roof.streetNumber = streetNumber;
-            roof.city = city;
-            roof.notes = notes;
-        });
-      }
-      
+
+    const userMin = UserMinimal.map(initialUser);
+
+    if(roof != null){
+        realm.write(() => {
+          roof.width = parseFloat(width);
+          roof.height = parseFloat(height);
+          roof.zipCode = zipCode;
+          roof.street = street;
+          roof.streetNumber = streetNumber;
+          roof.city = city;
+          roof.notes = notes;
+      });
+    
       reset();
-      navigation.navigate(ROUTES.ROOF.HOME, {prevEvent: PAGE_EVENTS.ROOF.EDIT_ROOF_SUCCESS});
+      navigation.navigate(ROUTES.ROOF.HOME, {prevEvent: PAGE_EVENTS.ROOF.EDIT_ROOF_SUCCESS, user: userMin});
     }
+  }
+
+  function FilterRow(){
+
+    if(!user){
+      return <></>
+    }
+
+    return(<View style={{alignSelf: 'flex-start', display: 'flex', marginBottom: CONTAINER_PADDING}}>
+              <Chip 
+                icon='human-male'
+               >{user.firstName} {user.lastName}</Chip>
+           </View>);
   }
 
   return (  <KeyboardAvoidingView
@@ -165,8 +185,10 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
                   <AppBar title={appTitle} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
                     
                   </AppBar>
-                  
                   <View style={GlobalStyles.siteContainer}>
+
+                  <FilterRow />
+
                     <ScrollView
                       style={{flex: 1}}
                       contentContainerStyle={styles.rowContainer}

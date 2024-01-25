@@ -7,5 +7,10 @@ export default {
     cancel: 'Abbrechen',
     error: {
         required_fields: 'Bitte füllen sie alle Felder richtig aus!'
+    },
+    sort: {
+        change: 'Sortierung ändern',
+        desc: 'Absteigend',
+        asc: 'Aufsteigend'
     }
 };

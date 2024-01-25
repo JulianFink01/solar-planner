@@ -7,5 +7,10 @@ export default {
     warning: 'Warning!',
     error: {
         required_fields: 'Please complete the above formular!'
+    },
+    sort: {
+        change: 'Sort Items',
+        desc: 'Descending',
+        asc: 'Ascending'
     }
 };

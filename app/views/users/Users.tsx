@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, Button, Dialog, Divider, List, Text} from 'react-native-paper';
+import {  Appbar, Button, Chip, Dialog, Divider, List, Text} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -18,14 +18,16 @@ import { User } from '../../models/User';
 import {useRealm} from '@realm/react';
 import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
 import SuccessSnackbar from '../../componentes/SuccessSnackbar';
-import { UserMinimal } from '../../models/UserMinimal';
+import { UserMinimal } from '../../mapper/UserMinimal';
 import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { ThemeDark } from '../../themes/ThemeDark';
+import UserListView from './UserListView';
 
 function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
 
   const [deletePromptVisible, setDeletePromptVisible]= React.useState(false);
   const [userToDelete, setUserToDelete] = React.useState<User | null>(null);
+  const [sortReverse, setSortReverse] = React.useState<boolean>(false);
 
   const { t } = useTranslation();
   const realm = useRealm();
@@ -59,10 +61,6 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
     navigation.navigate(ROUTES.USER.ADD_USER, {user: user})
   }
 
-  function navigateToUserRoofs(user: UserMinimal){
-    navigation.navigate(ROUTES.ROOF.HOME, {user: user})
-  }
-
   function openDeleteUserPrompt(user: User){
     setUserToDelete(user);
     setDeletePromptVisible(true);
@@ -72,6 +70,25 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
     setDeletePromptVisible(false);
     setUserToDelete(null);
   }
+
+  function FilterRow(){
+
+
+    function changeSort(){
+      setSortReverse(!sortReverse);
+    }
+
+    if(users.length < 1){
+      return <></>
+    }
+
+    return(<View style={{alignSelf: 'flex-start', display: 'flex'}}>
+                    <Chip icon='sort'
+                          onPress={changeSort}                        
+                        >{t('common:sort:change')}</Chip>          
+           </View>);
+  }
+
 
   return (  
 
@@ -86,29 +103,26 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
                                 icon="account-plus" 
                                 onPress={addUser} 
                                 message={t('users:no_data')}/>}
+
+        <FilterRow />                        
         <ScrollView
           style={{flex: 1, width: '100%'}}
           bounces={false}
         >
             <List.Section>
-              {users.map((user, index) => {
+              {users.sorted("firstName", sortReverse).map((user, index) => {
 
-                const title = user.firstName + ' ' + user.lastName;
                 const dividerKey = 'divider-' + user._id.toString();
                 const wrapperKey = 'wrapper-' + user._id.toString();
+                const userKey = 'user-' + user._id.toString();
 
                 return <View key={wrapperKey}>
-                          <List.Item key={user._id.toString()} 
-                                    style={{paddingRight: 0}} 
-                                    title={title} 
-                                    onPress={() => {navigateToUserRoofs(UserMinimal.map(user))}}
-                                    left={() => <List.Icon icon="account" />} 
-                                    right={() => <ActionContainer deleteAction 
-                                                                  editAction 
-                                                                  editIcon='account-edit' 
-                                                                  onDelete={() => openDeleteUserPrompt(user)}
-                                                                  onEdit={() =>  editUser(UserMinimal.map(user))}/>}
-                                                                  />
+                          <UserListView
+                              navigation={navigation}
+                              onOpenDelete={openDeleteUserPrompt}
+                              user={user}
+                              key={userKey}
+                          />
                           {index < users.length - 1 && <Divider key={dividerKey} />}
                         </View>
               })}

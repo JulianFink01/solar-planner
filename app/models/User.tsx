@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { Roof } from './Roof';
 
 
 export class User extends Realm.Object<User> {
@@ -13,6 +14,7 @@ export class User extends Realm.Object<User> {
     street!: string;
     streetNumber!: string;
     notes!: string;
+    roofs!: Realm.List<Roof>
     
     static schema = {
       name: 'User',
@@ -26,7 +28,8 @@ export class User extends Realm.Object<User> {
         zipCode: {type: 'string', indexed: 'full-text'},
         street: {type: 'string', indexed: 'full-text'},
         streetNumber: {type: 'string', indexed: 'full-text'},
-        notes: {type: 'string', indexed: 'full-text'}
+        notes: {type: 'string', indexed: 'full-text'},
+        roofs: 'Roof[]'
       },
       primaryKey: '_id',
     };

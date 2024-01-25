@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from "../models/User";
 
 export class UserMinimal {
     firstName: string;
@@ -10,7 +10,10 @@ export class UserMinimal {
         this.lastName = lastName;
         this._id = _id;
     }
-    static map(user: User): UserMinimal{
+    static map(user: User | null): UserMinimal | null {
+        if(!user){
+            return null;
+        }
         return new UserMinimal(user.firstName, user.lastName, user._id.toString());
     }
 }

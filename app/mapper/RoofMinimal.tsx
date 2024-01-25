@@ -1,6 +1,6 @@
 import { useObject } from "@realm/react";
-import { Roof } from "./Roof";
-import { User } from "./User";
+import { Roof } from "../models/Roof";
+import { User } from "../models/User";
 import { UserMinimal } from "./UserMinimal";
 
 export class RoofMinimal {
@@ -25,6 +25,6 @@ export class RoofMinimal {
         if(roof == null){
             throw "Roof Mapping was not successfull";
         }
-        return new RoofMinimal(roof._id.toString(), roof.city, roof.street, roof.width, roof.height, roof.userId.toString());
+        return new RoofMinimal(roof._id.toString(), roof.city, roof.street, roof.width, roof.height, 'roof.user._objectKey.toString()');
     }
 }
