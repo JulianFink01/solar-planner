@@ -1,50 +1,90 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Dimensions,
+  ImageBackground,
+  ImageLoadEventData,
+  NativeSyntheticEvent,
   Platform,
   ScrollView,
   StyleSheet,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import {  Appbar, Avatar, Button, Card, List, Text} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
-import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
+import {Canvas, Circle, Fill, Path, Skia} from "@shopify/react-native-skia";
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import RoofSelector from './RoofSelector';
+import Information from './Information';
+
 
 function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
 
-  const MORE_ICON = Platform.OS === 'ios' ? 'dots-horizontal' : 'dots-vertical';
-
   const { t } = useTranslation();
+  const [imageSize, setImageSize] = React.useState<Dimension>();
+
+  const [lockMode, setLockMode] = React.useState<boolean>(false); // prevents anything from being modified
+  const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
+  const [displayInfo, setDisplayInfo] = React.useState<boolean>(true); // If true displays a information modal for the roof
+
+  const information = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    if(displayInfo){
+      information.current.open();
+    }else {
+      information.current.close();
+    }
+  }, [displayInfo]);
+
+  function onImageLoad(event: NativeSyntheticEvent<ImageLoadEventData>){
+
+      const width = event?.nativeEvent?.source?.width;
+      const heigth = event?.nativeEvent?.source?.height;
+
+      const screenWidth = Dimensions.get('screen').width;
+
+      // calculate ratio betwen screen witdth and imageWidth
+      const ratio = screenWidth / width; // we know screen width is x bigger then width
+      
+      const imageWidth = screenWidth;
+      const imageHeight = heigth * ratio;
+
+      const dimensions: Dimension = {width: imageWidth , height: imageHeight};
+      setImageSize(dimensions);
+  }
 
   return (
     <View style={GlobalStyles.pageWrapper}>
-    <AppBar title={t('editor:title')}>
-      <Appbar.Action icon={'account-plus'} onPress={() => {}} />
-      <Appbar.Action icon="magnify" onPress={() => {}} />
-      <Appbar.Action icon={MORE_ICON} onPress={() => {}} />
-    </AppBar>
+      <AppBar title={t('editor:title')}>
+        <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} onPress={() => {setDisplayInfo(!displayInfo)}} />
+        <Appbar.Action icon={lockMode ?'lock' : 'lock-open' } onPress={() => {setLockMode(!lockMode)}} />
+        <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} onPress={() => {setDisplayGrid(!displayGrid)}} />
+      </AppBar>
     
-    <View style={GlobalStyles.siteContainer}>
-      <ScrollView
-        style={{flex: 1}}
-        bounces={false}
-      >
-        <Card>
-          <Card.Title title="Card Title" subtitle="Card Subtitle" left={() => <Avatar.Icon size={50} icon="home-roof" />} />
-          <Card.Content>
-            <Text variant="titleLarge">Card title</Text>
-            <Text variant="bodyMedium">Card content</Text>
-          </Card.Content>
-          <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-          <Card.Actions>
-            <Button>Cancel</Button>
-            <Button>Ok</Button>
-          </Card.Actions>
-        </Card>    
-      </ScrollView>
-    </View>
+
+      <View  style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+        }}>
+          <ImageBackground 
+              onLoad={onImageLoad}
+              resizeMode="contain" 
+              style={{flex: 1, height: '90%'}} 
+              source={{uri: 'https://st2.depositphotos.com/20602302/47738/i/450/depositphotos_477380366-stock-photo-half-cleaned-house-roof-shows.jpg'}}>
+                {imageSize != null && <RoofSelector
+                                          lockMode={lockMode}
+                                          imageSize={imageSize}
+                                          displayGrid={displayGrid}
+                                        />}
+                <Information ref={information} onClose={() => {setDisplayInfo(false)}}/>                        
+          </ImageBackground>
+      </View>
   </View>
   );
 }

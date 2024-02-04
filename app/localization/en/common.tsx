@@ -3,6 +3,7 @@ export default {
     reset: 'Reset',
     close: 'Close',
     submit: 'Submit',
+    select: 'Select',
     cancel: 'Cancel',
     warning: 'Warning!',
     error: {
@@ -12,5 +13,8 @@ export default {
         change: 'Sort Items',
         desc: 'Descending',
         asc: 'Ascending'
+    },
+    view: {
+        change: 'Change View'
     }
 };

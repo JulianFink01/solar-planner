@@ -31,15 +31,15 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
   const user = route.params?.user?._id ? useObject(User, new Realm.BSON.UUID(route.params?.user?._id)): null;
   const realm = useRealm();
 
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [eMail, setEMail] = React.useState("");
-  const [phoneNumber, setPhoneNumber] = React.useState("");
-  const [placeOfResidence, setPlaceOfResidence] = React.useState("");
-  const [zipCode, setZipCode] = React.useState(""); 
-  const [street, setStreet] = React.useState("");
-  const [streetNumber, setStreetNumber] = React.useState("");
-  const [notes, setNotes] = React.useState("");
+  const [firstName, setFirstName] = React.useState(getOrElse(user?.firstName, ''));
+  const [lastName, setLastName] = React.useState(getOrElse(user?.lastName, ''));
+  const [eMail, setEMail] = React.useState(getOrElse(user?.eMail, ''));
+  const [phoneNumber, setPhoneNumber] = React.useState(getOrElse(user?.phoneNumber, ''));
+  const [placeOfResidence, setPlaceOfResidence] = React.useState(getOrElse(user?.placeOfResidence, ''));
+  const [zipCode, setZipCode] = React.useState(getOrElse(user?.zipCode, '')); 
+  const [street, setStreet] = React.useState(getOrElse(user?.street, ''));
+  const [streetNumber, setStreetNumber] = React.useState(getOrElse(user?.streetNumber, ''));
+  const [notes, setNotes] = React.useState(getOrElse(user?.firstName, ''));
 
   const [appTitle, setAppTitle] = React.useState(t('users:add_user'));
   const [editMode, setEditMode] = React.useState(false);
@@ -47,11 +47,17 @@ function AddUser({navigation, route}: StackScreenProps): React.JSX.Element {
   const [userInitialState, setUserInitialState] = React.useState<User>();
   const labelSize = 'labelMedium';
 
+  function getOrElse(value: any, otherwise: any){
+    if(value != null && value != otherwise){
+      return value + '';
+    }
+    return otherwise;
+} 
+
   React.useEffect(() => {
     if(user){
       setAppTitle(t('users:edit_user'));
       setUserInitialState(user);
-      setUserValues(user);
       setEditMode(true);
     }
   }, [user]);

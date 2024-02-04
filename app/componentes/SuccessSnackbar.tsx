@@ -5,14 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { Button, Snackbar } from 'react-native-paper';
 import { ThemeDark } from '../themes/ThemeDark';
 
+interface Props {
+}
 
-
-function SuccessSnackbar(props: StackNavigationProp, ref: React.Ref): React.JSX.Element {
+function SuccessSnackbar({}: Props, ref: React.Ref): React.JSX.Element {
    
     const {t} = useTranslation();
     const [visible, setVisible] = React.useState(false);
-    const onDismissSnackBar = () => setVisible(false);
     const [message, setMessage] = React.useState("");
+
+    const onDismissSnackBar = () => {
+        setVisible(false)
+    };
   
 
     React.useImperativeHandle(ref, () => ({

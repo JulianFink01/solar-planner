@@ -83,12 +83,11 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
     }
 
     return(<View style={{alignSelf: 'flex-start', display: 'flex'}}>
-                    <Chip icon='sort'
+                    <Chip icon={sortReverse ? 'sort-alphabetical-ascending' : 'sort-alphabetical-descending'}
                           onPress={changeSort}                        
                         >{t('common:sort:change')}</Chip>          
            </View>);
   }
-
 
   return (  
 
@@ -129,7 +128,7 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
             </List.Section>
           </ScrollView>
           
-          <Dialog visible={deletePromptVisible} >
+          <Dialog visible={deletePromptVisible} onDismiss={cancelDelete} style={{width: '50%', alignSelf: 'center'}}>
             <Dialog.Icon icon="alert" size={3 * CONTAINER_PADDING}/>
             <Dialog.Title style={{}}>{t('users:delete_user_title')}</Dialog.Title>
             <Dialog.Content>
@@ -146,7 +145,7 @@ function Users({navigation, route}: StackNavigationProp): React.JSX.Element {
           </Dialog>
 
 
-          <SuccessSnackbar ref={snackbBar}/>
+          <SuccessSnackbar ref={snackbBar}key={'snackbar-success'}/>
       </View>
     </View>
   );

@@ -68,7 +68,7 @@ const Navigation = ({navigation}: StackScreenProps) => {
       {routesDefinition.map(route => <Tab.Screen
         name={route.key}
         key={route.key}
-        component={route.component}
+        component={route.component}        
         options={{
           tabBarLabel: route.title,
           tabBarIcon: ({ color, size }) => {

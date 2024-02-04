@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, Button, Chip, Dialog, Divider, List, Text} from 'react-native-paper';
+import {  Appbar, Avatar, Button, Chip, Dialog, Divider, Icon, List, Text,} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -14,7 +14,6 @@ import { ROUTES } from '../../componentes/navigtation/Routes';
 import { UserMinimal } from '../../mapper/UserMinimal';
 import { useQuery, useRealm } from '@realm/react';
 import { Roof } from '../../models/Roof';
-import { RoofMinimal } from '../../mapper/RoofMinimal';
 import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
 import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { ThemeDark } from '../../themes/ThemeDark';
@@ -22,6 +21,7 @@ import SuccessSnackbar from '../../componentes/SuccessSnackbar';
 import { PAGE_EVENTS } from '../../constants/PageEvent';
 import RoofListView from './RoofListView';
 import { User } from '../../models/User';
+import RoofCardView from './RoofCardView';
 
 function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
 
@@ -29,10 +29,9 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
   const [deletePromptVisible, setDeletePromptVisible]= React.useState(false);
   const [roofToDelete, setRoofToDelete] = React.useState<Roof | null>(null);
   const [sortReverse, setSortReverse] = React.useState<boolean>(false);
-  const [stateRefreshes, setStateRefreshes] = React.useState<number>(0); //updates everytime the roof state changes, to be able to change keys
+  const [cardView, setCardView] = React.useState<boolean>(true);
 
   const {t} = useTranslation();
-  const roofs = useQuery(Roof);
   const users = useQuery(User);
   const realm = useRealm();
   const snackbBar = React.useRef<any>(null);
@@ -41,7 +40,6 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
   React.useEffect(() => {
     if(route?.params?.user){
       setUser(route.params.user);
-      roofs.filter(roof => {});
     }
     if(route?.params?.prevEvent === PAGE_EVENTS.ROOF.ADD_ROOF_SUCCESS){
       snackbBar?.current?.present(t('roofs:add_roof_success'));
@@ -49,11 +47,6 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
       snackbBar?.current?.present(t('roofs:edit_roof_success'));
     }
   }, [route])
-
-  React.useEffect(() => {
-    setStateRefreshes(stateRefreshes+1)
-  }, [roofs, users])
-
 
   function addRoof(){
       navigation.navigate(ROUTES.ROOF.ADD_ROOF, {user: user});
@@ -68,17 +61,24 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
     function changeSort(){
       setSortReverse(!sortReverse);
     }
+    function changeListView(){
+      setCardView(!cardView);
+    }
 
-    return(<View style={{alignSelf: 'flex-start', flexDirection: 'row', display: 'flex'}}>
-              {user && <Chip 
-                          icon='human-male'
-                          style={styles.chip}
-                          onClose={clearUser}
-                        >{user.firstName} {user.lastName}</Chip>}
-                    <Chip icon='sort'
+    return(<View style={{alignSelf: 'flex-start', flexDirection: 'row', display: 'flex', paddingBottom: 10}}>
+                    <Chip icon={sortReverse ? 'sort-alphabetical-ascending' : 'sort-alphabetical-descending' }
                           style={styles.chip}
                           onPress={changeSort}                        
-                        >{t('common:sort:change')}</Chip>          
+                        >{t('common:sort:change')}</Chip>       
+                    <Chip icon={cardView ? 'view-list' : 'card'}
+                          style={styles.chip}
+                          onPress={changeListView}                        
+                        >{t('common:view:change')}</Chip>                 
+            {user && <Chip 
+                        icon='human-male'
+                        style={styles.chip}
+                        onClose={clearUser}
+                      >{user.firstName} {user.lastName}</Chip>}          
            </View>);
   }
 
@@ -94,8 +94,8 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
     }
   }
 
-  function openDeleteRoofPrompt(user: User){
-    setRoofToDelete(user);
+  function openDeleteRoofPrompt(roof: Roof){
+    setRoofToDelete(roof);
     setDeletePromptVisible(true);
   }
 
@@ -104,71 +104,106 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
     setRoofToDelete(null);
   }
 
-  function filterRoofs(value: Roof, index: number){
+  function filterUsers(value: User, index: number){
 
     let contain = true;
 
     if(user && contain === true){
-    //  contain = value.userId.toString() === user._id;
+      contain = value._id.toString() === user._id;
     }
     return contain;
   }
 
-  //const roofsFiltered = roofs.sorted("users", sortReverse).filter((value, index) => filterRoofs(value, index));
+  function getAllUserRoofs(user: User){
+    return user.roofs;
+  }
+
+  function reduceArray(first: any, second: any){
+      if(second != null){
+        return [...first, ...second];
+      }
+
+      return first;
+  }
+
+  function AcordionTitle({_user}: {_user:  User}){
+    return <View style={{width: '100%', marginTop: CONTAINER_PADDING - 10, flexDirection: 'row', alignItems: 'center',}}>
+              <Avatar.Icon icon={'account'} size={25} style={{marginBottom: 10, marginRight: 10}}/>
+              <Text style={{marginRight: 10, marginBottom: 10}} variant={'titleLarge'}>{_user.firstName} {_user.lastName}</Text>
+              <View style={{flex: 1, height: 1, backgroundColor: 'white', opacity: 0.2}} />
+          </View>
+  }
+
+  const allRoofs = users.filter(filterUsers).map(getAllUserRoofs).reduce(reduceArray);
+  const usersFiltered = users.sorted("firstName", sortReverse).filter(filterUsers);
   return (
     <View style={GlobalStyles.pageWrapper}>
-    <AppBar title={t('roofs:title')}>
-      <Appbar.Action icon={'plus'} onPress={addRoof} />
-    </AppBar>
-    
-    <View style={GlobalStyles.siteContainer}>
-      <FilterRow />  
-      {roofs.length === 0 && <NoDataPlaceholder icon="home-roof" onPress={addRoof} message={t('roofs:no_data')}/>}
-      <ScrollView
-        style={{flex: 1, width: '100%'}}
-        bounces={false}
-      >
-          <List.Section>
-            {roofs.map((roof, index) => {
-
-              const dividerKey = 'divider-' + roof._id.toString() + stateRefreshes;
-              const wrapperKey = 'wrapper-' + roof._id.toString();  + stateRefreshes;
-              const roofKey = 'roof' + roof._id.toString() + stateRefreshes;
+      <AppBar title={t('roofs:title')}>
+        <Appbar.Action icon={'plus'} onPress={addRoof} />
+      </AppBar>
+      
+      <View style={GlobalStyles.siteContainer}>
+          
+          <FilterRow />  
+        
+          {allRoofs.length === 0 && <NoDataPlaceholder icon="home-roof" onPress={addRoof} message={t('roofs:no_data')}/>}
               
-              return <View key={wrapperKey}>
-                        <RoofListView
-                            navigation={navigation}
-                            key={roofKey}
-                            onOpenDelete={openDeleteRoofPrompt}
-                            roof={roof}
-                        ></RoofListView>
-                        {index < roofs.length - 1 && <Divider key={dividerKey} />}
-                      </View>
-            })}
-                                         
-          </List.Section>
-        </ScrollView>
+          <ScrollView bounces={false} style={{width: '100%'}}>
+            {usersFiltered.filter(u => u.roofs.length > 0).map((_user, userIndex) => {
+              
+              const userKey = _user._id.toString();
+              
+              return  <View style={{width: '100%'}} key={userKey}>
+                        <AcordionTitle _user={_user}/>
+                        <List.Section style={{display: 'flex', flexDirection: 'row', width: '100%', flexWrap: 'wrap'}}>
+                          {_user.roofs.map((roof, index, array) => {
+                              
+                            const wrapperKey = 'wrapper-' + roof._id.toString();;
+                            const roofKey = 'roof' + roof._id.toString();
+                            
+                            return <View key={wrapperKey} style={cardView ? styles.cardView : styles.listView}>
+                                      {cardView && <RoofCardView
+                                                        navigation={navigation}
+                                                        key={'card-'+roofKey}
+                                                        onOpenDelete={openDeleteRoofPrompt}
+                                                        roof={roof}
+                                                    ></RoofCardView>}
+                                      {!cardView && <RoofListView
+                                                        navigation={navigation}
+                                                        key={'list-'+roofKey}
+                                                        onOpenDelete={openDeleteRoofPrompt}
+                                                        roof={roof}
+                                                    ></RoofListView>}
+                                      {!cardView && index < array.length -1 && <Divider />}
+                                    </View>
+                          })}
+                      </List.Section>   
+                    </View>       
+                    }
+                  )
+                }
+          </ScrollView>
 
-        <Dialog visible={deletePromptVisible} >
-            <Dialog.Icon icon="alert" size={3 * CONTAINER_PADDING}/>
-            <Dialog.Title style={{}}>{t('roofs:delete_roof_title')}</Dialog.Title>
-            <Dialog.Content>
-              <Text variant="bodyMedium">{t('roofs:delete_roof_prompt')}</Text>
-              <Divider style={{marginBottom: 20, marginTop: 20}}/>
-              <View style={{width: '30%', alignSelf: 'center'}}>
-                <Button onPress={cancelDelete}>{t('common:cancel')}</Button>
-                <Button onPress={deleteRoof} 
-                        textColor={ThemeDark.colors.background} 
-                        style={{backgroundColor: ThemeDark.colors.error}}>{t('common:submit')}</Button>
-              </View>
+          <Dialog visible={deletePromptVisible} onDismiss={cancelDelete} style={{width: '50%', alignSelf: 'center'}}>
+              <Dialog.Icon icon="alert" size={3 * CONTAINER_PADDING}/>
+              <Dialog.Title style={{}}>{t('roofs:delete_roof_title')}</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">{t('roofs:delete_roof_prompt')}</Text>
+                <Divider style={{marginBottom: 20, marginTop: 20}}/>
+                <View style={{width: '30%', alignSelf: 'center'}}>
+                  <Button onPress={cancelDelete}>{t('common:cancel')}</Button>
+                  <Button onPress={deleteRoof} 
+                          textColor={ThemeDark.colors.background} 
+                          style={{backgroundColor: ThemeDark.colors.error}}>{t('common:submit')}</Button>
+                </View>
 
-            </Dialog.Content>
-          </Dialog>
+              </Dialog.Content>
+            </Dialog>
 
 
-          <SuccessSnackbar ref={snackbBar}/>
+            <SuccessSnackbar ref={snackbBar}/>
 
-    </View>
+      </View>
   </View>
   );
 }
@@ -176,6 +211,14 @@ function Roofs({navigation, route}: StackScreenProps): React.JSX.Element {
 const styles = StyleSheet.create({
   chip: {
     marginRight: 10
+  },
+  cardView: {
+    width:  '50%', 
+    paddingRight: 2 * CONTAINER_PADDING, 
+    marginBottom: 2 * CONTAINER_PADDING
+  },
+  listView: {
+    width:  '100%'
   }
 });
 

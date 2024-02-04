@@ -39,14 +39,14 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
   const realm = useRealm();
   const { t } = useTranslation();
 
-  const [width, setWidth] = React.useState<string>('');
-  const [height, setHeight] = React.useState<string>('');
+  const [width, setWidth] = React.useState<string>(getOrElse(roof?.width, ''));
+  const [height, setHeight] = React.useState<string>(getOrElse(roof?.height, ''));
   const [user, setUser] = React.useState<UserMinimal | null>(UserMinimal.map(initialUser));
-  const [zipCode, setZipCode] = React.useState(""); 
-  const [street, setStreet] = React.useState("");
-  const [streetNumber, setStreetNumber] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [notes, setNotes] = React.useState("");
+  const [zipCode, setZipCode] = React.useState(getOrElse(roof?.zipCode, '')); 
+  const [street, setStreet] = React.useState(getOrElse(roof?.street, ''));
+  const [streetNumber, setStreetNumber] = React.useState(getOrElse(roof?.streetNumber, ''));
+  const [city, setCity] = React.useState(getOrElse(roof?.city, ''));
+  const [notes, setNotes] = React.useState(getOrElse(roof?.notes, ''));
 
   const [appTitle, setAppTitle] = React.useState(t('roofs:add_roof'));
   const [editMode, setEditMode] = React.useState(false);
@@ -58,20 +58,15 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
     if(roof){
       setAppTitle(t('roofs:edit_roof'));
       setRoofInitialState(roof);
-      setRoofValues(roof);
       setEditMode(true);
     }
   }, [roof]);
 
-  function setRoofValues(roof: Roof){
-
-      setWidth(roof.width + '');
-      setHeight(roof.height+ '');
-      setZipCode(roof.zipCode);
-      setStreet(roof.street);
-      setStreetNumber(roof.streetNumber);
-      setCity(roof.city);
-      setNotes(roof.notes);
+  function getOrElse(value: any, otherwise: any){
+      if(value != null && value != otherwise){
+        return value + '';
+      }
+      return otherwise;
   }
 
   function reset(){

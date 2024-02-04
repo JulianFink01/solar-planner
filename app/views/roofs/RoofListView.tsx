@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import {  Appbar, Button, Chip, Dialog, Divider, List, Text} from 'react-native-paper';
+import {  Appbar, Button, Chip, Dialog, Divider, Icon, List, Text} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import ActionContainer from '../../componentes/ActionContainer';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -23,6 +23,7 @@ import SuccessSnackbar from '../../componentes/SuccessSnackbar';
 import { PAGE_EVENTS } from '../../constants/PageEvent';
 import { Callback } from 'i18next';
 import { User } from '../../models/User';
+import RoofViewContent from './RoofViewContent';
 
 interface Props {
   roof: Roof;
@@ -42,13 +43,15 @@ function RoofListView({navigation, roof, onOpenDelete}: Props): React.JSX.Elemen
 
   return (
     <List.Item style={{paddingRight: 0}} 
-                                        title={user?.firstName + ' ' + user?.lastName + ' ' + roof.city} 
+                                        title={<View>
+                                                 <RoofViewContent roof={roof} user={user} />
+                                        </View>} 
                                         left={() => <List.Icon icon="home-roof" />} 
                                         right={() => <ActionContainer deleteAction 
                                                                       editAction 
                                                                       onEdit={() => editRoof(roof)}
                                                                       onDelete={() => onOpenDelete(roof)}
-                                                                      editIcon='pencil'/>}/>
+                                                                      editIcon='pencil'/>}></List.Item>
   )
 }
 
