@@ -67,7 +67,7 @@ function RoofSelector({imageSize, lockMode, displayGrid}: Props, ref: React.Ref)
         )!;
 
         return (
-          <Canvas style={{ width: '100%',height:'100%', marginTop: 13}}>
+          <Canvas style={{ width: '100%',height:'100%', }}>
               <Group
                 clip={star} 
                 color="black"
@@ -122,7 +122,7 @@ function RoofSelector({imageSize, lockMode, displayGrid}: Props, ref: React.Ref)
                                     });
 
     return (
-        <View style={{flex: 1}}>
+        <View style={{width: imageSize.width, height: imageSize.height,}}>
           <GestureDetector gesture={gesture}>
             <Selection />
           </GestureDetector>

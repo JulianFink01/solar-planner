@@ -11,6 +11,7 @@ import AddRoof from '../../views/roofs/AddRoof';
 import AddUser from '../../views/users/AddUser';
 import Navigation from './Navigation';
 import { useRealm } from '@realm/react';
+import Editor from '../../views/editor/Editor';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,7 @@ function StackNavigator(): React.JSX.Element {
       <Stack.Screen options={{cardStyle: styles.cardStyle}} name={ROUTES.NAVIGATOR.HOME} component={Navigation} />
       <Stack.Screen options={{cardStyle: styles.cardStyle}} name={ROUTES.ROOF.ADD_ROOF} component={AddRoof} />
       <Stack.Screen options={{cardStyle: styles.cardStyle, }} name={ROUTES.USER.ADD_USER} component={AddUser} />
+      <Stack.Screen options={{cardStyle: styles.cardStyle, }} name={ROUTES.EDITOR.HOME} component={Editor} />
     </Stack.Navigator>
   );
 }

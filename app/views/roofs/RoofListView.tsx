@@ -41,6 +41,10 @@ function RoofListView({navigation, roof, onOpenDelete}: Props): React.JSX.Elemen
     }
   }
 
+  function selectRoof(){
+    navigation.navigate(ROUTES.EDITOR.HOME, {roof: RoofMinimal.map(roof), user: UserMinimal.map(user)})
+  }
+
   return (
     <List.Item style={{paddingRight: 0}} 
                                         title={<View>

@@ -19,7 +19,6 @@ const Navigation = ({navigation}: StackScreenProps) => {
   const routesDefinition = [
     { key: ROUTES.USER.HOME, title: t('users:title'), focusedIcon: 'account-group', unfocusedIcon: 'account-group-outline', component: Users},
     { key: ROUTES.ROOF.HOME, title: t('roofs:title'), focusedIcon: 'home-roof', component:  Roofs },
-    { key: ROUTES.EDITOR.HOME, title: t('editor:title'), focusedIcon: 'solar-panel-large', component: Editor},
     { key: ROUTES.SETTINGS.HOME, title: t('settings:title'), focusedIcon: 'dots-horizontal', component: Settings}
   ];
 

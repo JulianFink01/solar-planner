@@ -11,13 +11,18 @@ import { Blur, Canvas, Rect } from '@shopify/react-native-skia';
 import { ThemeDark } from '../../themes/ThemeDark';
 import { IconButton, Text } from 'react-native-paper';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import { Roof } from '../../models/Roof';
+import { User } from '../../models/User';
+import RoofViewContent from '../roofs/RoofViewContent';
 
 
 interface Props {
-  onClose: Function
+  onClose: Function,
+  roof: Roof,
+  user: User
 };
 
-function Information({onClose}: Props, ref: React.Ref): React.JSX.Element {
+function Information({onClose, roof, user}: Props, ref: React.Ref): React.JSX.Element {
   const { t } = useTranslation();
   const width = useSharedValue(0);
   
@@ -54,6 +59,12 @@ function Information({onClose}: Props, ref: React.Ref): React.JSX.Element {
             <Text variant='bodyLarge'>{t('editor:information')}</Text>
             <IconButton icon={'close'} onPress={() => onClose()}/>
           </View>
+          <RoofViewContent
+            roof={roof}
+            user={user}
+          >
+
+          </RoofViewContent>
         </View>
       </View>
     </Animated.View>

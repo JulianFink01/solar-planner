@@ -42,6 +42,10 @@ function RoofCardView({navigation, roof, onOpenDelete}: Props): React.JSX.Elemen
     }
   }
 
+  function selectRoof(){
+    navigation.navigate(ROUTES.EDITOR.HOME, {roof: RoofMinimal.map(roof), user: UserMinimal.map(user)})
+  }
+
   return (
     
     <Card>    
@@ -53,7 +57,7 @@ function RoofCardView({navigation, roof, onOpenDelete}: Props): React.JSX.Elemen
                 <Card.Actions>
                     <IconButton onPress={() => onOpenDelete(roof)} icon={'delete'} />
                     <IconButton onPress={editRoof} icon={'pencil'} />
-                    <Button>{t('common:select')}</Button>
+                    <Button onPress={selectRoof}>{t('common:select')}</Button>
                   </Card.Actions>
 
             </View>

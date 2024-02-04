@@ -21,18 +21,28 @@ import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanima
 import RoofSelector from './RoofSelector';
 import Information from './Information';
 import { ThemeDark } from '../../themes/ThemeDark';
+import { Roof } from '../../models/Roof';
+import { User } from '../../models/User';
+import { useObject } from '@realm/react';
 
 
-function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
+function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Element {
 
   const { t } = useTranslation();
   const [imageSize, setImageSize] = React.useState<Dimension>();
 
   const [lockMode, setLockMode] = React.useState<boolean>(false); // prevents anything from being modified
   const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
-  const [displayInfo, setDisplayInfo] = React.useState<boolean>(true); // If true displays a information modal for the roof
+  const [displayInfo, setDisplayInfo] = React.useState<boolean>(false); // If true displays a information modal for the roof
 
   const information = React.useRef<any>(null);
+
+  const roofId = route?.params?.roof?._id;
+  const userId = route.params?.user?._id;
+
+  const roof = roofId ? useObject(Roof, new Realm.BSON.UUID(roofId)): null;
+  const user = userId ? useObject(User, new Realm.BSON.UUID(userId)): null;
+
 
   React.useEffect(() => {
     if(displayInfo){
@@ -66,10 +76,14 @@ function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
   const activeColor = ThemeDark.colors.inversePrimary;
   const inactiveColor = ThemeDark.colors.outline;
 
+  if(!user || !roof){
+    return;
+  }
+
   return (
 
     <View style={GlobalStyles.pageWrapper}>
-      <AppBar title={t('editor:title')}>
+      <AppBar title={t('editor:title')} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
         <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} color={displayInfo ? activeColor : inactiveColor} onPress={() => {setDisplayInfo(!displayInfo)}} />
         <Appbar.Action icon={!lockMode ?'lock' : 'lock-open' } color={lockMode ? activeColor : inactiveColor} onPress={() => {setLockMode(!lockMode)}} />
         <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} color={displayGrid ? inactiveColor : activeColor} onPress={() => {setDisplayGrid(!displayGrid)}} />
@@ -78,21 +92,24 @@ function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
     
 
       <View  style={{
-          width: '100%',
-          height: '100%',
+          flex: 1,
           position: 'relative',
         }}>
           <ImageBackground 
               onLoad={onImageLoad}
-              resizeMode="contain" 
-              style={{flex: 1, height: '90%'}} 
+              resizeMode="contain"
+              style={{flex: 1, maxHeight: imageSize?.height}} 
               source={{uri: 'https://st2.depositphotos.com/20602302/47738/i/450/depositphotos_477380366-stock-photo-half-cleaned-house-roof-shows.jpg'}}>
                 {imageSize != null && <RoofSelector
                                           lockMode={lockMode}
                                           imageSize={imageSize}
                                           displayGrid={displayGrid}
                                         />}
-                <Information ref={information} onClose={() => {setDisplayInfo(false)}}/>                        
+                <Information  ref={information} 
+                              onClose={() => {setDisplayInfo(false)}}
+                              user={user}
+                              roof={roof}
+                              />                        
           </ImageBackground>
       </View>
   </View>
