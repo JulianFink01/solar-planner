@@ -20,6 +20,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import RoofSelector from './RoofSelector';
 import Information from './Information';
+import { ThemeDark } from '../../themes/ThemeDark';
 
 
 function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
@@ -58,12 +59,21 @@ function Editor({navigation, changeTab}: StackScreenProps): React.JSX.Element {
       setImageSize(dimensions);
   }
 
+  function save(){
+
+  }
+
+  const activeColor = ThemeDark.colors.inversePrimary;
+  const inactiveColor = ThemeDark.colors.outline;
+
   return (
+
     <View style={GlobalStyles.pageWrapper}>
       <AppBar title={t('editor:title')}>
-        <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} onPress={() => {setDisplayInfo(!displayInfo)}} />
-        <Appbar.Action icon={lockMode ?'lock' : 'lock-open' } onPress={() => {setLockMode(!lockMode)}} />
-        <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} onPress={() => {setDisplayGrid(!displayGrid)}} />
+        <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} color={displayInfo ? activeColor : inactiveColor} onPress={() => {setDisplayInfo(!displayInfo)}} />
+        <Appbar.Action icon={!lockMode ?'lock' : 'lock-open' } color={lockMode ? activeColor : inactiveColor} onPress={() => {setLockMode(!lockMode)}} />
+        <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} color={displayGrid ? inactiveColor : activeColor} onPress={() => {setDisplayGrid(!displayGrid)}} />
+        <Appbar.Action style={{backgroundColor: ThemeDark.colors.primary}} color={ThemeDark.colors.background} icon={'content-save'} onPress={() => {save()}} />
       </AppBar>
     
 
