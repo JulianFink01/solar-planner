@@ -6,12 +6,13 @@ import { Platform } from 'react-native';
 
 interface Props extends PointInterface  {
     hidden: boolean;
+    color: string;
+    maxCursorCoordinates: {x: number, y: number}
 }
 
-const pointColor = ThemeDark.colors.primary;
 
 
-function Point ({x, y, radius, hidden}: Props, ref: React.Ref): React.JSX.Element {
+function Point ({x, y, radius, hidden, color, maxCursorCoordinates}: Props, ref: React.Ref): React.JSX.Element {
    
     const [point, setPoint] = React.useState<PointInterface>({x, y, radius});
 
@@ -21,7 +22,7 @@ function Point ({x, y, radius, hidden}: Props, ref: React.Ref): React.JSX.Elemen
 
             const collides = space <= point.radius + otherPoint.radius;
         
-            if(collides){
+            if(collides && otherPoint.x > 0 && otherPoint.y > 0 && otherPoint.x < maxCursorCoordinates.x && otherPoint.y < maxCursorCoordinates.y){
                 setPoint({x: otherPoint.x, y: otherPoint.y, radius: point.radius});
             } 
             return collides;
@@ -32,7 +33,7 @@ function Point ({x, y, radius, hidden}: Props, ref: React.Ref): React.JSX.Elemen
        }));
     
     return (
-        <Circle cx={point.x} cy={point.y} r={point.radius} color={pointColor} opacity={hidden ? 0 : 1}>
+        <Circle cx={point.x} cy={point.y} r={point.radius} color={color} opacity={hidden ? 0 : 1}>
              <Shadow dx={-1} dy={-1} blur={1} color={ThemeDark.colors.shadow} />
              <Shadow dx={1} dy={1} blur={1} color={ThemeDark.colors.shadow} />
         </Circle>

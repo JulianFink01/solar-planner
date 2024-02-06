@@ -77,7 +77,7 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
   const inactiveColor = ThemeDark.colors.outline;
 
   if(!user || !roof){
-    return;
+    return <></>;
   }
 
   return (
