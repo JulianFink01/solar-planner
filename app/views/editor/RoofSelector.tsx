@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {  runOnJS, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import { Blur, Canvas, Circle, DiffRect, FractalNoise, Group, Path, Rect, Skia, Turbulence, rect, rrect } from "@shopify/react-native-skia";
+import { Blur, Canvas, Circle, DiffRect, FractalNoise, Group, Path, Rect, Skia, Turbulence, point, rect, rrect, sub } from "@shopify/react-native-skia";
 import { View } from 'react-native';
 import Point from './Point';
 import { ThemeDark } from '../../themes/ThemeDark';
-import { pointsToSvg, transformPointInRectangleToTrapez } from '../../utils/PerspectiveHelper';
+import { pointsToSvg, transforMatrix } from '../../utils/PerspectiveHelper';
 
 
 const POINT_RADIUS = 10;
@@ -78,44 +78,41 @@ function RoofSelector({imageSize, lockMode, displayGrid}: Props, ref: React.Ref)
 
       function WorkingArea(){
 
-
+        const width2 = imageSize.width; //width; //Math.max(points[1].x - points[0].x, points[2].x - points[3].x);
+        const height2 = imageSize.height; //Math.max(points[3].y - points[0].y, points[2].y - points[1].y);
         // Wir plazieren alles in einem Rechteck die Transformation übernimmt den Rest
-        const rectanglePoints: number[][] = [[points[0].x, points[0].y], 
-                                             [points[0].x + width, points[0].y], 
-                                             [points[0].x + width, points[0].y + height], 
-                                             [points[0].x, points[0].y + height]];
-        // Wir definieren die Koordinaten vom Trapez für die Matrix
-        const targetPoints: number[][] = [[points[0].x, points[0].y], 
-                                          [points[1].x, points[1].y], 
-                                          [points[2].x, points[2].y], 
-                                          [points[3].x, points[3].y]]; 
-
+        const rectanglePoints: PointInterface[] = [{x:0, y: 0}, 
+                                                   {x:0 + width2, y: 0 }, 
+                                                   {x:0 + width2, y: 0 + height2}, 
+                                                   {x:0, y: 0 + height2}];    
+                                                                                                                                                      
         // Jeden einzelnen für die neue Form herausfinden und innenabstand hinzufügen
         const innerSpace = 10;
-        const pointInRectangle1: number[] = [rectanglePoints[0][0] + innerSpace, rectanglePoints[0][1] + innerSpace];
-        const pointInRectangle2: number[] = [rectanglePoints[1][0] - innerSpace, rectanglePoints[1][1] + innerSpace];
-        const pointInRectangle3: number[] = [rectanglePoints[2][0] - innerSpace, rectanglePoints[2][1] - innerSpace];
-        const pointInRectangle4: number[] = [rectanglePoints[3][0] + innerSpace, rectanglePoints[3][1] - innerSpace];
+        const pointInRectangle1: PointInterface = {x: rectanglePoints[0].x + innerSpace, y: rectanglePoints[0].y + innerSpace};
+        const pointInRectangle2: PointInterface = {x: rectanglePoints[1].x - innerSpace, y: rectanglePoints[1].y + innerSpace};
+        const pointInRectangle3: PointInterface = {x: rectanglePoints[2].x - innerSpace, y: rectanglePoints[2].y - innerSpace};
+        const pointInRectangle4: PointInterface = {x: rectanglePoints[3].x + innerSpace, y: rectanglePoints[3].y - innerSpace};
 
-        const transformedPoint1: number[] = transformPointInRectangleToTrapez(pointInRectangle1, rectanglePoints[0], rectanglePoints[1], rectanglePoints[2], rectanglePoints[3], targetPoints[0], targetPoints[1], targetPoints[2], targetPoints[3]);
-        const transformedPoint2: number[] = transformPointInRectangleToTrapez(pointInRectangle2, rectanglePoints[0], rectanglePoints[1], rectanglePoints[2], rectanglePoints[3], targetPoints[0], targetPoints[1], targetPoints[2], targetPoints[3]);
-        const transformedPoint3: number[] = transformPointInRectangleToTrapez(pointInRectangle3, rectanglePoints[0], rectanglePoints[1], rectanglePoints[2], rectanglePoints[3], targetPoints[0], targetPoints[1], targetPoints[2], targetPoints[3]);
-        const transformedPoint4: number[] = transformPointInRectangleToTrapez(pointInRectangle4, rectanglePoints[0], rectanglePoints[1], rectanglePoints[2], rectanglePoints[3], targetPoints[0], targetPoints[1], targetPoints[2], targetPoints[3]);
+        const transformedPoints: PointInterface[] = transforMatrix(rectanglePoints,[pointInRectangle1, pointInRectangle2, pointInRectangle3, pointInRectangle4], points);
 
-        function mapPoint(pt: number[]): {x: number, y: number}{
-          return {x: Math.round(pt[0]), y: Math.round(pt[1])};
-        }
 
-        const ps = [mapPoint(transformedPoint1), mapPoint(transformedPoint2), mapPoint(transformedPoint3),mapPoint(transformedPoint4)];
-        const ps2 = [mapPoint(rectanglePoints[0]), mapPoint(rectanglePoints[1]), mapPoint(rectanglePoints[2]),mapPoint(rectanglePoints[3])];
         return (
           <>
-              <Path path={pointsToSvg(ps)}
-               opacity={1} style="stroke" strokeJoin="round" color={'red'} strokeWidth={3}/>
-              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoint1[0]} y={transformedPoint1[1]} radius={5}  />
-              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoint2[0]} y={transformedPoint2[1]} radius={5}  />
-              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoint3[0]} y={transformedPoint3[1]} radius={5} />
-              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoint4[0]} y={transformedPoint4[1]} radius={5} />
+              <Path path={pointsToSvg(transformedPoints)} opacity={1} style="stroke" strokeJoin="round" color={'red'} strokeWidth={3}/>
+              <Path path={pointsToSvg([pointInRectangle1, pointInRectangle2, pointInRectangle3, pointInRectangle4])} opacity={1} style="stroke" strokeJoin="round" color={'red'} strokeWidth={3}/>
+              <Path path={pointsToSvg(rectanglePoints)} opacity={1} style="stroke" strokeJoin="round" color={'green'} strokeWidth={3}/>
+             
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoints[0].x} y={transformedPoints[0].y} radius={5}  />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoints[1].x} y={transformedPoints[1].y} radius={5}  />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoints[2].x} y={transformedPoints[2].y} radius={5} />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={ThemeDark.colors.background} hidden={false} x={transformedPoints[3].x} y={transformedPoints[3].y} radius={5} />
+
+
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={'green'} hidden={false} x={pointInRectangle1.x} y={pointInRectangle1.y} radius={5}  />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={'green'} hidden={false} x={pointInRectangle2.x} y={pointInRectangle2.y} radius={5}  />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={'green'} hidden={false} x={pointInRectangle3.x} y={pointInRectangle3.y} radius={5} />
+              <Point maxCursorCoordinates={getMaxCursorCoordinates()} color={'green'} hidden={false} x={pointInRectangle4.x} y={pointInRectangle4.y} radius={5} />
+
           </>
         );
       }
