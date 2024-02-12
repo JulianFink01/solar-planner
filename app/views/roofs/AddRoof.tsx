@@ -130,6 +130,8 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
           streetNumber: streetNumber,
           city: city,
           notes: notes,
+          innerMarginCM: 10,
+          distanceBetweenPanelsCM: 10
         });
         initialUser.roofs.push(roof);
      }

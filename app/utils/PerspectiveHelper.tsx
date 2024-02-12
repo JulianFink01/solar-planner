@@ -1,4 +1,6 @@
-const math = require('mathjs'); // sicherstellen, dass mathjs installiert ist (npm install mathjs)
+import { point } from "@shopify/react-native-skia";
+
+const numeric = require('numeric');
 
 type Point = {
   x: number;
@@ -6,52 +8,62 @@ type Point = {
 };
 
 
-
-export function transforMatrix(allScreen: Point[], relativeToScreen: Point[], newRelative: Point[]): Point[] {
-
-  console.log(allScreen.length)
-  console.log(relativeToScreen.length)
-  console.log(newRelative.length)
-
-  const matrix = calculateTransformationMatrix(allScreen, relativeToScreen);
-  const formD = applyTransformation(newRelative, matrix);
-  return formD;
+// allScreen ist der ganze View Bereich
+// relativeToScreen ein Rechteck welches im View plaziert wurde
+// trapezeoid ist die Form welche vom User ausgewählt wurde
+// Der Code vergleicht die Transformation von allScreen zu Trapezeoid und plaziert das Rechteck relativeToScreen in gleichen Verhältniss zum trapezeoid
+export function transforMatrix(allScreen: Point[], relativeToScreen: Point[], trapezeoid: Point[]): Point[] {
+  const H = calculateHomographyMatrix(allScreen, trapezeoid);
+  return [applyHomography(H, relativeToScreen[0]),applyHomography(H, relativeToScreen[1]),applyHomography(H, relativeToScreen[2]),applyHomography(H, relativeToScreen[3])]
 }
 
-function calculateTransformationMatrix(A: Point[], B: Point[]): math.Matrix {
-  // Umwandlung der Punkte in eine Matrix für A und B
-  const AMatrix = math.matrix(A.map(p => [p.x, p.y, 1]));
-  const BMatrixX = math.matrix(B.map(p => p.x));
-  const BMatrixY = math.matrix(B.map(p => p.y));
 
-  // Verwendung der Pseudoinversen, da AMatrix nicht quadratisch ist
-  const AMatrixPseudoInverse = math.pinv(AMatrix);
+function calculateHomographyMatrix(srcPoints: Point[], dstPoints: Point[]) {
+  if (srcPoints.length !== 4 || dstPoints.length !== 4) {
+      throw new Error('Es werden genau vier korrespondierende Punkte benötigt.');
+  }
 
-  // Berechnung der Transformationskoeffizienten für X und Y
-  const transformX = math.multiply(AMatrixPseudoInverse, BMatrixX).toArray();
-  const transformY = math.multiply(AMatrixPseudoInverse, BMatrixY).toArray();
+  let A = [];
+  for (let i = 0; i < 4; i++) {
+      const { x: x1, y: y1 } = srcPoints[i];
+      const { x: x2, y: y2 } = dstPoints[i];
 
-  // Aufbau der Transformationsmatrix
-  const transformationMatrix = [
-      [transformX[0], transformX[1], transformX[2]],
-      [transformY[0], transformY[1], transformY[2]],
-      [0, 0, 1] // Homogene Koordinaten für affine Transformationen
+      A.push([x1, y1, 1, 0, 0, 0, -x2 * x1, -x2 * y1]);
+      A.push([0, 0, 0, x1, y1, 1, -y2 * x1, -y2 * y1]);
+  }
+
+  let rhs: any = [];
+  dstPoints.forEach(point => {
+      rhs.push(point.x);
+      rhs.push(point.y);
+  });
+
+  // Verwenden Sie numeric.js, um das Gleichungssystem zu lösen
+  let solution = numeric.solve(A, rhs);
+
+  // Umformen der Lösung in eine 3x3 Homographie-Matrix
+  let H = [
+      [solution[0], solution[1], solution[2]],
+      [solution[3], solution[4], solution[5]],
+      [solution[6], solution[7], 1] // Setzen Sie den letzten Wert auf 1 für homogene Koordinaten
   ];
 
-  return math.matrix(transformationMatrix);
+  return H;
 }
 
-// Wende die Transformationsmatrix auf Form C an, um Form D zu erhalten
-function applyTransformation(C: Point[], transformationMatrix: math.Matrix): Point[] {
-  return C.map(point => {
-    const result = math.multiply([point.x, point.y, 1], transformationMatrix).toArray();
-    return { x: result[0], y: result[1] };
-});
+function applyHomography(H: any[][], point: Point) {
+  let result = numeric.dot(H, [point.x, point.y, 1]);
+  return {
+      x: result[0] / result[2],
+      y: result[1] / result[2]
+  };
 }
-
-
 
 export function pointsToSvg(points: {x: number, y: number}[]) {
+    if(points.length == 0){
+      return "";
+    }
+
     let pathData = "M";
 
     for (let i = 0; i < points.length; i++) {
@@ -63,3 +75,10 @@ export function pointsToSvg(points: {x: number, y: number}[]) {
     pathData += " Z";
     return pathData;
   }
+
+
+export function getMaxCursorCoordinates(imageSize: {width: number, height: number}): {x: number, y: number}{
+    return {x: imageSize.width, y: imageSize.height}
+  }
+
+  

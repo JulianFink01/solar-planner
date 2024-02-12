@@ -14,7 +14,9 @@ export class Roof extends Realm.Object<Roof> {
     streetNumber!: string;
     city!: string;
     notes!: string;
-    user!: Realm.List<User>
+    user!: Realm.List<User>;
+    innerMarginCM!: number;
+    distanceBetweenPanelsCM!: number;
 
     static schema = {
       name: 'Roof',
@@ -22,6 +24,8 @@ export class Roof extends Realm.Object<Roof> {
         _id: 'uuid',
         width: 'float',
         height:'float',
+        innerMarginCM:'float',
+        distanceBetweenPanelsCM: 'float',
         user: {
           type: 'linkingObjects',
           objectType: 'User',
