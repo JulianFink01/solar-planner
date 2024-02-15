@@ -14,10 +14,17 @@ export class SolarPanelMinimal {
     }
   
 
-    getWrapperCoordinates(panelMarginY: number, panelMarginX: number): PointInterface[]{
+    getWrapperCoordinates(panelMargin: number,relationOneZentimeterX: number, relationOneZentimeterY: number, ): PointInterface[]{
 
-        const width = this.solarPanelType.width + (panelMarginX);
-        const height = this.solarPanelType.height + (panelMarginY);
+        function relationize(value: number, isX = true){
+            if(isX){
+                return value * relationOneZentimeterX;
+            }
+            return value * relationOneZentimeterY;
+          }
+
+        const width = relationize(this.solarPanelType.width) + relationize(panelMargin);
+        const height = relationize(this.solarPanelType.height, false)  + relationize(panelMargin, false);
 
         return [{x: this.startX, y: this.startY},
                 {x: this.startX + width, y: this.startY},
@@ -25,15 +32,26 @@ export class SolarPanelMinimal {
                 {x: this.startX, y: this.startY + height}];
     }
 
-    getCoordinates(panelMarginY: number, panelMarginX: number): PointInterface[]{
+    getCoordinates(panelMargin: number,relationOneZentimeterX: number, relationOneZentimeterY: number, ): PointInterface[]{
+        
+        function relationize(value: number, isX = true){
+            if(isX){
+                return value * relationOneZentimeterX;
+            }
+            return value * relationOneZentimeterY;
+          }
+        
 
-        const marginXHalth = panelMarginX / 2;
-        const marginYHalth = panelMarginY / 2;
+        const marginXHalth = relationize(panelMargin)  / 2;
+        const marginYHalth = relationize(panelMargin, false)  / 2;
+
+        const panelWidth = relationize(this.solarPanelType.width);
+        const panelHeight = relationize(this.solarPanelType.height, false);
 
         return [{x: this.startX + marginXHalth, y: this.startY + marginYHalth},
-                {x: this.startX - marginXHalth + this.solarPanelType.width, y: this.startY + marginYHalth},
-                {x: this.startX - marginXHalth + this.solarPanelType.width, y: this.startY + this.solarPanelType.height - marginYHalth},
-                {x: this.startX + marginXHalth, y: this.startY + this.solarPanelType.height - marginYHalth}];
+                {x: this.startX  +  marginXHalth + panelWidth, y: this.startY + marginYHalth},
+                {x: this.startX  + marginXHalth + panelWidth, y: this.startY + panelHeight + marginYHalth},
+                {x: this.startX + marginXHalth, y: this.startY + panelHeight + marginYHalth}];
     }
 
 }

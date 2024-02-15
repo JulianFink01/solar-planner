@@ -4,6 +4,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Icon, IconButton, Text } from "react-native-paper";
 import { Image } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 import { CONTAINER_PADDING } from "../constants/GlobalConstants";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface Props extends StackNavigationProp {
     onPress?: () => {},

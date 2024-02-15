@@ -6,7 +6,7 @@ import { Path } from '@shopify/react-native-skia';
 import Point from '../Point';
 import { ThemeDark } from '../../../themes/ThemeDark';
 import TransformedPath from './TransformedPath';
-import SolarPanelHelper from '../../../utils/SolarPanelHelper';
+import SolarPanelHelper, { POSITIONED } from '../../../utils/SolarPanelHelper';
 
 type Props = {
     imageSize: {width: number, height: number},
@@ -50,22 +50,18 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
     const oneZentimeterVertical = imageSize.height / roof.height / 100;
     const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
    
-    // innen abstand von dach zu wohin plaziert werden kann
-    const innerSpaceX = oneZentimeterVertical * roof.innerMarginCM;                                                                      
-    const innerSpaceY = oneZentimeterHorizontal * roof.innerMarginCM;  
+
     // Punkte die man verschieben kann
     const [roofPoints, setRoofPoints] = React.useState<PointInterface[]>([{x: startX, y: startY, radius: POINT_RADIUS}, // leftTop
                                                                           {x: startX + width, y: startY, radius: POINT_RADIUS},  // rightTop
                                                                           {x: startX + width, y: startY + height, radius: POINT_RADIUS},  // rightBottom
                                                                           {x: startX, y: startY + height, radius: POINT_RADIUS}]); // leftTop 
                                                                           
-    const [roofRect, setRoofRect] = React.useState<PointInterface[]>([{x: allScreen[0].x + innerSpaceX, y: allScreen[0].y + innerSpaceY},
-                                                                      {x: allScreen[1].x - innerSpaceX, y: allScreen[1].y + innerSpaceY},
-                                                                      {x: allScreen[2].x - innerSpaceX, y: allScreen[2].y - innerSpaceY},
-                                                                      {x: allScreen[3].x + innerSpaceX, y: allScreen[3].y - innerSpaceY}]);                                                                      
- 
-                                                                    
-
+    const [roofRect, setRoofRect] = React.useState<PointInterface[]>(getInnerMarginArea());                                                                      
+                                                                 
+    React.useEffect(() => {
+      setRoofRect(getInnerMarginArea());
+    }, [roof])
     React.useEffect(() => {
         onUpdate(roofPoints)
     }, [roofPoints])
@@ -78,6 +74,17 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
          updatePoints();
      }
     }));
+
+    function getInnerMarginArea(): PointInterface[]{
+
+      const innerSpaceY = oneZentimeterVertical * roof.innerMarginCM;
+      const innerSpaceX = oneZentimeterHorizontal * roof.innerMarginCM
+
+     return [ {x: allScreen[0].x + innerSpaceX, y: allScreen[0].y + innerSpaceY},
+              {x: allScreen[1].x - innerSpaceX, y: allScreen[1].y + innerSpaceY},
+              {x: allScreen[2].x - innerSpaceX, y: allScreen[2].y - innerSpaceY},
+              {x: allScreen[3].x + innerSpaceX, y: allScreen[3].y - innerSpaceY}]
+    }
 
     function checkForCollsion(x: number, y: number, radius: number){
         if(pointLeftTop.current.collides({x, y, radius})){
@@ -100,7 +107,7 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
       onUpdate(newPoints);
     }
 
-    const solarPanels = SolarPanelHelper.placePanelsAlignedLeft(imageSize, roof, roofRect[0]);
+    const solarPanels = SolarPanelHelper.placePanelsAlignedLeft(imageSize, roof, roofRect[0], POSITIONED.LEFT);
 
     return (
       <>

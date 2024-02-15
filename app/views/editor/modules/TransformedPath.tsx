@@ -20,22 +20,24 @@ interface Props {
     debugView: boolean,
     points: {x: number, y: number}[],
     color: string,
-    strokeWidth: number
+    strokeWidth: number,
+    pathStyle: 'stroke' | 'fill'
 }
-function TransformedPath({allScreen,strokeWidth, points,debugView, roofPoints, color}: Props){
+function TransformedPath({allScreen,pathStyle,strokeWidth, points,debugView, roofPoints, color}: Props){
 
 
     const transformedPoints: PointInterface[] = transforMatrix(allScreen, points, roofPoints);
    
     return (<>
-              <Path path={pointsToSvg(transformedPoints)} opacity={1} style="stroke" strokeJoin="round" color={color} strokeWidth={strokeWidth}/>
+              <Path  path={pointsToSvg(transformedPoints)} opacity={1} style={pathStyle} strokeJoin="round" color={color} strokeWidth={strokeWidth}/>
               {debugView && <Path path={pointsToSvg(points)} opacity={1} style="stroke" strokeJoin="round" color={'green'} strokeWidth={5}/>}    
             </>);
   }
 
 TransformedPath.defaultProps = {
   color: 'white',
-  strokeWidth: 3
+  strokeWidth: 3,
+  pathStyle: 'stroke'
 }
   
 export default TransformedPath;

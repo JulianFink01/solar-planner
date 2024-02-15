@@ -2,20 +2,18 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
-  Easing,
   StyleSheet,
   View,
 } from 'react-native';
-import { GlobalStyles } from '../../style/GlobalStyle';
-import { Blur, Canvas, Rect } from '@shopify/react-native-skia';
 import { ThemeDark } from '../../themes/ThemeDark';
 import { Button, IconButton, Text, TextInput } from 'react-native-paper';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { Roof } from '../../models/Roof';
 import { User } from '../../models/User';
-import RoofViewContent from '../roofs/RoofViewContent';
 import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { useRealm } from '@realm/react';
+import NumberAdder from '../../componentes/NumberAdder';
+import { GlobalStyles } from '../../style/GlobalStyle';
 
 
 interface Props {
@@ -28,35 +26,63 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
 
   const { t } = useTranslation();
   const width = useSharedValue(0);
+  const translatePanelX = useSharedValue(0);
   const realm = useRealm();
 
-  const[innerMargin, setInnerMargin] = React.useState<number>(roof.innerMarginCM);
-  const[panelDistance, setPanelDistance] = React.useState<number>(roof.distanceBetweenPanelsCM);
+  const [isBoxLeft, setIsBoxLeft] = React.useState<boolean>(false);
   
+  const innerMarginPicker = React.useRef<any>(null);
+  const panelDistancePicker = React.useRef<any>(null);
+  const roofWidth = React.useRef<any>(null);
+  const roofHeight = React.useRef<any>(null);
+
+
+  const panelWidth = 450;
+  const screenWidth = Dimensions.get('screen').width;
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       position: 'absolute',
       height: '100%',
       width: withTiming(width.value, {duration: 300}),
       overflow: 'hidden',
-      right: 0
+      right: 0,
+      transform: [{translateX: withTiming(translatePanelX.value, {duration: 300})}]
     }
   });
 
   React.useImperativeHandle(ref, () => ({
     open(){
-      width.value = 450;
+      if(isBoxLeft){
+        translatePanelX.value = -1 * (screenWidth - panelWidth);
+      } else {
+         width.value = panelWidth;
+      }
     },
     close(){
-       width.value = 0;
+       if(isBoxLeft){
+          translatePanelX.value = -1 * (screenWidth + 150);
+       } else {
+          width.value = 0;
+       }
     }
    }));
+  
+   React.useEffect(() => {
+    if(isBoxLeft){
+      translatePanelX.value = -1 * (screenWidth - panelWidth);
+    } else {
+      translatePanelX.value = 0;
+    }
+   }, [isBoxLeft]);
 
   function update(){
     if(roof != null){
       realm.write(() => {
-        roof.innerMarginCM = innerMargin;
-        roof.distanceBetweenPanelsCM = panelDistance;
+        roof.innerMarginCM = innerMarginPicker.current.getState();
+        roof.distanceBetweenPanelsCM = panelDistancePicker.current.getState();
+        roof.height = roofHeight.current.getState();
+        roof.width = roofWidth.current.getState();
       });
     }
   } 
@@ -64,26 +90,49 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
   return (
     <Animated.View style={animatedStyle}>
       <View style={styles.innerView}>
-        <View style={styles.contentView}>
+        <View style={GlobalStyles.informationContainer}>
           <View style={styles.heading}>
             <Text variant='bodyLarge'>{t('settings:title')}</Text>
-            <IconButton icon={'close'} onPress={() => onClose()}/>
+            <View style={{display: 'flex', flexDirection: 'row'}}>
+              <IconButton icon={isBoxLeft ? 'arrow-right' : 'arrow-left'} onPress={() => setIsBoxLeft((prevValue) => !prevValue)}/>
+              <IconButton icon={'close'} onPress={() => onClose()}/>
+            </View>
           </View>
           
-          <View style={{flex: 1}}>
-            <TextInput
-                style={styles.inputContainer}
-                label={t('editor:innerMargin')}
-                value={innerMargin + ''}
-                onChangeText={(val) => setInnerMargin(parseFloat(val))}
-              />
-
-            <TextInput
-              style={styles.inputContainer}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+           
+            <NumberAdder 
+              onUpdate={() => {update()}}
+              ref={innerMarginPicker}
+              key='innerMarginPicker'
+              label={t('editor:innerMargin')}
+              initialValue={roof.innerMarginCM}
+            />
+            <NumberAdder 
+              ref={panelDistancePicker}
+              onUpdate={() => {update()}}
+              key='panelDistancePicker'
               label={t('editor:panelDistance')}
-              value={panelDistance + ''}
-              onChangeText={(val) => setPanelDistance(parseFloat(val))}
-            />  
+              initialValue={roof.distanceBetweenPanelsCM}
+            /> 
+             <NumberAdder 
+              ref={roofWidth}
+              onUpdate={() => {update()}}
+              key='roofWidth'
+              label={t('roofs:width')}
+              initialValue={roof.width}
+            /> 
+             <NumberAdder 
+              ref={roofHeight}
+              onUpdate={() => {update()}}
+              key='roofHeight'
+              label={t('roofs:height')}
+              initialValue={roof.height}
+            /> 
+          </View>
+
+          <View style={{flex: 1}}>
+
           </View>
 
           <Button icon="account-sync" 
@@ -104,27 +153,11 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative'
   },
-  contentView: {
-    flex: 1,
-    position: 'absolute',
-    padding: 20,
-    width: '100%',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 1,
-    backgroundColor: ThemeDark.colors.background
-  },
   heading: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
-  },
-  inputContainer: {
-   marginBottom: CONTAINER_PADDING,
-   width: '95%'
   },
   button: {
     marginTop: CONTAINER_PADDING,

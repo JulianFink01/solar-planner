@@ -29,7 +29,6 @@ function Information({onClose, roof, user}: Props, ref: React.Ref): React.JSX.El
   const animatedStyle = useAnimatedStyle(() => {
     return {
       position: 'absolute',
-      marginTop: 50,
       height: '100%',
       width: withTiming(width.value, {duration: 300}),
       overflow: 'hidden'
@@ -47,13 +46,7 @@ function Information({onClose, roof, user}: Props, ref: React.Ref): React.JSX.El
 
   return (
     <Animated.View style={animatedStyle}>
-      <View style={styles.innerView}>
-        <Canvas style={{flex: 1}}>
-          <Rect y={20} x={-5} width={400} height={Dimensions.get('screen').height * 0.6} color={ThemeDark.colors.background}>
-            <Blur blur={3}/>
-          </Rect>
-        </Canvas>
-
+      <View style={GlobalStyles.informationContainer}>
         <View style={styles.contentView}>
           <View style={styles.heading}>
             <Text variant='bodyLarge'>{t('editor:information')}</Text>
@@ -81,7 +74,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     padding: 20,
     width: 400,
-    paddingTop: 40,
     top: 0,
     left: 0,
     right: 0,
