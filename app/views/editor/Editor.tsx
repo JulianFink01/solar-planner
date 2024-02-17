@@ -99,7 +99,6 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
         <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} color={displayInfo ? activeColor : inactiveColor} onPress={() => {setDisplayInfo(!displayInfo)}} />
         <Appbar.Action icon={!lockMode ?'lock' : 'lock-open' } color={lockMode ? activeColor : inactiveColor} onPress={() => {setLockMode(!lockMode)}} />
         <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} color={displayGrid ? inactiveColor : activeColor} onPress={() => {setDisplayGrid(!displayGrid)}} />
-        <Appbar.Action style={{backgroundColor: ThemeDark.colors.primary}} color={ThemeDark.colors.background} icon={'content-save'} onPress={() => {save()}} />
       </AppBar>
     
 

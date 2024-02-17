@@ -31,11 +31,11 @@ export default class SolarPanelHelper{
       const panelWidth =relationize(panelType.width);
       const panelHeight = relationize(panelType.height, false);
       
-      const innerMarginX = relationize(roof.innerMarginCM);
-      const innerMarginY = relationize(roof.innerMarginCM, false);
+      const innerMarginX = relationize(roof.innerMarginLeft) + relationize(roof.innerMarginRight);
+      const innerMarginY = relationize(roof.innerMarginTop, false) + relationize(roof.innerMarginBottom, false);
 
 
-      const maxPanels = this.getMaximumSolarPanelsOnRoof(imageSize.width - (2 * innerMarginX), imageSize.height - (2 * innerMarginY), relationize(roof.distanceBetweenPanelsCM), relationize(roof.distanceBetweenPanelsCM, false), panelWidth, panelHeight);
+      const maxPanels = this.getMaximumSolarPanelsOnRoof(imageSize.width - innerMarginX, imageSize.height - innerMarginY, relationize(roof.distanceBetweenPanelsCM), relationize(roof.distanceBetweenPanelsCM, false), panelWidth, panelHeight);
       const result: SolarPanelMinimal[] = [];
 
     
@@ -43,8 +43,8 @@ export default class SolarPanelHelper{
       if(position === POSITIONED.LEFT){
         for(let x = 0; x < maxPanels.x; x++){
             for(let y = 0; y < maxPanels.y; y++){
-                const startX = roofTopLeftPoint.x + (x * (panelWidth + relationize(roof.distanceBetweenPanelsCM)) );
-                const startY = roofTopLeftPoint.y + (y * (panelHeight + relationize(roof.distanceBetweenPanelsCM, false)) );
+                const startX = (roofTopLeftPoint.x - (relationize(roof.distanceBetweenPanelsCM / 2))) + (x * (panelWidth + relationize(roof.distanceBetweenPanelsCM)) );
+                const startY = (roofTopLeftPoint.y - (relationize(roof.distanceBetweenPanelsCM / 2, false))) + (y * (panelHeight + relationize(roof.distanceBetweenPanelsCM, false)) );
 
                 result.push(new SolarPanelMinimal(panelType, startX, startY));
             }            

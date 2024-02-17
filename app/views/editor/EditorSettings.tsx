@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
@@ -31,7 +32,10 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
 
   const [isBoxLeft, setIsBoxLeft] = React.useState<boolean>(false);
   
-  const innerMarginPicker = React.useRef<any>(null);
+  const innerMarginPickerTop = React.useRef<any>(null);
+  const innerMarginPickerRight = React.useRef<any>(null);
+  const innerMarginPickerBottom = React.useRef<any>(null);
+  const innerMarginPickerLeft = React.useRef<any>(null);
   const panelDistancePicker = React.useRef<any>(null);
   const roofWidth = React.useRef<any>(null);
   const roofHeight = React.useRef<any>(null);
@@ -79,7 +83,10 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
   function update(){
     if(roof != null){
       realm.write(() => {
-        roof.innerMarginCM = innerMarginPicker.current.getState();
+        roof.innerMarginTop = innerMarginPickerTop.current.getState();
+        roof.innerMarginBottom = innerMarginPickerBottom.current.getState();
+        roof.innerMarginLeft = innerMarginPickerLeft.current.getState();
+        roof.innerMarginRight = innerMarginPickerRight.current.getState();
         roof.distanceBetweenPanelsCM = panelDistancePicker.current.getState();
         roof.height = roofHeight.current.getState();
         roof.width = roofWidth.current.getState();
@@ -92,22 +99,70 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
       <View style={styles.innerView}>
         <View style={GlobalStyles.informationContainer}>
           <View style={styles.heading}>
-            <Text variant='bodyLarge'>{t('settings:title')}</Text>
+            <Text variant='headlineSmall'>{t('settings:title')}</Text>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <IconButton icon={isBoxLeft ? 'arrow-right' : 'arrow-left'} onPress={() => setIsBoxLeft((prevValue) => !prevValue)}/>
               <IconButton icon={'close'} onPress={() => onClose()}/>
             </View>
           </View>
           
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}></View>
+          <ScrollView contentContainerStyle={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}>
            
+            <View style={{width: '100%', marginBottom: 10}}>
+                <Text variant='bodyLarge'>
+                  {t('editor:innerMargin')}
+                </Text>
+            </View>
+
             <NumberAdder 
-              onUpdate={() => {update()}}
-              ref={innerMarginPicker}
-              key='innerMarginPicker'
-              label={t('editor:innerMargin')}
-              initialValue={roof.innerMarginCM}
+              ref={innerMarginPickerTop}
+              key='innerMarginTop'
+              label={t('editor:innerMarginTop')}
+              initialValue={roof.innerMarginTop}
             />
+            <NumberAdder 
+              ref={innerMarginPickerRight}
+              key='innerMarginRight'
+              label={t('editor:innerMarginRight')}
+              initialValue={roof.innerMarginRight}
+            />
+            <NumberAdder 
+              ref={innerMarginPickerBottom}
+              key='innerMarginBottom'
+              label={t('editor:innerMarginBottom')}
+              initialValue={roof.innerMarginBottom}
+            />
+            <NumberAdder 
+              ref={innerMarginPickerLeft}
+              key='innerMarginLeft'
+              label={t('editor:innerMarginLeft')}
+              initialValue={roof.innerMarginLeft}
+            />
+
+            <View style={{width: '100%', marginBottom: 10}}>
+                <Text variant='bodyLarge'>
+                  {t('roofs:roof_dimensions')}
+                </Text>
+            </View>
+             <NumberAdder 
+              ref={roofWidth}
+              key='roofWidth'
+              label={t('roofs:width')}
+              initialValue={roof.width}
+            /> 
+             <NumberAdder 
+              ref={roofHeight}
+              key='roofHeight'
+              label={t('roofs:height')}
+              initialValue={roof.height}
+            /> 
+            <View style={{width: '100%', marginBottom: 10}}>
+                  <Text variant='bodyLarge'>
+                    {t('common:more')}
+                  </Text>
+              </View>
+
             <NumberAdder 
               ref={panelDistancePicker}
               onUpdate={() => {update()}}
@@ -115,25 +170,7 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
               label={t('editor:panelDistance')}
               initialValue={roof.distanceBetweenPanelsCM}
             /> 
-             <NumberAdder 
-              ref={roofWidth}
-              onUpdate={() => {update()}}
-              key='roofWidth'
-              label={t('roofs:width')}
-              initialValue={roof.width}
-            /> 
-             <NumberAdder 
-              ref={roofHeight}
-              onUpdate={() => {update()}}
-              key='roofHeight'
-              label={t('roofs:height')}
-              initialValue={roof.height}
-            /> 
-          </View>
-
-          <View style={{flex: 1}}>
-
-          </View>
+          </ScrollView>
 
           <Button icon="account-sync" 
               mode="contained"

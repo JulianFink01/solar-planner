@@ -3,11 +3,12 @@ import { StyleSheet, View } from "react-native";
 import { CONTAINER_PADDING } from "../constants/GlobalConstants";
 import { Button, IconButton, Text, TextInput } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { ThemeDark } from "../themes/ThemeDark";
 
 type Props = {
     initialValue: number,
     label: string;
-    onUpdate: any
+    onUpdate?: any
 }
 
 export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.Ref<any>): React.JSX.Element {
@@ -28,7 +29,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
                 }, 150);   
         } else {
           clearInterval(intervalId);
-          onUpdate();
+          onUpdate != undefined && onUpdate();
         }
     
         return () => clearInterval(intervalId);
@@ -48,7 +49,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
                 setState(state + 1)
             }
         }
-        onUpdate();
+        onUpdate != undefined && onUpdate();
     }
 
 
@@ -61,6 +62,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
             </Text>
             <View style={{display: 'flex', flexDirection: 'row', marginTop: 10}}>
                     <IconButton  icon={'arrow-down'}
+                                style={styles.button}
                                  size={28}
                                  onTouchStart={() => {setIsHolding(-1)}}
                                  onTouchEnd={() => {setIsHolding(0)}}
@@ -72,6 +74,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
                                 onChangeText={(val) => setState(val?.trim()?.length > 0 ? parseInt(val) : '')}
                     />
                     <IconButton  icon={'arrow-up'}
+                                 style={styles.button}
                                  size={28}
                                  onTouchStart={() => {setIsHolding(1)}}
                                  onTouchEnd={() => {setIsHolding(0)}}
@@ -93,5 +96,9 @@ const styles = StyleSheet.create({
      fontWeight: 'bold',
      
     },
+    button: {
+        backgroundColor: ThemeDark.colors.elevation.level4,
+        
+    }
   });
   

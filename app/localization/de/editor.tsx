@@ -1,6 +1,10 @@
 export default {
     title: 'Editor',
     information: 'Information',
-    innerMargin: 'Dach Innen Abstand (CM)',
-    panelDistance: 'Abstand zwischen den Solar Panels (CM)'
+    panelDistance: 'Abstand zwischen den Solar Panels (CM)',
+    innerMargin: 'Abstand vom Dach zu den Panels',
+    innerMarginTop: 'Oben (CM)',
+    innerMarginRight: 'Rechts (CM)',
+    innerMarginBottom: 'Unten (CM)',
+    innerMarginLeft: 'Links (CM)',
 }

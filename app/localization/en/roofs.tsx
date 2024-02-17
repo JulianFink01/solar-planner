@@ -3,6 +3,7 @@ export default {
     add_roof: 'Add roof',
     edit_roof: 'Edit roof',
     no_data: 'There is not yet a Roof configured.\nPlease add a Roof to continue.',
+    roof_dimensions: 'Roof dimensions',
     add_roof_success: 'Roof added succesfully!',
     edit_roof_success: 'The roof was edited successfully!',
     delete_roof_title: 'Delete Roof?',

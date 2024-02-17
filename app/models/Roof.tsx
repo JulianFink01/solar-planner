@@ -10,12 +10,15 @@ export class Roof extends Realm.Object<Roof> {
     width!: number;
     height!: number;
     zipCode!: string;
+    innerMarginTop!: number;
+    innerMarginRight!: number;
+    innerMarginBottom!: number;
+    innerMarginLeft!: number;
     street!: string;
     streetNumber!: string;
     city!: string;
     notes!: string;
     user!: Realm.List<User>;
-    innerMarginCM!: number;
     distanceBetweenPanelsCM!: number;
 
     static schema = {
@@ -24,7 +27,10 @@ export class Roof extends Realm.Object<Roof> {
         _id: 'uuid',
         width: 'float',
         height:'float',
-        innerMarginCM:'float',
+        innerMarginTop: 'float',
+        innerMarginRight: 'float',
+        innerMarginBottom: 'float',
+        innerMarginLeft: 'float',
         distanceBetweenPanelsCM: 'float',
         user: {
           type: 'linkingObjects',

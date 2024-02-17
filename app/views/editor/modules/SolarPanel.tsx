@@ -44,7 +44,7 @@ function SolarPanel({imageSize, roof, allScreen,solarPanel,displayGrid, debugVie
                 points={solarPanel.getCoordinates(roof.distanceBetweenPanelsCM, oneZentimeterHorizontal, oneZentimeterVertical)}
                       />
 
-          {displayGrid && <TransformedPath
+          {displayGrid && false && <TransformedPath
                             strokeWidth={1}
                             color='yellow'
                             debugView={debugView}

@@ -6,6 +6,7 @@ export default {
     select: 'Select',
     cancel: 'Cancel',
     warning: 'Warning!',
+    more: 'More',
     error: {
         required_fields: 'Please complete the above formular!'
     },

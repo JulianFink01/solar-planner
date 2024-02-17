@@ -6,6 +6,7 @@ export default {
     add_roof_success: 'Das Dach wurde hinzugefügt!',
     edit_roof_success: 'Das Dach wurde bearbeitet!',
     delete_roof_title: 'Dach löschen',
+    roof_dimensions: 'Dach Dimensionen',
     delete_roof_prompt: 'Sind sie sicher das Sie dieses Dach löschen möchten?',
     width: 'Breite (M)',
     height: 'Höhe (M)',

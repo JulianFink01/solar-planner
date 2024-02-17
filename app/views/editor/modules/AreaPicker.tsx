@@ -77,13 +77,17 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
 
     function getInnerMarginArea(): PointInterface[]{
 
-      const innerSpaceY = oneZentimeterVertical * roof.innerMarginCM;
-      const innerSpaceX = oneZentimeterHorizontal * roof.innerMarginCM
+      function relationize(value: number, isX = true){
+        if(isX){
+            return value * oneZentimeterHorizontal;
+        }
+        return value * oneZentimeterVertical;
+      }
 
-     return [ {x: allScreen[0].x + innerSpaceX, y: allScreen[0].y + innerSpaceY},
-              {x: allScreen[1].x - innerSpaceX, y: allScreen[1].y + innerSpaceY},
-              {x: allScreen[2].x - innerSpaceX, y: allScreen[2].y - innerSpaceY},
-              {x: allScreen[3].x + innerSpaceX, y: allScreen[3].y - innerSpaceY}]
+     return [ {x: allScreen[0].x + relationize(roof.innerMarginLeft), y: allScreen[0].y + relationize(roof.innerMarginTop, false)},
+              {x: allScreen[1].x - relationize(roof.innerMarginRight), y: allScreen[1].y + relationize(roof.innerMarginTop, false)},
+              {x: allScreen[2].x - relationize(roof.innerMarginRight), y: allScreen[2].y - relationize(roof.innerMarginBottom, false)},
+              {x: allScreen[3].x + relationize(roof.innerMarginLeft), y: allScreen[3].y - relationize(roof.innerMarginBottom, false)}]
     }
 
     function checkForCollsion(x: number, y: number, radius: number){
@@ -113,8 +117,8 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
       <>
 
         {displayGrid && <TransformedPath
-                            strokeWidth={1}
-                            color='yellow'
+                            strokeWidth={2}
+                            color='orange'
                             debugView={debugView}
                             allScreen={allScreen}
                             roofPoints={roofPoints}

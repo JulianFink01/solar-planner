@@ -6,6 +6,7 @@ export default {
     warning: 'Achtung!',
     submit: 'Bestätigen',
     cancel: 'Abbrechen',
+    more: 'Weiteres',
     error: {
         required_fields: 'Bitte füllen sie alle Felder richtig aus!'
     },

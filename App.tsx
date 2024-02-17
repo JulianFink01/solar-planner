@@ -33,7 +33,7 @@ import { Roof } from './app/models/Roof';
             newRealm.close();
 
             });
-        }} */ schema={[User, Roof]} schemaVersion={28} >
+        }} */ schema={[User, Roof]} schemaVersion={31} >
           <NavigationContainer>
             <StatusBar hidden={false}/>
             <StackNavigator></StackNavigator>
