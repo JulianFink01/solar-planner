@@ -15,15 +15,17 @@ import { CONTAINER_PADDING } from '../../constants/GlobalConstants';
 import { useRealm } from '@realm/react';
 import NumberAdder from '../../componentes/NumberAdder';
 import { GlobalStyles } from '../../style/GlobalStyle';
+import ChipPicker from '../../componentes/ChipPicker';
 
 
 interface Props {
   onClose: Function,
   roof: Roof,
   user: User,
+  regenerateGrid: (panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string') => any
 };
 
-function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): React.JSX.Element {
+function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React.Ref<any>): React.JSX.Element {
 
   const { t } = useTranslation();
   const width = useSharedValue(0);
@@ -32,6 +34,9 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
 
   const [isBoxLeft, setIsBoxLeft] = React.useState<boolean>(false);
   
+  const panelPlacement = React.useRef<any>(null);
+  const horizontalPlacement = React.useRef<any>(null);
+  const verticalPlacement = React.useRef<any>(null);
   const innerMarginPickerTop = React.useRef<any>(null);
   const innerMarginPickerRight = React.useRef<any>(null);
   const innerMarginPickerBottom = React.useRef<any>(null);
@@ -41,8 +46,21 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
   const roofHeight = React.useRef<any>(null);
 
 
-  const panelWidth = 450;
+  const placementValues = [{icon: 'panorama-vertical', title: t('common:vertical'), value: 'vertical'},
+                          {icon: 'panorama-horizontal', title: t('common:horizontal'), value: 'horizontal'}, 
+                           ];
+
+  const horizontalPlacements = [{icon: 'align-horizontal-left', title: t('common:horizontal'), value: 'align-horizontal-left'}, 
+                                {icon: 'align-horizontal-center', title: t('common:vertical'), value: 'align-horizontal-center'},
+                                {icon: 'align-horizontal-right', title: t('common:vertical'), value: 'align-horizontal-right'}];
+                                
+
+  const verticalPlacements =   [{icon: 'align-vertical-top', title: t('common:horizontal'), value: 'align-horizontal-left'}, 
+                                {icon: 'align-vertical-center', title: t('common:vertical'), value: 'align-horizontal-center'},
+                                {icon: 'align-vertical-bottom', title: t('common:vertical'), value: 'align-horizontal-right'}];
+
   const screenWidth = Dimensions.get('screen').width;
+  const panelWidth = screenWidth / 4 * 3;
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -94,6 +112,18 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
     }
   } 
 
+  function ListTitle({text}: {text: string}){
+    return <View style={{width: '100%', marginBottom: 10}}>
+              <Text variant='bodyLarge'>
+                {text}
+              </Text>
+          </View>
+    }
+
+  function triggerRegenerate(){
+    regenerateGrid(panelPlacement.current.getState(), horizontalPlacement.current.getState(), verticalPlacement.current.getState());
+  }  
+
   return (
     <Animated.View style={animatedStyle}>
       <View style={styles.innerView}>
@@ -109,76 +139,99 @@ function EditorSettings({onClose, roof, user}: Props, ref: React.Ref<any>): Reac
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}></View>
           <ScrollView contentContainerStyle={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}>
            
-            <View style={{width: '100%', marginBottom: 10}}>
-                <Text variant='bodyLarge'>
-                  {t('editor:innerMargin')}
-                </Text>
-            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', width: '60%', borderRightWidth: 1, borderRightColor: 'white'}}>
+              
 
-            <NumberAdder 
-              ref={innerMarginPickerTop}
-              key='innerMarginTop'
-              label={t('editor:innerMarginTop')}
-              initialValue={roof.innerMarginTop}
-            />
-            <NumberAdder 
-              ref={innerMarginPickerRight}
-              key='innerMarginRight'
-              label={t('editor:innerMarginRight')}
-              initialValue={roof.innerMarginRight}
-            />
-            <NumberAdder 
-              ref={innerMarginPickerBottom}
-              key='innerMarginBottom'
-              label={t('editor:innerMarginBottom')}
-              initialValue={roof.innerMarginBottom}
-            />
-            <NumberAdder 
-              ref={innerMarginPickerLeft}
-              key='innerMarginLeft'
-              label={t('editor:innerMarginLeft')}
-              initialValue={roof.innerMarginLeft}
-            />
-
-            <View style={{width: '100%', marginBottom: 10}}>
-                <Text variant='bodyLarge'>
-                  {t('roofs:roof_dimensions')}
-                </Text>
-            </View>
-             <NumberAdder 
-              ref={roofWidth}
-              key='roofWidth'
-              label={t('roofs:width')}
-              initialValue={roof.width}
-            /> 
-             <NumberAdder 
-              ref={roofHeight}
-              key='roofHeight'
-              label={t('roofs:height')}
-              initialValue={roof.height}
-            /> 
-            <View style={{width: '100%', marginBottom: 10}}>
-                  <Text variant='bodyLarge'>
-                    {t('common:more')}
-                  </Text>
+              <ListTitle text={t('editor:innerMargin')}/>
+              <NumberAdder 
+                ref={innerMarginPickerTop}
+                key='innerMarginTop'
+                label={t('editor:innerMarginTop')}
+                initialValue={roof.innerMarginTop}
+              />
+              <NumberAdder 
+                ref={innerMarginPickerRight}
+                key='innerMarginRight'
+                label={t('editor:innerMarginRight')}
+                initialValue={roof.innerMarginRight}
+              />
+              <NumberAdder 
+                ref={innerMarginPickerBottom}
+                key='innerMarginBottom'
+                label={t('editor:innerMarginBottom')}
+                initialValue={roof.innerMarginBottom}
+              />
+              <NumberAdder 
+                ref={innerMarginPickerLeft}
+                key='innerMarginLeft'
+                label={t('editor:innerMarginLeft')}
+                initialValue={roof.innerMarginLeft}
+              />
+              <ListTitle text={t('roofs:roof_dimensions')} />
+         
+              <NumberAdder 
+                ref={roofWidth}
+                key='roofWidth'
+                label={t('roofs:width')}
+                initialValue={roof.width}
+              /> 
+              <NumberAdder 
+                ref={roofHeight}
+                key='roofHeight'
+                label={t('roofs:height')}
+                initialValue={roof.height}
+              /> 
+              <ListTitle text={t('common:more')} />
+             
+              <NumberAdder 
+                ref={panelDistancePicker}
+                onUpdate={() => {update()}}
+                key='panelDistancePicker'
+                label={t('editor:panelDistance')}
+                initialValue={roof.distanceBetweenPanelsCM}
+              /> 
               </View>
-
-            <NumberAdder 
-              ref={panelDistancePicker}
-              onUpdate={() => {update()}}
-              key='panelDistancePicker'
-              label={t('editor:panelDistance')}
-              initialValue={roof.distanceBetweenPanelsCM}
-            /> 
+              <View style={{flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', width: '40%', paddingLeft: 15}}>
+                <ListTitle text={t('editor:autoFill')} />
+                <Text variant="labelSmall">{t('editor:panelPlacement')}</Text>
+                <ChipPicker
+                  ref={panelPlacement} 
+                  items={placementValues}
+                  initialValue={placementValues[0].value}
+                />
+               
+                 <Text variant="labelSmall">{t('editor:placementHorizontal')}</Text>
+                 <ChipPicker
+                  ref={horizontalPlacement} 
+                  items={horizontalPlacements}
+                  initialValue={horizontalPlacements[0].value}
+                />
+                <Text variant="labelSmall">{t('editor:placementVertical')}</Text>
+                <ChipPicker
+                  ref={verticalPlacement} 
+                  items={verticalPlacements}
+                  initialValue={verticalPlacements[0].value}
+                />
+            </View>
           </ScrollView>
 
-          <Button icon="account-sync" 
-              mode="contained"
-              style={styles.button}
-              buttonColor={ThemeDark.colors.inverseSurface}
-              onPress={update}>
-                {t('common:save')}
-          </Button>  
+         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
+           
+            <Button icon="account-sync" 
+                mode="contained"
+                style={styles.button}
+                buttonColor={ThemeDark.colors.inverseSurface}
+                onPress={update}>
+                  {t('common:save')}
+            </Button>  
+            <Button icon="refresh" 
+                mode="contained"
+                style={{...styles.button, marginRight: 10}}
+                buttonColor={ThemeDark.colors.primary}
+                onPress={triggerRegenerate}>
+                  {t('editor:regenerate')}
+            </Button>  
+         </View>
         </View>
       </View>
     </Animated.View>
@@ -198,7 +251,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: CONTAINER_PADDING,
-    width: '44%',
     alignSelf: 'flex-end'
   },
 });

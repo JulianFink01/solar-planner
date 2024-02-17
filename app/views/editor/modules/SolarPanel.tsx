@@ -23,7 +23,7 @@ interface Props {
     displayGrid: boolean,
     roofPoints: PointInterface[],
     imageSize: {width: number, height: number},
-    roof: Roof
+    roof: Roof,
 }
 function SolarPanel({imageSize, roof, allScreen,solarPanel,displayGrid, debugView, roofPoints}: Props){
 

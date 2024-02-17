@@ -20,12 +20,17 @@ interface Props {
   lockMode: boolean,
   debugView: boolean,
   displayGrid: boolean,
-  roof: Roof
+  roof: Roof,
 }
 
 function ViewPainter({imageSize, lockMode, displayGrid, roof, debugView}: Props, ref: React.Ref<any>): React.JSX.Element {
 
 
+    React.useImperativeHandle(ref, () => ({
+      regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
+        areaPicker.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+      }
+    }));
   
     const areaPicker = React.useRef<any>(null);
 

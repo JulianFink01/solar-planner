@@ -62,7 +62,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
             </Text>
             <View style={{display: 'flex', flexDirection: 'row', marginTop: 10}}>
                     <IconButton  icon={'arrow-down'}
-                                style={styles.button}
+                                    style={styles.button}
                                  size={28}
                                  onTouchStart={() => {setIsHolding(-1)}}
                                  onTouchEnd={() => {setIsHolding(0)}}

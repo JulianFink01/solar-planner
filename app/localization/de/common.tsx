@@ -7,6 +7,8 @@ export default {
     submit: 'Bestätigen',
     cancel: 'Abbrechen',
     more: 'Weiteres',
+    vertical: 'Vertikal',
+    horizontal: 'Horizontal',
     error: {
         required_fields: 'Bitte füllen sie alle Felder richtig aus!'
     },

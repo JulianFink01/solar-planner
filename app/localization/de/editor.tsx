@@ -7,4 +7,9 @@ export default {
     innerMarginRight: 'Rechts (CM)',
     innerMarginBottom: 'Unten (CM)',
     innerMarginLeft: 'Links (CM)',
+    panelPlacement: 'Solar Panels Ausrichtung',
+    regenerate: 'Neu platzieren',
+    autoFill: 'Automatische Befüllung',
+    placementHorizontal: 'Horizontale Ausrichtung',
+    placementVertical: 'Vertikale Ausrichtung',
 }

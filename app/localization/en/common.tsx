@@ -7,6 +7,8 @@ export default {
     cancel: 'Cancel',
     warning: 'Warning!',
     more: 'More',
+    vertical: 'vertically',
+    horizontal: 'horizontally',
     error: {
         required_fields: 'Please complete the above formular!'
     },

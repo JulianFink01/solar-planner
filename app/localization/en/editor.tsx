@@ -7,4 +7,9 @@ export default {
     innerMarginRight: 'Right (CM)',
     innerMarginBottom: 'Bottom (CM)',
     innerMarginLeft: 'Left (CM)',
+    panelPlacement: 'Initial panel placement',
+    regenerate: 'Regenerate',
+    autoFill: 'Automatic fillment',
+    placementHorizontal: 'Horizontal placement',
+    placementVertical: 'Vertical placement',
 }

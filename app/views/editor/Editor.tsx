@@ -15,7 +15,7 @@ import {  Appbar, Avatar, Button, Card, List, Text} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
-import RoofSelector from './modules/ViewPainter';
+import ViewPainter from './modules/ViewPainter';
 import Information from './Information';
 import { ThemeDark } from '../../themes/ThemeDark';
 import { Roof } from '../../models/Roof';
@@ -29,6 +29,12 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
   const { t } = useTranslation();
   const [imageSize, setImageSize] = React.useState<Dimension>();
 
+  const roofId = route?.params?.roof?._id;
+  const userId = route.params?.user?._id;
+
+  const roof = roofId ? useObject(Roof, new Realm.BSON.UUID(roofId)): null;
+  const user = userId ? useObject(User, new Realm.BSON.UUID(userId)): null;
+
   const [lockMode, setLockMode] = React.useState<boolean>(false); // prevents anything from being modified
   const [displayEditorSettings, setDisplayEditorSettings] = React.useState<boolean>(false); // prevents anything from being modified
   const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
@@ -36,14 +42,11 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
   const [debugView, setDebugView] = React.useState<boolean>(false); // If true displays the non transformed Matrix in color green
 
 
+  const viewPainter = React.useRef<any>(null);
   const information = React.useRef<any>(null);
   const editorSettings = React.useRef<any>(null);
 
-  const roofId = route?.params?.roof?._id;
-  const userId = route.params?.user?._id;
-
-  const roof = roofId ? useObject(Roof, new Realm.BSON.UUID(roofId)): null;
-  const user = userId ? useObject(User, new Realm.BSON.UUID(userId)): null;
+ 
 
 
   React.useEffect(() => {
@@ -83,6 +86,10 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
 
   }
 
+  function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
+    viewPainter.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+  }
+
   const activeColor = ThemeDark.colors.inversePrimary;
   const inactiveColor = ThemeDark.colors.outline;
 
@@ -111,7 +118,8 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
               resizeMode="contain"
               style={{flex: 1, maxHeight: imageSize?.height}} 
               source={{uri: 'https://st2.depositphotos.com/20602302/47738/i/450/depositphotos_477380366-stock-photo-half-cleaned-house-roof-shows.jpg'}}>
-                {imageSize != null && <RoofSelector
+                {imageSize != null && <ViewPainter
+                                          ref={viewPainter}
                                           debugView={debugView}
                                           roof={roof}
                                           lockMode={lockMode}
@@ -124,6 +132,7 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
                               roof={roof}
                               /> 
                 <EditorSettings  ref={editorSettings} 
+                                 regenerateGrid={regenerateGrid}
                                  onClose={() => {setDisplayEditorSettings(false)}}
                                  user={user}
                                  roof={roof}
