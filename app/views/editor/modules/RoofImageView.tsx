@@ -12,18 +12,18 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {  Appbar} from 'react-native-paper';
-import { GlobalStyles } from '../../style/GlobalStyle';
-import AppBar from '../../componentes/appBar/AppBar';
+import { GlobalStyles } from '../../../style/GlobalStyle';
+import AppBar from '../../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
-import ViewPainter from './modules/ViewPainter';
-import Information from './Information';
-import { ThemeDark } from '../../themes/ThemeDark';
-import { Roof } from '../../models/Roof';
-import { User } from '../../models/User';
+import ViewPainter from './ViewPainter';
+import Information from '../Information';
+import { ThemeDark } from '../../../themes/ThemeDark';
+import { Roof } from '../../../models/Roof';
+import { User } from '../../../models/User';
 import { useObject } from '@realm/react';
-import EditorSettings from './EditorSettings';
+import EditorSettings from '../EditorSettings';
 import Realm from 'realm';
-import { RoofImage } from '../../models/RoofImage';
+import { RoofImage } from '../../../models/RoofImage';
 
 type Props = {
     roof: Roof,
@@ -60,8 +60,8 @@ function RoofImageView({user, roof,  debugView, lockMode, displayGrid, roofImage
   }
 
   React.useImperativeHandle(ref, () => ({
-    regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-        viewPainter.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+    regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string', save: boolean){
+      regenerateGrid(panelPlacement, placementHorizontal, placementVertical, save);
     },
     save(){
         viewPainter.current.save();
@@ -70,7 +70,7 @@ function RoofImageView({user, roof,  debugView, lockMode, displayGrid, roofImage
 
 
   function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-    viewPainter.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+    viewPainter?.current?.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
   }
 
   if(!user || !roof){
@@ -86,6 +86,7 @@ function RoofImageView({user, roof,  debugView, lockMode, displayGrid, roofImage
               style={{flex: 1, maxHeight: imageSize?.height}} 
               source={{uri: roofImage.src}}>
                 {imageSize != null && <ViewPainter
+                                          key={'viewpainter'}
                                           roofImage={roofImage}
                                           ref={viewPainter}
                                           debugView={debugView}

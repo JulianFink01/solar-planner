@@ -38,14 +38,22 @@ function ViewPainter({imageSize, lockMode, roofImage, displayGrid, roof, debugVi
     const {t} = useTranslation();
 
     React.useImperativeHandle(ref, () => ({
-      regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-        areaPicker.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+      regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string', saveAfter: boolean){
+        const data: {roofPoints: PointInterface[], solarPanels: SolarPanelMinimal[]} = areaPicker.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+        if(saveAfter){
+          save(data);
+        }
       },
       save(){
         const data: {roofPoints: PointInterface[], solarPanels: SolarPanelMinimal[]} = areaPicker.current.getState();
+        save(data);
+      }
+    }));
+  
+    function save(data: {roofPoints: PointInterface[], solarPanels: SolarPanelMinimal[]}){
         realm.write(() => {
-          if(roofImage?.roofPoints?.length > 0){
-            realm.delete(roofImage.roofPoints);
+          if(roofImage?.solarPanels?.length > 0){
+            realm.delete(roofImage.solarPanels);
           }
 
           for(let panel of data.solarPanels){
@@ -59,8 +67,8 @@ function ViewPainter({imageSize, lockMode, roofImage, displayGrid, roof, debugVi
           }
         
         
-          if(roofImage?.solarPanels?.length > 0){
-            realm.delete(roofImage.solarPanels);
+          if(roofImage?.roofPoints?.length > 0){
+            realm.delete(roofImage.roofPoints);
           }
           for(let point of data.roofPoints){
             const newPoint = realm.create(RoofPoint, {
@@ -76,9 +84,8 @@ function ViewPainter({imageSize, lockMode, roofImage, displayGrid, roof, debugVi
         })
 
         snackbBar?.current?.present(t('common:savedChanges'));
-      }
-    }));
-  
+    }
+
     const areaPicker = React.useRef<any>(null);
 
     const [areaPickerPoints, setAreaPickerPoints] = React.useState<PointInterface[]>([]);

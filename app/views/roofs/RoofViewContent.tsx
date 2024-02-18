@@ -7,13 +7,16 @@ import {
 import {  Icon, Text} from 'react-native-paper';
 import { Roof } from '../../models/Roof';
 import { User } from '../../models/User';
+import { RoofImage } from '../../models/RoofImage';
+import { SolarPanel } from '../../models/SolarPanel';
 
 interface Props{
     roof: Roof,
-    user: User
+    user: User, 
+    roofImage?: RoofImage
 }
 
-function RoofViewContent({roof, user}: Props): React.JSX.Element {
+function RoofViewContent({roof, roofImage, user}: Props): React.JSX.Element {
 
   const { t } = useTranslation();
 
@@ -29,7 +32,11 @@ function RoofViewContent({roof, user}: Props): React.JSX.Element {
                 <View style={{flexDirection: 'row'}}>
                     <Icon size={18} source={'face-man'} />
                     <Text style={{marginLeft: 5}} variant="bodyMedium">{user.firstName} {user.lastName}</Text>
-                </View>          
+                </View>        
+                {roofImage && <View style={{flexDirection: 'row'}}>
+                    <Icon size={18} source={'face-man'} />
+                    <Text style={{marginLeft: 5}} variant="bodyMedium">{t('editor:totalPanels').replaceAll('%s', (roofImage?.solarPanels?.length ?? 0) + '')}</Text>
+                </View>}  
         </View>;
 }
 

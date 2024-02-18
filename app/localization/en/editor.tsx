@@ -12,4 +12,5 @@ export default {
     autoFill: 'Automatic fillment',
     placementHorizontal: 'Horizontal placement',
     placementVertical: 'Vertical placement',
+    totalPanels: 'There are a total of %s solar panels.'
 }

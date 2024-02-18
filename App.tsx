@@ -36,7 +36,7 @@ import { SolarPanel } from './app/models/SolarPanel';
             newRealm.close();
 
             });
-        }} */ schema={[User, Roof, RoofImage, RoofPoint, SolarPanel]} schemaVersion={39} >
+        }} */ schema={[User, Roof, RoofImage, RoofPoint, SolarPanel]} schemaVersion={46} >
           <NavigationContainer>
             <StatusBar hidden={false}/>
             <StackNavigator></StackNavigator>

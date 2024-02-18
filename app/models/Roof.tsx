@@ -41,8 +41,7 @@ export class Roof extends Realm.Object<Roof> {
         city: {type: 'string', indexed: 'full-text'},
         zipCode: {type: 'string', indexed: 'full-text'},
         street: {type: 'string', indexed: 'full-text'},
-        streetNumber: {type: 'string', indexed: 'full-text'},
-        notes: {type: 'string', indexed: 'full-text'}
+        streetNumber: {type: 'string', indexed: 'full-text'}
       },
       primaryKey: '_id',
     };

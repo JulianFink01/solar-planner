@@ -28,7 +28,7 @@ export default class SolarPanelHelper{
       
       const panelWidth = mode !== 'horizontal' ? relationize(panelType.width) : relationize(panelType.height);
       const panelHeight = mode !== 'horizontal' ? relationize(panelType.height, false) : relationize(panelType.width, false);
-      
+
       const innerMarginX = relationize(roof.innerMarginLeft) + relationize(roof.innerMarginRight);
       const innerMarginY = relationize(roof.innerMarginTop, false) + relationize(roof.innerMarginBottom, false);
 

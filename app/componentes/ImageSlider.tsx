@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
     Animated, Dimensions, Image, Keyboard, Platform,
-    StyleSheet, Text,
+    StyleSheet, 
     View
 } from 'react-native';
 import {PanGestureHandler} from "react-native-gesture-handler";
 import {GestureEvent} from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
 import Value = Animated.Value;
-import { IconButton } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
 import { ThemeDark } from '../themes/ThemeDark';
 
 
@@ -125,6 +125,13 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
                                                                     }}
                                                                     icon={'delete'}/>}
 
+
+
+                    </View>
+
+                    <View style={{backgroundColor: ThemeDark.colors.background, borderRadius: 50, overflow: 'hidden', display: 'flex', alignContent: 'center', alignItems: 'center'}}>
+                    {this.props.images.length > 0 && <Text  style={{backgroundColor: ThemeDark.colors.background, padding: 10, borderRadius: 10}}
+                                                           variant={'titleMedium'}>{this.state.currentActiveFileIndex+1}/{this.props.images.length}</Text>}
                     </View>
 
                 </View>

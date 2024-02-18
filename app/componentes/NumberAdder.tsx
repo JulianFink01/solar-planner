@@ -26,7 +26,7 @@ export function NumberAdder({label, initialValue, onUpdate}: Props, ref: React.R
                 if(typeof state === 'number'){
                     setState(state => (state as number) + isHolding);
                 }
-                }, 150);   
+                }, 80);   
         } else {
           clearInterval(intervalId);
           onUpdate != undefined && onUpdate();

@@ -30,7 +30,6 @@ function SolarPanel({imageSize, roof, allScreen,solarPanel,displayGrid, debugVie
   const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
   const oneZentimeterVertical = imageSize.height / roof.height / 100;
 
-
     return (
       <>
 

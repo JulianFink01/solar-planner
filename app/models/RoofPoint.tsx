@@ -11,7 +11,7 @@ export class RoofPoint extends Realm.Object<RoofPoint> {
     _id!: Realm.BSON.UUID;
     x!: number;
     y!: number;
-    roof!: Realm.List<RoofImage>;
+    roofImage!: Realm.List<RoofImage>;
 
     static schema = {
       name: 'RoofPoint',
@@ -19,7 +19,7 @@ export class RoofPoint extends Realm.Object<RoofPoint> {
         _id: 'uuid',
         x: 'float',
         y: 'float',
-        roof: {
+        roofImage: {
           type: 'linkingObjects',
           objectType: 'RoofImage',
           property: 'roofPoints',

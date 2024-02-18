@@ -23,10 +23,10 @@ import { User } from '../../models/User';
 import { useObject } from '@realm/react';
 import EditorSettings from './EditorSettings';
 import Realm from 'realm';
-import RoofImageView from './RoofImageView';
+import RoofImageView from './modules/RoofImageView';
 import { RoofImage } from '../../models/RoofImage';
 
-function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Element {
+function Editor({navigation, route}: StackScreenProps): React.JSX.Element {
 
   const { t } = useTranslation();
 
@@ -68,8 +68,9 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
     roofImageView.current.save();
   }
 
-  function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-    roofImageView.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+  function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string', save: boolean){
+
+    roofImageView.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical, save);
   }
 
   const activeColor = ThemeDark.colors.inversePrimary;
@@ -119,7 +120,7 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
     <View style={GlobalStyles.pageWrapper}>
       <AppBar title={<Title />} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
         <Appbar.Action icon={debugView ? 'eye-outline' : 'eye'} color={debugView ? activeColor : inactiveColor} onPress={() => {setDebugView(!debugView)}} />
-        <Appbar.Action icon={displayEditorSettings ? 'tape-measure' : 'tape-measure'} color={displayEditorSettings ? activeColor : inactiveColor} onPress={() => {setDisplayEditorSettings(!displayEditorSettings)}} />
+        <Appbar.Action icon={displayEditorSettings ? 'tape-measure' : 'application-settings'} color={displayEditorSettings ? activeColor : inactiveColor} onPress={() => {setDisplayEditorSettings(!displayEditorSettings)}} />
         <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} color={displayInfo ? activeColor : inactiveColor} onPress={() => {setDisplayInfo(!displayInfo)}} />
         <Appbar.Action icon={!lockMode ?'lock' : 'lock-open' } color={lockMode ? activeColor : inactiveColor} onPress={() => {setLockMode(!lockMode)}} />
         <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} color={displayGrid ? inactiveColor : activeColor} onPress={() => {setDisplayGrid(!displayGrid)}} />
@@ -147,6 +148,7 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
                                 onClose={() => {setDisplayInfo(false)}}
                                 user={user}
                                 roof={roof}
+                                roofImage={selectedImage}
                                 /> 
                 <EditorSettings  ref={editorSettings} 
                                  regenerateGrid={regenerateGrid}

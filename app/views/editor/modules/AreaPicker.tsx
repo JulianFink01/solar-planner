@@ -59,11 +59,11 @@ function AreaPicker({imageSize, roof, debugView, roofImage, lockMode, displayGri
                                                                                                                                                 
     const [roofRect, setRoofRect] = React.useState<PointInterface[]>(getInnerMarginArea());                                                                      
     const [solarPanels, setSolarPanels] = React.useState<SolarPanelMinimal[]>(getInitialSolarPanels());
-                                                                 
+            
     React.useEffect(() => {
       setRoofRect(getInnerMarginArea());
-      setSolarPanels(getInitialSolarPanels());
     }, [roof])
+
 
     React.useEffect(() => {
         onUpdate(roofPoints)
@@ -77,7 +77,11 @@ function AreaPicker({imageSize, roof, debugView, roofImage, lockMode, displayGri
          updatePoints();
      },
      regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-      setSolarPanels(getInitialSolarPanels(panelPlacement));
+      const roofRect = getInnerMarginArea();
+      setRoofRect(roofRect);
+      const panels = getInitialSolarPanels(panelPlacement, roofRect[0], true);
+      setSolarPanels(panels);
+      return {roofPoints: roofRect, solarPanels: panels}
     },
     getState(){
       return {roofPoints: roofPoints, solarPanels: solarPanels}
@@ -96,17 +100,16 @@ function AreaPicker({imageSize, roof, debugView, roofImage, lockMode, displayGri
               {x: startX, y: startY + height, radius: POINT_RADIUS}];
     }
 
-    function getInitialSolarPanels(panelPlacement: 'vertical' | 'horizontal' = 'vertical'): SolarPanelMinimal[]{
+    function getInitialSolarPanels(panelPlacement: 'vertical' | 'horizontal' = 'vertical', roofStart:PointInterface = roofRect[0], isReset = false): SolarPanelMinimal[]{
 
       const panelType: SolarPanelType = {width: 100, height: 200};  
-
-
-      if(roofImage.solarPanels?.length > 0){
-        return roofImage.solarPanels.map((sp) => new SolarPanelMinimal(panelType, sp.startX, sp.startY));
+  
+      if(roofImage.solarPanels?.length > 0 && !isReset){
+        return roofImage.solarPanels.map((sp) => new SolarPanelMinimal(panelType, sp.startX, sp.startY, sp.placement));
       }
 
 
-      return SolarPanelHelper.placePanelsAlignedLeft(panelType, imageSize, roof, roofRect[0], POSITIONED.LEFT, panelPlacement);
+      return SolarPanelHelper.placePanelsAlignedLeft(panelType, imageSize, roof, roofStart, POSITIONED.LEFT, panelPlacement);
     }  
 
     function getInnerMarginArea(): PointInterface[]{

@@ -12,7 +12,7 @@ import { RoofImage } from './RoofImage';
 export class SolarPanel extends Realm.Object<SolarPanel> {
     
     _id!: Realm.BSON.UUID;
-    roof!: Realm.List<RoofImage>;
+    roofImage!: Realm.List<RoofImage>;
     startX!: number;
     startY!: number;
     placement!: string;
@@ -25,7 +25,7 @@ export class SolarPanel extends Realm.Object<SolarPanel> {
         startX: 'float',
         startY: 'float',
         placement: 'string',
-        roof: {
+        roofImage: {
           type: 'linkingObjects',
           objectType: 'RoofImage',
           property: 'solarPanels',

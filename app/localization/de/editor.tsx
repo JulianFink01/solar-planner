@@ -12,4 +12,5 @@ export default {
     autoFill: 'Automatische Befüllung',
     placementHorizontal: 'Horizontale Ausrichtung',
     placementVertical: 'Vertikale Ausrichtung',
+    totalPanels: 'Es sind ingessamt %s Solar Panels platiert'
 }

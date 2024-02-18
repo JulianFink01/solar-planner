@@ -104,6 +104,7 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
 
     const valid = parseFloat(width) > 0 && 
                   parseFloat(height) > 0 &&
+                  imageUrls.length > 0 &&
                   //user != null && 
                   //user?._id != null && 
                   zipCode?.length > 0 && 
@@ -132,9 +133,7 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
 
     const userMin = UserMinimal.map(initialUser);
     realm.write(() => {
-    
       if(initialUser){
-
         const roofImages = [];
 
         for(let image of imageUrls){
@@ -173,10 +172,6 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
     const userMin = UserMinimal.map(initialUser);
 
     if(roof != null){
-
-       
-
-
         realm.write(() => {
 
           const roofImages = [];
@@ -213,7 +208,6 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
       selectionLimit: 0
     }
     const result = await launchImageLibrary(options);
-    console.log(result);
     if(!result.assets || result?.assets?.length < 1){
       setImageUrls([...imageUrls]);
     }else{

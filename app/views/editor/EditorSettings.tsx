@@ -22,7 +22,7 @@ interface Props {
   onClose: Function,
   roof: Roof,
   user: User,
-  regenerateGrid: (panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string') => any
+  regenerateGrid: (panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string', save: boolean) => any
 };
 
 function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React.Ref<any>): React.JSX.Element {
@@ -109,6 +109,7 @@ function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React
         roof.height = roofHeight.current.getState();
         roof.width = roofWidth.current.getState();
       });
+      regenerateGrid(panelPlacement.current.getState(), horizontalPlacement.current.getState(), verticalPlacement.current.getState(), true);
     }
   } 
 
@@ -121,7 +122,7 @@ function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React
     }
 
   function triggerRegenerate(){
-    regenerateGrid(panelPlacement.current.getState(), horizontalPlacement.current.getState(), verticalPlacement.current.getState());
+    regenerateGrid(panelPlacement.current.getState(), horizontalPlacement.current.getState(), verticalPlacement.current.getState(), false);
   }  
 
   return (
@@ -140,7 +141,20 @@ function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React
           <ScrollView contentContainerStyle={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap'}}>
            
             <View style={{flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', width: '60%', borderRightWidth: 1, borderRightColor: 'white'}}>
-              
+            <ListTitle text={t('roofs:roof_dimensions')} />
+         
+              <NumberAdder 
+                ref={roofWidth}
+                key='roofWidth'
+                label={t('roofs:width')}
+                initialValue={roof.width}
+              /> 
+              <NumberAdder 
+                ref={roofHeight}
+                key='roofHeight'
+                label={t('roofs:height')}
+                initialValue={roof.height}
+              /> 
 
               <ListTitle text={t('editor:innerMargin')}/>
               <NumberAdder 
@@ -167,20 +181,7 @@ function EditorSettings({onClose, roof, user, regenerateGrid}: Props, ref: React
                 label={t('editor:innerMarginLeft')}
                 initialValue={roof.innerMarginLeft}
               />
-              <ListTitle text={t('roofs:roof_dimensions')} />
-         
-              <NumberAdder 
-                ref={roofWidth}
-                key='roofWidth'
-                label={t('roofs:width')}
-                initialValue={roof.width}
-              /> 
-              <NumberAdder 
-                ref={roofHeight}
-                key='roofHeight'
-                label={t('roofs:height')}
-                initialValue={roof.height}
-              /> 
+             
               <ListTitle text={t('common:more')} />
              
               <NumberAdder 

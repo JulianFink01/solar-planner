@@ -14,15 +14,17 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } fr
 import { Roof } from '../../models/Roof';
 import { User } from '../../models/User';
 import RoofViewContent from '../roofs/RoofViewContent';
+import { RoofImage } from '../../models/RoofImage';
 
 
 interface Props {
   onClose: Function,
   roof: Roof,
+  roofImage: RoofImage,
   user: User
 };
 
-function Information({onClose, roof, user}: Props, ref: React.Ref): React.JSX.Element {
+function Information({onClose, roof, user,roofImage}: Props, ref: React.Ref): React.JSX.Element {
   const { t } = useTranslation();
   const width = useSharedValue(0);
   
@@ -53,11 +55,10 @@ function Information({onClose, roof, user}: Props, ref: React.Ref): React.JSX.El
             <IconButton icon={'close'} onPress={() => onClose()}/>
           </View>
           <RoofViewContent
+            roofImage={roofImage}
             roof={roof}
             user={user}
-          >
-
-          </RoofViewContent>
+          />
         </View>
       </View>
     </Animated.View>
