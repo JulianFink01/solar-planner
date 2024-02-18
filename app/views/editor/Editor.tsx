@@ -11,7 +11,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {  Appbar} from 'react-native-paper';
+import {  Appbar, IconButton, Text} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -23,11 +23,12 @@ import { User } from '../../models/User';
 import { useObject } from '@realm/react';
 import EditorSettings from './EditorSettings';
 import Realm from 'realm';
+import RoofImageView from './RoofImageView';
+import { RoofImage } from '../../models/RoofImage';
 
 function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Element {
 
   const { t } = useTranslation();
-  const [imageSize, setImageSize] = React.useState<Dimension>();
 
   const roofId = route?.params?.roof?._id;
   const userId = route.params?.user?._id;
@@ -40,9 +41,9 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
   const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
   const [displayInfo, setDisplayInfo] = React.useState<boolean>(false); // If true displays a information modal for the roof
   const [debugView, setDebugView] = React.useState<boolean>(false); // If true displays the non transformed Matrix in color green
+  const [selectedImage, setSelectedImage] = React.useState<RoofImage>(roof?.roofImages[0])
 
-
-  const viewPainter = React.useRef<any>(null);
+  const roofImageView = React.useRef<any>(null);
   const information = React.useRef<any>(null);
   const editorSettings = React.useRef<any>(null);
 
@@ -62,29 +63,13 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
     }
   }, [displayEditorSettings]);
 
-  function onImageLoad(event: NativeSyntheticEvent<ImageLoadEventData>){
-
-      const width = event?.nativeEvent?.source?.width;
-      const heigth = event?.nativeEvent?.source?.height;
-
-      const screenWidth = Dimensions.get('screen').width;
-
-      // calculate ratio betwen screen witdth and imageWidth
-      const ratio = screenWidth / width; // we know screen width is x bigger then width
-      
-      const imageWidth = screenWidth;
-      const imageHeight = heigth * ratio;
-
-      const dimensions: Dimension = {width: imageWidth , height: imageHeight};
-      setImageSize(dimensions);
-  }
 
   function save(){
-
+    roofImageView.current.save();
   }
 
   function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-    viewPainter.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+    roofImageView.current.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
   }
 
   const activeColor = ThemeDark.colors.inversePrimary;
@@ -94,15 +79,51 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
     return <></>;
   }
 
+
+  function Title(){
+
+    const activeIndex = roof?.roofImages.indexOf(selectedImage) ?? -9999999;
+
+    function moveRight(){
+     if((roof?.roofImages?.length ?? -9999) > 0){
+      let newIndex = activeIndex + 1;
+      if(newIndex >= roof?.roofImages.length){
+        newIndex = 0;
+      }
+      setSelectedImage(roof?.roofImages[newIndex]);
+     }
+    }
+
+    function moveLeft(){
+      if((roof?.roofImages?.length ?? -9999) > 0){
+        let newIndex = activeIndex - 1;
+        if(newIndex < 0){
+          newIndex = (roof?.roofImages.length -1);
+        }
+        setSelectedImage(roof?.roofImages[newIndex]);
+      }
+    }
+
+    return <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+            <Text variant='titleLarge'>{t('editor:title')}</Text>
+            <View style={{marginLeft: 100, display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                <IconButton icon={'arrow-left'} onPress={moveLeft}/>
+                <Text variant='titleLarge'>{t('roofs:image')} {(activeIndex) + 1}/{roof?.roofImages.length}</Text>
+                <IconButton icon={'arrow-right'} onPress={moveRight} />
+            </View>
+          </View>
+  }
+
   return (
 
     <View style={GlobalStyles.pageWrapper}>
-      <AppBar title={t('editor:title')} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
+      <AppBar title={<Title />} left={<Appbar.Action icon={'arrow-left'} onPress={() => {navigation.goBack()}} />}>
         <Appbar.Action icon={debugView ? 'eye-outline' : 'eye'} color={debugView ? activeColor : inactiveColor} onPress={() => {setDebugView(!debugView)}} />
         <Appbar.Action icon={displayEditorSettings ? 'tape-measure' : 'tape-measure'} color={displayEditorSettings ? activeColor : inactiveColor} onPress={() => {setDisplayEditorSettings(!displayEditorSettings)}} />
         <Appbar.Action icon={displayInfo ? 'information-off' : 'information'} color={displayInfo ? activeColor : inactiveColor} onPress={() => {setDisplayInfo(!displayInfo)}} />
         <Appbar.Action icon={!lockMode ?'lock' : 'lock-open' } color={lockMode ? activeColor : inactiveColor} onPress={() => {setLockMode(!lockMode)}} />
         <Appbar.Action icon={displayGrid ? 'grid-off' : 'grid'} color={displayGrid ? inactiveColor : activeColor} onPress={() => {setDisplayGrid(!displayGrid)}} />
+        <Appbar.Action style={{backgroundColor: ThemeDark.colors.primary}} color={ThemeDark.colors.background} icon={'content-save'} onPress={() => {save()}} />
       </AppBar>
     
 
@@ -110,31 +131,29 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
           flex: 1,
           position: 'relative',
         }}>
-          <ImageBackground 
-              onLoad={onImageLoad}
-              resizeMode="contain"
-              style={{flex: 1, maxHeight: imageSize?.height}} 
-              source={{uri: 'https://st2.depositphotos.com/20602302/47738/i/450/depositphotos_477380366-stock-photo-half-cleaned-house-roof-shows.jpg'}}>
-                {imageSize != null && <ViewPainter
-                                          ref={viewPainter}
-                                          debugView={debugView}
-                                          roof={roof}
-                                          lockMode={lockMode}
-                                          imageSize={imageSize}
-                                          displayGrid={displayGrid}
-                                        />}
-                <Information  ref={information} 
-                              onClose={() => {setDisplayInfo(false)}}
-                              user={user}
-                              roof={roof}
-                              /> 
+
+              <RoofImageView 
+                key={selectedImage.src}
+                ref={roofImageView}
+                roof={roof}
+                roofImage={selectedImage}
+                user={user}
+                displayGrid={displayGrid}
+                debugView={debugView}
+                lockMode={lockMode}
+              />
+
+              <Information  ref={information} 
+                                onClose={() => {setDisplayInfo(false)}}
+                                user={user}
+                                roof={roof}
+                                /> 
                 <EditorSettings  ref={editorSettings} 
                                  regenerateGrid={regenerateGrid}
                                  onClose={() => {setDisplayEditorSettings(false)}}
                                  user={user}
                                  roof={roof}
-                                 />                        
-          </ImageBackground>
+                                 />                
       </View>
   </View>
   );

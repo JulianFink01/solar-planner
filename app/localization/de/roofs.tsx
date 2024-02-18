@@ -18,4 +18,8 @@ export default {
     notes: 'Notizen',
     generell_data: 'Generelle Daten',
     address_data: 'Address Daten',
+    images: 'Bilder',
+    selectImages: 'Bilder auswählen',
+    roof: 'Dach',
+    image: 'Bild'
 };

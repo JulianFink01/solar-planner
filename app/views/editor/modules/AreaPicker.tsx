@@ -8,10 +8,12 @@ import { ThemeDark } from '../../../themes/ThemeDark';
 import TransformedPath from './TransformedPath';
 import SolarPanelHelper, { POSITIONED } from '../../../utils/SolarPanelHelper';
 import { SolarPanelMinimal } from '../../../mapper/SolarPanelMinimal';
+import { RoofImage } from '../../../models/RoofImage';
 
 type Props = {
     imageSize: {width: number, height: number},
     roof: Roof,
+    roofImage: RoofImage,
     debugView: boolean,
     lockMode: boolean,
     displayGrid: boolean,
@@ -25,7 +27,7 @@ type PointProps ={
 
 
 
-function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate}: Props, ref: React.Ref<any>) : React.JSX.Element{
+function AreaPicker({imageSize, roof, debugView, roofImage, lockMode, displayGrid, onUpdate}: Props, ref: React.Ref<any>) : React.JSX.Element{
     
     const pointLeftTop = React.useRef<any>(null);
     const pointLeftBottom = React.useRef<any>(null);
@@ -53,16 +55,14 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
    
 
     // Punkte die man verschieben kann
-    const [roofPoints, setRoofPoints] = React.useState<PointInterface[]>([{x: startX, y: startY, radius: POINT_RADIUS}, // leftTop
-                                                                          {x: startX + width, y: startY, radius: POINT_RADIUS},  // rightTop
-                                                                          {x: startX + width, y: startY + height, radius: POINT_RADIUS},  // rightBottom
-                                                                          {x: startX, y: startY + height, radius: POINT_RADIUS}]); // leftTop 
+    const [roofPoints, setRoofPoints] = React.useState<PointInterface[]>(getInititalRoofPoints()); // leftTop 
                                                                                                                                                 
     const [roofRect, setRoofRect] = React.useState<PointInterface[]>(getInnerMarginArea());                                                                      
     const [solarPanels, setSolarPanels] = React.useState<SolarPanelMinimal[]>(getInitialSolarPanels());
                                                                  
     React.useEffect(() => {
       setRoofRect(getInnerMarginArea());
+      setSolarPanels(getInitialSolarPanels());
     }, [roof])
 
     React.useEffect(() => {
@@ -77,13 +77,36 @@ function AreaPicker({imageSize, roof, debugView, lockMode, displayGrid, onUpdate
          updatePoints();
      },
      regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-      console.log("here", panelPlacement);
       setSolarPanels(getInitialSolarPanels(panelPlacement));
+    },
+    getState(){
+      return {roofPoints: roofPoints, solarPanels: solarPanels}
     }
     }));
 
+    function getInititalRoofPoints(){
+
+      if(roofImage.roofPoints?.length > 0){
+        return roofImage.roofPoints.map((rp) => ({x: rp.x, y: rp.y, radius: POINT_RADIUS}));
+      }
+
+      return [{x: startX, y: startY, radius: POINT_RADIUS}, // leftTop
+              {x: startX + width, y: startY, radius: POINT_RADIUS},  // rightTop
+              {x: startX + width, y: startY + height, radius: POINT_RADIUS},  // rightBottom
+              {x: startX, y: startY + height, radius: POINT_RADIUS}];
+    }
+
     function getInitialSolarPanels(panelPlacement: 'vertical' | 'horizontal' = 'vertical'): SolarPanelMinimal[]{
-      return SolarPanelHelper.placePanelsAlignedLeft(imageSize, roof, roofRect[0], POSITIONED.LEFT, panelPlacement);
+
+      const panelType: SolarPanelType = {width: 100, height: 200};  
+
+
+      if(roofImage.solarPanels?.length > 0){
+        return roofImage.solarPanels.map((sp) => new SolarPanelMinimal(panelType, sp.startX, sp.startY));
+      }
+
+
+      return SolarPanelHelper.placePanelsAlignedLeft(panelType, imageSize, roof, roofRect[0], POSITIONED.LEFT, panelPlacement);
     }  
 
     function getInnerMarginArea(): PointInterface[]{

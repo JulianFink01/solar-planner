@@ -9,10 +9,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 interface Props extends StackNavigationProp {
     onPress?: () => {},
     message: string,
-    icon: string
+    icon: string,
+    size: number
 }
 
-function NoDataPlaceholder({onPress, message, navigation, icon}: StackNavigationProp): React.JSX.Element {
+function NoDataPlaceholder({onPress, message, navigation, size, icon}: StackNavigationProp): React.JSX.Element {
 
     const {t} = useTranslation();
 
@@ -21,7 +22,7 @@ function NoDataPlaceholder({onPress, message, navigation, icon}: StackNavigation
                 <View style={{borderColor: 'white', borderWidth: 1, borderRadius: 120, padding: 20}}>
                     <IconButton
                         icon={icon}
-                        size={180}
+                        size={size}
                         animated
                         onPress={onPress}
                     />
@@ -32,7 +33,8 @@ function NoDataPlaceholder({onPress, message, navigation, icon}: StackNavigation
  }
 
 NoDataPlaceholder.defaultProps = {
-    onPress: () => {}
+    onPress: () => {},
+    size: 180
 }
 
 export default NoDataPlaceholder;

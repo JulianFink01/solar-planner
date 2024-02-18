@@ -9,6 +9,7 @@ export default {
     more: 'Weiteres',
     vertical: 'Vertikal',
     horizontal: 'Horizontal',
+    savedChanges: 'Änderungen gespeichert',
     error: {
         required_fields: 'Bitte füllen sie alle Felder richtig aus!'
     },

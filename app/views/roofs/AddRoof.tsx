@@ -8,6 +8,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -23,7 +24,10 @@ import { PAGE_EVENTS } from '../../constants/PageEvent';
 import ErrorSnackbar from '../../componentes/ErrorSnackbar';
 import { Roof } from '../../models/Roof';
 import { UserMinimal } from '../../mapper/UserMinimal';
-import { RoofMinimal } from '../../mapper/RoofMinimal';
+import { ImageLibraryOptions, launchImageLibrary } from 'react-native-image-picker';
+import ImageSlider from '../../componentes/ImageSlider';
+import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
+import { RoofImage } from '../../models/RoofImage';
 
 
 function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
@@ -46,10 +50,12 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
   const [street, setStreet] = React.useState(getOrElse(roof?.street, ''));
   const [streetNumber, setStreetNumber] = React.useState(getOrElse(roof?.streetNumber, ''));
   const [city, setCity] = React.useState(getOrElse(roof?.city, ''));
-  const [notes, setNotes] = React.useState(getOrElse(roof?.notes, ''));
 
   const [appTitle, setAppTitle] = React.useState(t('roofs:add_roof'));
   const [editMode, setEditMode] = React.useState(false);
+
+
+  const [imageUrls, setImageUrls] = React.useState<string[]>(getOrElseArr(roof?.roofImages?.map(i => i.src), []));
 
   const [roofInitialState, setRoofInitialState] = React.useState<Roof>();
   const labelSize = 'labelMedium';
@@ -69,6 +75,14 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
       return otherwise;
   }
 
+  function getOrElseArr(value: any, otherwise: any){
+    if(value != null && value != otherwise){
+      return value;
+    }
+    return otherwise;
+}
+
+
   function reset(){
     
     if(editMode){
@@ -83,7 +97,6 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
       setStreet('');
       setStreetNumber('');
       setCity('');
-      setNotes('');
     }
   }
 
@@ -121,6 +134,17 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
     realm.write(() => {
     
       if(initialUser){
+
+        const roofImages = [];
+
+        for(let image of imageUrls){
+            const roofImage = realm.create(RoofImage, {
+              _id: new Realm.BSON.UUID(),
+              src: image
+            });
+            roofImages.push(roofImage);
+        }
+
         const roof = realm.create(Roof, {
           _id: new Realm.BSON.UUID(),
           width: parseFloat(width),
@@ -129,12 +153,12 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
           street: street,
           streetNumber: streetNumber,
           city: city,
-          notes: notes,
           innerMarginTop: 10,
           innerMarginRight: 10,
           innerMarginBottom: 10,
           innerMarginLeft: 10,
-          distanceBetweenPanelsCM: 10
+          distanceBetweenPanelsCM: 10,
+          roofImages: roofImages
         });
         initialUser.roofs.push(roof);
      }
@@ -149,19 +173,53 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
     const userMin = UserMinimal.map(initialUser);
 
     if(roof != null){
+
+       
+
+
         realm.write(() => {
+
+          const roofImages = [];
+
+          for(let image of imageUrls){
+              const roofImage = realm.create(RoofImage, {
+                _id: new Realm.BSON.UUID(),
+                src: image
+              });
+              roofImages.push(roofImage);
+          }
+
           roof.width = parseFloat(width);
           roof.height = parseFloat(height);
           roof.zipCode = zipCode;
           roof.street = street;
           roof.streetNumber = streetNumber;
           roof.city = city;
-          roof.notes = notes;
+          
+          realm.delete(roof.roofImages);
+          for(let roofImage of roofImages){
+            roof.roofImages.push(roofImage);
+          }
       });
     
       reset();
       navigation.navigate(ROUTES.ROOF.HOME, {prevEvent: PAGE_EVENTS.ROOF.EDIT_ROOF_SUCCESS, user: userMin});
     }
+  }
+
+  async function openImageLibrary(){
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      selectionLimit: 0
+    }
+    const result = await launchImageLibrary(options);
+    console.log(result);
+    if(!result.assets || result?.assets?.length < 1){
+      setImageUrls([...imageUrls]);
+    }else{
+      const uris: string[] = result.assets.filter(a => a?.uri != undefined).map(a => a.uri) as string[];
+      setImageUrls([...imageUrls, ...uris]);
+    }      
   }
 
   function FilterRow(){
@@ -194,7 +252,7 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
                       contentContainerStyle={styles.rowContainer}
                       bounces={false}
                     >
-                        <View style={{...styles.rowContainer, width: '55%'}}>
+                        <View style={{...styles.rowContainer, flex: 1}}>
                           <Text
                             style={styles.section}
                             variant={labelSize} 
@@ -249,35 +307,50 @@ function AddRoof({navigation, route}: StackScreenProps): React.JSX.Element {
                             />
                         </View>
                           
-                        <View style={{width: '45%', alignItems: 'flex-end'}}>
-                        <Text variant={labelSize} >
-                                {t('users:notes')}
-                              </Text>
+                        <View style={{paddingLeft: 15, alignItems: 'flex-end'}}>
+                        <Text variant={labelSize} >{t('roofs:images')}</Text>
                         
-                        <NativeTextInput
-                              style={styles.notesContainer}
-                              value={notes}
-                              multiline
-                              onChangeText={setNotes}
-                            />      
+                        <View style={styles.imageContainer}>
+
+                          {imageUrls.length === 0 && <View style={{width: 550, display: 'flex', justifyContent: 'center', alignContent:'center', flex: 1}}>
+                                  <NoDataPlaceholder icon={'image-plus'} size={100} onPress={openImageLibrary} />
+                              </View>}
+
+                           {imageUrls.length > 0 && <ImageSlider 
+                            width={550}
+                            images={imageUrls}
+                            removeImage={(url) => {setImageUrls(old => old.filter(o => o != url))}}
+                          />}
                         </View>
 
-                      <View style={styles.buttonContainer}>
-                        <Button icon="format-clear" 
+                        <Button icon="folder-multiple-image" 
                                 mode="contained"
-                                style={styles.button}
-                                buttonColor={ThemeDark.colors.error}
-                                onPress={reset}>
-                          {t('common:reset')}
-                        </Button>
+                                textColor='white'
+                                style={{...styles.button, alignSelf: 'flex-start',}}
+                                buttonColor={ThemeDark.colors.elevation.level5}
+                                onPress={openImageLibrary}>
+                                  {t('roofs:selectImages')}
+                            </Button>  
+                            
+                              <Button icon="format-clear" 
+                                  mode="contained"
+                                  style={styles.button}
+                                  buttonColor={ThemeDark.colors.error}
+                                  onPress={reset}>
+                            {t('common:reset')}
+                          </Button>
 
-                        <Button icon="account-sync" 
-                                mode="contained"
-                                style={styles.button}
-                                buttonColor={ThemeDark.colors.inverseSurface}
-                                onPress={submit}>
-                          {t('common:save')}
-                        </Button>
+                          <Button icon="account-sync" 
+                                  mode="contained"
+                                  style={styles.button}
+                                  buttonColor={ThemeDark.colors.inverseSurface}
+                                  onPress={submit}>
+                            {t('common:save')}
+                          </Button>
+                        </View>
+
+                        <View style={styles.buttonContainer}>
+                       
                       </View>
                     </ScrollView>
                     <ErrorSnackbar ref={errorSnackBar} />
@@ -295,7 +368,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: CONTAINER_PADDING,
-    width: '44%'
+    width: '100%'
   },
  inputContainer: {
   marginBottom: CONTAINER_PADDING*2,
@@ -309,15 +382,14 @@ const styles = StyleSheet.create({
   flexWrap: 'wrap', 
   justifyContent: 'space-between'
  },
- notesContainer: {
+ imageContainer: {
   flex: 1,
-  width: '98%',
-  backgroundColor: '#ffe57f',
+  height: 300,
+  backgroundColor: ThemeDark.colors.background,
   borderRadius: 8,
   borderWidth: 1,
   borderColor: 'black',
-  padding: CONTAINER_PADDING,
-  paddingTop: CONTAINER_PADDING
+  overflow: 'hidden'
  }
 });
 

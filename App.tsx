@@ -20,6 +20,9 @@ import StackNavigator from './app/componentes/navigtation/StackNavigator';
 import {RealmProvider, useRealm} from '@realm/react';
 import { User } from './app/models/User';
 import { Roof } from './app/models/Roof';
+import { RoofImage } from './app/models/RoofImage';
+import { RoofPoint } from './app/models/RoofPoint';
+import { SolarPanel } from './app/models/SolarPanel';
 
  export default function Main() {
 
@@ -33,7 +36,7 @@ import { Roof } from './app/models/Roof';
             newRealm.close();
 
             });
-        }} */ schema={[User, Roof]} schemaVersion={33} >
+        }} */ schema={[User, Roof, RoofImage, RoofPoint, SolarPanel]} schemaVersion={39} >
           <NavigationContainer>
             <StatusBar hidden={false}/>
             <StackNavigator></StackNavigator>

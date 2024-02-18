@@ -15,11 +15,9 @@ export default class SolarPanelHelper{
     }
 
 
-    static placePanelsAlignedLeft(imageSize: {width: number, height: number},roof: Roof, roofTopLeftPoint: PointInterface, position: POSITIONED, mode: 'horizontal' |  'vertical'): SolarPanelMinimal[]{
+    static placePanelsAlignedLeft(panelType: SolarPanelType, imageSize: {width: number, height: number},roof: Roof, roofTopLeftPoint: PointInterface, position: POSITIONED, mode: 'horizontal' |  'vertical'): SolarPanelMinimal[]{
       const oneZentimeterVertical = imageSize.height / roof.height / 100;
       const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
-
-      const panelType: SolarPanelType = {width: 100, height: 200};  
 
       function relationize(value: number, isX = true){
         if(isX){

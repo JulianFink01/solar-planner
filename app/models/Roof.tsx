@@ -17,8 +17,8 @@ export class Roof extends Realm.Object<Roof> {
     street!: string;
     streetNumber!: string;
     city!: string;
-    notes!: string;
     user!: Realm.List<User>;
+    roofImages!: Realm.List<RoofImage>;
     distanceBetweenPanelsCM!: number;
 
     static schema = {
@@ -37,6 +37,7 @@ export class Roof extends Realm.Object<Roof> {
           objectType: 'User',
           property: 'roofs',
         },
+        roofImages: 'RoofImage[]',
         city: {type: 'string', indexed: 'full-text'},
         zipCode: {type: 'string', indexed: 'full-text'},
         street: {type: 'string', indexed: 'full-text'},
