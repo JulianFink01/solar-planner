@@ -11,7 +11,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {  Appbar, Avatar, Button, Card, List, Text} from 'react-native-paper';
+import {  Appbar} from 'react-native-paper';
 import { GlobalStyles } from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -22,7 +22,7 @@ import { Roof } from '../../models/Roof';
 import { User } from '../../models/User';
 import { useObject } from '@realm/react';
 import EditorSettings from './EditorSettings';
-
+import Realm from 'realm';
 
 function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Element {
 
@@ -45,9 +45,6 @@ function Editor({navigation, changeTab, route}: StackScreenProps): React.JSX.Ele
   const viewPainter = React.useRef<any>(null);
   const information = React.useRef<any>(null);
   const editorSettings = React.useRef<any>(null);
-
- 
-
 
   React.useEffect(() => {
     if(displayInfo){
