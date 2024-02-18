@@ -1,5 +1,5 @@
 export default {
-    editor: 'Editor',
+    title: 'Editor',
     information: 'Information',
     panelDistance: 'Distance between Solar Panels (CM)',
     innerMargin: 'Roof inner Margin',
