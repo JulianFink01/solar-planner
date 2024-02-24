@@ -1,5 +1,4 @@
-
 export default {
-    HOME: 'users',
-    ADD_USER: 'add_user'   
-}
+  HOME: 'users',
+  ADD_USER: 'add_user',
+};

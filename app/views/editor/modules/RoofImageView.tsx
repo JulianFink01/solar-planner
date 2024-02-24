@@ -1,108 +1,105 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import Realm from 'realm';
 import {
   Dimensions,
   ImageBackground,
   ImageLoadEventData,
   NativeSyntheticEvent,
-  Platform,
-  ScrollView,
   StyleSheet,
-  View,
-  useWindowDimensions,
 } from 'react-native';
-import {  Appbar} from 'react-native-paper';
-import { GlobalStyles } from '../../../style/GlobalStyle';
-import AppBar from '../../../componentes/appBar/AppBar';
-import { StackScreenProps } from '@react-navigation/stack';
 import ViewPainter from './ViewPainter';
-import Information from '../Information';
-import { ThemeDark } from '../../../themes/ThemeDark';
-import { Roof } from '../../../models/Roof';
-import { User } from '../../../models/User';
-import { useObject } from '@realm/react';
-import EditorSettings from '../EditorSettings';
-import Realm from 'realm';
-import { RoofImage } from '../../../models/RoofImage';
+import {Roof} from '../../../models/Roof';
+import {User} from '../../../models/User';
+import {RoofImage} from '../../../models/RoofImage';
 
 type Props = {
-    roof: Roof,
-    roofImage: RoofImage,
-    user: User,
-    debugView: boolean,
-    lockMode: boolean,
-    displayGrid: boolean,
-}
+  roof: Roof;
+  roofImage: RoofImage;
+  user: User;
+  debugView: boolean;
+  lockMode: boolean;
+  displayGrid: boolean;
+};
 
-function RoofImageView({user, roof,  debugView, lockMode, displayGrid, roofImage}: Props, ref: React.Ref<any>): React.JSX.Element {
-
+function RoofImageView(
+  {user, roof, debugView, lockMode, displayGrid, roofImage}: Props,
+  ref: React.Ref<any>,
+): React.JSX.Element {
   const viewPainter = React.useRef<any>(null);
 
   const [imageSize, setImageSize] = React.useState<Dimension>();
 
- 
+  function onImageLoad(event: NativeSyntheticEvent<ImageLoadEventData>) {
+    const width = event?.nativeEvent?.source?.width;
+    const heigth = event?.nativeEvent?.source?.height;
 
-  function onImageLoad(event: NativeSyntheticEvent<ImageLoadEventData>){
+    const screenWidth = Dimensions.get('screen').width;
 
-      const width = event?.nativeEvent?.source?.width;
-      const heigth = event?.nativeEvent?.source?.height;
+    // calculate ratio betwen screen witdth and imageWidth
+    const ratio = screenWidth / width; // we know screen width is x bigger then width
 
-      const screenWidth = Dimensions.get('screen').width;
+    const imageWidth = screenWidth;
+    const imageHeight = heigth * ratio;
 
-      // calculate ratio betwen screen witdth and imageWidth
-      const ratio = screenWidth / width; // we know screen width is x bigger then width
-      
-      const imageWidth = screenWidth;
-      const imageHeight = heigth * ratio;
-
-      const dimensions: Dimension = {width: imageWidth , height: imageHeight};
-      setImageSize(dimensions);
+    const dimensions: Dimension = {width: imageWidth, height: imageHeight};
+    setImageSize(dimensions);
   }
 
   React.useImperativeHandle(ref, () => ({
-    regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string', save: boolean){
-      regenerateGrid(panelPlacement, placementHorizontal, placementVertical, save);
+    regenerateGrid(
+      panelPlacement: 'horizontal' | 'vertical',
+      placementHorizontal: string,
+      placementVertical: 'string',
+      save: boolean,
+    ) {
+      regenerateGrid(
+        panelPlacement,
+        placementHorizontal,
+        placementVertical,
+        save,
+      );
     },
-    save(){
-        viewPainter.current.save();
-    }
+    save() {
+      viewPainter.current.save();
+    },
   }));
 
-
-  function regenerateGrid(panelPlacement: 'horizontal' | 'vertical', placementHorizontal: string, placementVertical: 'string'){
-    viewPainter?.current?.regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
+  function regenerateGrid(
+    panelPlacement: 'horizontal' | 'vertical',
+    placementHorizontal: string,
+    placementVertical: 'string',
+  ) {
+    viewPainter?.current?.regenerateGrid(
+      panelPlacement,
+      placementHorizontal,
+      placementVertical,
+    );
   }
 
-  if(!user || !roof){
+  if (!user || !roof) {
     return <></>;
   }
 
-
   return (
-
-    <ImageBackground 
-              onLoad={onImageLoad}
-              resizeMode="contain"
-              style={{flex: 1, maxHeight: imageSize?.height}} 
-              source={{uri: roofImage.src}}>
-                {imageSize != null && <ViewPainter
-                                          key={'viewpainter'}
-                                          roofImage={roofImage}
-                                          ref={viewPainter}
-                                          debugView={debugView}
-                                          roof={roof}
-                                          lockMode={lockMode}
-                                          imageSize={imageSize}
-                                          displayGrid={displayGrid}
-                                        />}
-                      
-          </ImageBackground>
+    <ImageBackground
+      onLoad={onImageLoad}
+      resizeMode="contain"
+      style={{flex: 1, maxHeight: imageSize?.height}}
+      source={{uri: roofImage.src}}>
+      {imageSize != null && (
+        <ViewPainter
+          key={'viewpainter'}
+          roofImage={roofImage}
+          ref={viewPainter}
+          debugView={debugView}
+          roof={roof}
+          lockMode={lockMode}
+          imageSize={imageSize}
+          displayGrid={displayGrid}
+        />
+      )}
+    </ImageBackground>
   );
 }
 
-const styles = StyleSheet.create({
- 
-});
-
-
-export default  React.forwardRef(RoofImageView);
+export default React.forwardRef(RoofImageView);

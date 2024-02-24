@@ -1,4 +1,3 @@
-
 export default {
-    HOME: 'editor'
-}
+  HOME: 'editor',
+};

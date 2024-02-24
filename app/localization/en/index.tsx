@@ -6,10 +6,10 @@ import roofs from './roofs';
 import editor from './editor';
 
 export default {
-	common,
-	settings,
-	languages,
-	users,
-	roofs,
-	editor
+  common,
+  settings,
+  languages,
+  users,
+  roofs,
+  editor,
 };

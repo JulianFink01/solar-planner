@@ -1,30 +1,24 @@
-import { useObject } from '@realm/react';
 import Realm from 'realm';
-import { User } from './User';
-import { UserMinimal } from '../mapper/UserMinimal';
-import { Roof } from './Roof';
-import { RoofImage } from './RoofImage';
-
+import {RoofImage} from './RoofImage';
 
 export class RoofPoint extends Realm.Object<RoofPoint> {
-    
-    _id!: Realm.BSON.UUID;
-    x!: number;
-    y!: number;
-    roofImage!: Realm.List<RoofImage>;
+  _id!: Realm.BSON.UUID;
+  x!: number;
+  y!: number;
+  roofImage!: Realm.List<RoofImage>;
 
-    static schema = {
-      name: 'RoofPoint',
-      properties: {
-        _id: 'uuid',
-        x: 'float',
-        y: 'float',
-        roofImage: {
-          type: 'linkingObjects',
-          objectType: 'RoofImage',
-          property: 'roofPoints',
-        },
+  static schema = {
+    name: 'RoofPoint',
+    properties: {
+      _id: 'uuid',
+      x: 'float',
+      y: 'float',
+      roofImage: {
+        type: 'linkingObjects',
+        objectType: 'RoofImage',
+        property: 'roofPoints',
       },
-      primaryKey: '_id',
-    };
-  }
+    },
+    primaryKey: '_id',
+  };
+}
