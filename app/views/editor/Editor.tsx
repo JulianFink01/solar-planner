@@ -1,21 +1,10 @@
 import * as React from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  Dimensions,
-  ImageBackground,
-  ImageLoadEventData,
-  NativeSyntheticEvent,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Appbar, IconButton, Text} from 'react-native-paper';
 import {GlobalStyles} from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
 import {StackScreenProps} from '@react-navigation/stack';
-import ViewPainter from './modules/ViewPainter';
 import Information from './Information';
 import {ThemeDark} from '../../themes/ThemeDark';
 import {Roof} from '../../models/Roof';
