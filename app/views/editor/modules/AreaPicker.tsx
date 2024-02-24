@@ -99,6 +99,7 @@ function AreaPicker({imageSize, roof, debugView, roofImage, lockMode, displayGri
               {x: startX + width, y: startY + height, radius: POINT_RADIUS},  // rightBottom
               {x: startX, y: startY + height, radius: POINT_RADIUS}];
     }
+    
 
     function getInitialSolarPanels(panelPlacement: 'vertical' | 'horizontal' = 'vertical', roofStart:PointInterface = roofRect[0], isReset = false): SolarPanelMinimal[]{
 

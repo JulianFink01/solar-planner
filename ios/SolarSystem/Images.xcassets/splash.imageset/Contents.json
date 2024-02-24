@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "ezgif-7-580d6f3475.jpg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "ezgif-7-6b14bd1e35.jpg",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "ezgif-7-ed50122250.jpg",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
