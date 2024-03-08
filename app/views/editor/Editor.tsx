@@ -14,6 +14,7 @@ import EditorSettings from './EditorSettings';
 import Realm from 'realm';
 import RoofImageView from './modules/RoofImageView';
 import {RoofImage} from '../../models/RoofImage';
+import OpacitySlider from './OpacitySlider';
 
 function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const {t} = useTranslation();
@@ -27,16 +28,20 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const [lockMode, setLockMode] = React.useState<boolean>(false); // prevents anything from being modified
   const [displayEditorSettings, setDisplayEditorSettings] =
     React.useState<boolean>(false); // prevents anything from being modified
+  const [displayOpacitySlider, setDisplayOpacitySlider] =
+    React.useState<boolean>(false); // Opacity for Solar panels
   const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
   const [displayInfo, setDisplayInfo] = React.useState<boolean>(false); // If true displays a information modal for the roof
   const [debugView, setDebugView] = React.useState<boolean>(false); // If true displays the non transformed Matrix in color green
   const [selectedImage, setSelectedImage] = React.useState<RoofImage>(
     roof?.roofImages[0],
   );
+  const [opacity, setOpacity] = React.useState<number>(1);
 
   const roofImageView = React.useRef<any>(null);
   const information = React.useRef<any>(null);
   const editorSettings = React.useRef<any>(null);
+  const opacitySlider = React.useRef<any>(null);
 
   React.useEffect(() => {
     if (displayInfo) {
@@ -54,14 +59,28 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
     }
   }, [displayEditorSettings]);
 
+  React.useEffect(() => {
+    if (displayOpacitySlider) {
+      opacitySlider.current.open();
+    } else {
+      opacitySlider.current.close();
+    }
+  }, [displayOpacitySlider]);
+
   function save() {
     roofImageView.current.save();
   }
 
   function regenerateGrid(
     panelPlacement: 'horizontal' | 'vertical',
-    placementHorizontal: string,
-    placementVertical: 'string',
+    placementHorizontal:
+      | 'align-horizontal-left'
+      | 'align-horizontal-center'
+      | 'align-horizontal-right',
+    placementVertical:
+      | 'align-vertical-top'
+      | 'align-vertical-center'
+      | 'align-vertical-bottom',
     save: boolean,
   ) {
     roofImageView.current.regenerateGrid(
@@ -145,7 +164,11 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
         />
         <Appbar.Action
-          icon={displayEditorSettings ? 'tape-measure' : 'application-settings'}
+          icon={
+            displayEditorSettings
+              ? 'application-settings'
+              : 'application-settings'
+          }
           color={displayEditorSettings ? activeColor : inactiveColor}
           onPress={() => {
             setDisplayEditorSettings(!displayEditorSettings);
@@ -173,6 +196,13 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
         />
         <Appbar.Action
+          color={displayOpacitySlider ? activeColor : inactiveColor}
+          icon={'opacity'}
+          onPress={() => {
+            setDisplayOpacitySlider(!displayOpacitySlider);
+          }}
+        />
+        <Appbar.Action
           style={{backgroundColor: ThemeDark.colors.primary}}
           color={ThemeDark.colors.background}
           icon={'content-save'}
@@ -188,6 +218,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           position: 'relative',
         }}>
         <RoofImageView
+          opacity={opacity}
           key={selectedImage.src}
           ref={roofImageView}
           roof={roof}
@@ -206,6 +237,15 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           user={user}
           roof={roof}
           roofImage={selectedImage}
+        />
+        <OpacitySlider
+          onUpdate={(value: number) => {
+            setOpacity(value);
+          }}
+          onClose={() => {
+            setDisplayOpacitySlider(false);
+          }}
+          ref={opacitySlider}
         />
         <EditorSettings
           ref={editorSettings}

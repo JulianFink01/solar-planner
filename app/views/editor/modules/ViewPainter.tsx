@@ -23,11 +23,20 @@ interface Props {
   lockMode: boolean;
   debugView: boolean;
   displayGrid: boolean;
+  opacity: number;
   roof: Roof;
 }
 
 function ViewPainter(
-  {imageSize, lockMode, roofImage, displayGrid, roof, debugView}: Props,
+  {
+    imageSize,
+    lockMode,
+    roofImage,
+    displayGrid,
+    roof,
+    debugView,
+    opacity,
+  }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
   const realm = useRealm();
@@ -37,8 +46,14 @@ function ViewPainter(
   React.useImperativeHandle(ref, () => ({
     regenerateGrid(
       panelPlacement: 'horizontal' | 'vertical',
-      placementHorizontal: string,
-      placementVertical: 'string',
+      placementHorizontal:
+        | 'align-horizontal-left'
+        | 'align-horizontal-center'
+        | 'align-horizontal-right',
+      placementVertical:
+        | 'align-vertical-top'
+        | 'align-vertical-center'
+        | 'align-vertical-bottom',
       saveAfter: boolean,
     ) {
       const data: {
@@ -144,6 +159,7 @@ function ViewPainter(
             />
           </Group>
           <AreaPicker
+            opacity={opacity}
             roofImage={roofImage}
             onUpdate={points => {
               setAreaPickerPoints(points);

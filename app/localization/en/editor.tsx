@@ -13,4 +13,10 @@ export default {
   placementHorizontal: 'Horizontal placement',
   placementVertical: 'Vertical placement',
   totalPanels: 'There are a total of %s solar panels.',
+  opacity: 'Change transparency',
+  horizontalLeft: 'Left',
+  horizontalRight: 'Right',
+  verticalTop: 'Top',
+  center: 'Center',
+  verticalBottom: 'Bottom',
 };

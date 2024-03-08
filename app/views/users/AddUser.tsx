@@ -51,7 +51,7 @@ function AddUser({
   const [streetNumber, setStreetNumber] = React.useState(
     getOrElse(user?.streetNumber, ''),
   );
-  const [notes, setNotes] = React.useState(getOrElse(user?.firstName, ''));
+  const [notes, setNotes] = React.useState(getOrElse(user?.notes, ''));
 
   const [appTitle, setAppTitle] = React.useState(t('users:add_user'));
   const [editMode, setEditMode] = React.useState(false);

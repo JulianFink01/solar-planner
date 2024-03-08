@@ -135,7 +135,7 @@ function Roofs({navigation, route}: StackScreenProps<any>): React.JSX.Element {
     return user.roofs;
   }
 
-  function reduceArray(first: any, second: any) {
+  function reduceArray(first?: any, second?: any) {
     if (second != null) {
       return [...first, ...second];
     }
@@ -172,7 +172,7 @@ function Roofs({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const allRoofs = users
     .filter(filterUsers)
     .map(getAllUserRoofs)
-    .reduce(reduceArray);
+    .reduce(reduceArray, []);
   const usersFiltered = users
     .sorted('firstName', sortReverse)
     .filter(filterUsers);

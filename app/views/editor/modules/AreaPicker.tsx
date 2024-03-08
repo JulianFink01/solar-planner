@@ -22,6 +22,7 @@ type Props = {
   lockMode: boolean;
   displayGrid: boolean;
   onUpdate: (points: PointInterface[]) => any;
+  opacity: number;
 };
 
 type PointProps = {
@@ -37,6 +38,7 @@ function AreaPicker(
     lockMode,
     displayGrid,
     onUpdate,
+    opacity,
   }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
@@ -95,12 +97,24 @@ function AreaPicker(
     },
     regenerateGrid(
       panelPlacement: 'horizontal' | 'vertical',
-      placementHorizontal: string,
-      placementVertical: 'string',
+      placementHorizontal:
+        | 'align-horizontal-left'
+        | 'align-horizontal-center'
+        | 'align-horizontal-right',
+      placementVertical:
+        | 'align-vertical-top'
+        | 'align-vertical-center'
+        | 'align-vertical-bottom',
     ) {
       const roofRect = getInnerMarginArea();
       setRoofRect(roofRect);
-      const panels = getInitialSolarPanels(panelPlacement, roofRect[0], true);
+      const panels = getInitialSolarPanels(
+        panelPlacement,
+        placementHorizontal,
+        placementVertical,
+        roofRect[0],
+        true,
+      );
       setSolarPanels(panels);
       return {roofPoints: roofRect, solarPanels: panels};
     },
@@ -128,6 +142,14 @@ function AreaPicker(
 
   function getInitialSolarPanels(
     panelPlacement: 'vertical' | 'horizontal' = 'vertical',
+    placementHorizontal:
+      | 'align-horizontal-left'
+      | 'align-horizontal-center'
+      | 'align-horizontal-right',
+    placementVertical:
+      | 'align-vertical-top'
+      | 'align-vertical-center'
+      | 'align-vertical-bottom',
     roofStart: PointInterface = roofRect[0],
     isReset = false,
   ): SolarPanelMinimal[] {
@@ -140,12 +162,13 @@ function AreaPicker(
       );
     }
 
-    return SolarPanelHelper.placePanelsAlignedLeft(
+    return SolarPanelHelper.placePanelsAligned(
       panelType,
       imageSize,
       roof,
       roofStart,
-      POSITIONED.LEFT,
+      placementHorizontal,
+      placementVertical,
       panelPlacement,
     );
   }
@@ -205,7 +228,7 @@ function AreaPicker(
         <TransformedPath
           strokeWidth={2}
           color="orange"
-          debugView={debugView}
+          debugView={false}
           allScreen={allScreen}
           roofPoints={roofPoints}
           points={roofRect}
@@ -214,6 +237,7 @@ function AreaPicker(
 
       {solarPanels.map((sp, index) => (
         <SolarPanel
+          opacity={opacity}
           key={'pane-' + index}
           displayGrid={displayGrid}
           roof={roof}

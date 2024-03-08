@@ -14,7 +14,6 @@ interface Props {
 
 function RoofViewContent({roof, roofImage, user}: Props): React.JSX.Element {
   const {t} = useTranslation();
-
   return (
     <View>
       <View style={{flexDirection: 'row'}}>
@@ -43,6 +42,14 @@ function RoofViewContent({roof, roofImage, user}: Props): React.JSX.Element {
               '%s',
               (roofImage?.solarPanels?.length ?? 0) + '',
             )}
+          </Text>
+        </View>
+      )}
+      {roofImage && (
+        <View style={{flexDirection: 'row'}}>
+          <Icon size={18} source={'face-man'} />
+          <Text style={{marginLeft: 5}} variant="bodyMedium">
+            SolarPanel: 1M x 2M
           </Text>
         </View>
       )}

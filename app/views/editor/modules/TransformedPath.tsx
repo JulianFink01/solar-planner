@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {Path} from '@shopify/react-native-skia';
+import {
+  Canvas,
+  LinearGradient,
+  Path,
+  Rect,
+  vec,
+} from '@shopify/react-native-skia';
 import {pointsToSvg, transforMatrix} from '../../../utils/PerspectiveHelper';
 
 interface Props {
@@ -10,6 +16,8 @@ interface Props {
   color: string;
   strokeWidth: number;
   pathStyle: 'stroke' | 'fill';
+  useGradient: boolean;
+  opacity: number;
 }
 function TransformedPath({
   allScreen,
@@ -17,7 +25,9 @@ function TransformedPath({
   strokeWidth,
   points,
   debugView,
+  useGradient,
   roofPoints,
+  opacity,
   color,
 }: Props) {
   const transformedPoints: PointInterface[] = transforMatrix(
@@ -30,16 +40,16 @@ function TransformedPath({
     <>
       <Path
         path={pointsToSvg(transformedPoints)}
-        opacity={1}
+        opacity={opacity}
         style={pathStyle}
         strokeJoin="round"
         color={color}
-        strokeWidth={strokeWidth}
-      />
+        strokeWidth={strokeWidth}></Path>
+
       {debugView && (
         <Path
           path={pointsToSvg(points)}
-          opacity={1}
+          opacity={opacity}
           style="stroke"
           strokeJoin="round"
           color={'green'}
@@ -54,6 +64,8 @@ TransformedPath.defaultProps = {
   color: 'white',
   strokeWidth: 3,
   pathStyle: 'stroke',
+  useGradient: false,
+  opacity: 1,
 };
 
 export default TransformedPath;

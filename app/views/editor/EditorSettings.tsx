@@ -63,17 +63,17 @@ function EditorSettings(
   const horizontalPlacements = [
     {
       icon: 'align-horizontal-left',
-      title: t('common:horizontal'),
+      title: t('editor:horizontalLeft'),
       value: 'align-horizontal-left',
     },
     {
       icon: 'align-horizontal-center',
-      title: t('common:vertical'),
+      title: t('editor:center'),
       value: 'align-horizontal-center',
     },
     {
       icon: 'align-horizontal-right',
-      title: t('common:vertical'),
+      title: t('editor:horizontalRight'),
       value: 'align-horizontal-right',
     },
   ];
@@ -81,18 +81,18 @@ function EditorSettings(
   const verticalPlacements = [
     {
       icon: 'align-vertical-top',
-      title: t('common:horizontal'),
-      value: 'align-horizontal-left',
+      title: t('editor:verticalTop'),
+      value: 'align-vertical-top',
     },
     {
       icon: 'align-vertical-center',
-      title: t('common:vertical'),
-      value: 'align-horizontal-center',
+      title: t('editor:center'),
+      value: 'align-vertical-center',
     },
     {
       icon: 'align-vertical-bottom',
-      title: t('common:vertical'),
-      value: 'align-horizontal-right',
+      title: t('editor:verticalBottom'),
+      value: 'align-vertical-bottom',
     },
   ];
 
@@ -278,7 +278,12 @@ function EditorSettings(
                 items={placementValues}
                 initialValue={placementValues[0].value}
               />
-
+              <Text variant="labelSmall">{t('editor:placementVertical')}</Text>
+              <ChipPicker
+                ref={verticalPlacement}
+                items={verticalPlacements}
+                initialValue={verticalPlacements[0].value}
+              />
               <Text variant="labelSmall">
                 {t('editor:placementHorizontal')}
               </Text>
@@ -286,12 +291,6 @@ function EditorSettings(
                 ref={horizontalPlacement}
                 items={horizontalPlacements}
                 initialValue={horizontalPlacements[0].value}
-              />
-              <Text variant="labelSmall">{t('editor:placementVertical')}</Text>
-              <ChipPicker
-                ref={verticalPlacement}
-                items={verticalPlacements}
-                initialValue={verticalPlacements[0].value}
               />
             </View>
           </ScrollView>

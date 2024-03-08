@@ -19,10 +19,11 @@ type Props = {
   debugView: boolean;
   lockMode: boolean;
   displayGrid: boolean;
+  opacity: number;
 };
 
 function RoofImageView(
-  {user, roof, debugView, lockMode, displayGrid, roofImage}: Props,
+  {user, roof, debugView, lockMode, displayGrid, roofImage, opacity}: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
   const viewPainter = React.useRef<any>(null);
@@ -48,16 +49,17 @@ function RoofImageView(
   React.useImperativeHandle(ref, () => ({
     regenerateGrid(
       panelPlacement: 'horizontal' | 'vertical',
-      placementHorizontal: string,
-      placementVertical: 'string',
+      placementHorizontal:
+        | 'align-horizontal-left'
+        | 'align-horizontal-center'
+        | 'align-horizontal-right',
+      placementVertical:
+        | 'align-vertical-top'
+        | 'align-vertical-center'
+        | 'align-vertical-bottom',
       save: boolean,
     ) {
-      regenerateGrid(
-        panelPlacement,
-        placementHorizontal,
-        placementVertical,
-        save,
-      );
+      regenerateGrid(panelPlacement, placementHorizontal, placementVertical);
     },
     save() {
       viewPainter.current.save();
@@ -66,8 +68,14 @@ function RoofImageView(
 
   function regenerateGrid(
     panelPlacement: 'horizontal' | 'vertical',
-    placementHorizontal: string,
-    placementVertical: 'string',
+    placementHorizontal:
+      | 'align-horizontal-left'
+      | 'align-horizontal-center'
+      | 'align-horizontal-right',
+    placementVertical:
+      | 'align-vertical-top'
+      | 'align-vertical-center'
+      | 'align-vertical-bottom',
   ) {
     viewPainter?.current?.regenerateGrid(
       panelPlacement,
@@ -88,6 +96,7 @@ function RoofImageView(
       source={{uri: roofImage.src}}>
       {imageSize != null && (
         <ViewPainter
+          opacity={opacity}
           key={'viewpainter'}
           roofImage={roofImage}
           ref={viewPainter}

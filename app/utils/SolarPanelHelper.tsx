@@ -14,24 +14,40 @@ export default class SolarPanelHelper {
     distanceBetweenPanelsCMY: number,
     panelWidth: number,
     panelHeight: number,
-  ): {x: number; y: number} {
+  ): {x: number; y: number; diffX: number; diffY: number} {
     const maxX = (width - panelWidth) / (panelWidth + distanceBetweenPanelsCMX);
     const maxY =
       (height - panelHeight) / (panelHeight + distanceBetweenPanelsCMY);
-    return {x: Math.floor(maxX) + 1, y: Math.floor(maxY) + 1};
+
+    const x = Math.floor(maxX);
+    const y = Math.floor(maxY);
+
+    const diffX =
+      width - x * (panelWidth + distanceBetweenPanelsCMX) - panelWidth;
+    const diffY =
+      height - y * (panelHeight + distanceBetweenPanelsCMY) - panelHeight;
+
+    return {x: x + 1, y: y + 1, diffX, diffY};
   }
 
-  static placePanelsAlignedLeft(
+  static placePanelsAligned(
     panelType: SolarPanelType,
     imageSize: {width: number; height: number},
     roof: Roof,
     roofTopLeftPoint: PointInterface,
-    position: POSITIONED,
+    placementHorizontal:
+      | 'align-horizontal-left'
+      | 'align-horizontal-center'
+      | 'align-horizontal-right',
+    placementVertical:
+      | 'align-vertical-top'
+      | 'align-vertical-center'
+      | 'align-vertical-bottom',
     mode: 'horizontal' | 'vertical',
   ): SolarPanelMinimal[] {
     const oneZentimeterVertical = imageSize.height / roof.height / 100;
     const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
-
+    console.log(placementVertical);
     function relationize(value: number, isX = true) {
       if (isX) {
         return value * oneZentimeterHorizontal;
@@ -64,23 +80,44 @@ export default class SolarPanelHelper {
     );
     const result: SolarPanelMinimal[] = [];
 
-    if (position === POSITIONED.LEFT) {
-      for (let x = 0; x < maxPanels.x; x++) {
-        for (let y = 0; y < maxPanels.y; y++) {
-          const startX =
-            roofTopLeftPoint.x -
-            relationize(roof.distanceBetweenPanelsCM / 2) +
-            x * (panelWidth + relationize(roof.distanceBetweenPanelsCM));
-          const startY =
-            roofTopLeftPoint.y -
-            relationize(roof.distanceBetweenPanelsCM / 2, false) +
-            y *
-              (panelHeight + relationize(roof.distanceBetweenPanelsCM, false));
+    for (let x = 0; x < maxPanels.x; x++) {
+      for (let y = 0; y < maxPanels.y; y++) {
+        let startY, startX;
 
-          result.push(new SolarPanelMinimal(panelType, startX, startY, mode));
+        const innerMarginHalthX = relationize(roof.distanceBetweenPanelsCM / 2);
+        const innerMarginX =
+          panelWidth + relationize(roof.distanceBetweenPanelsCM);
+        startX = roofTopLeftPoint.x - innerMarginHalthX + x * innerMarginX;
+
+        if (placementHorizontal === 'align-horizontal-center') {
+          startX += maxPanels.diffX / 2;
         }
+
+        if (placementHorizontal === 'align-horizontal-right') {
+          startX += maxPanels.diffX;
+        }
+
+        const innerMarginHalthY = relationize(
+          roof.distanceBetweenPanelsCM / 2,
+          false,
+        );
+        const innerMarginY =
+          panelHeight + relationize(roof.distanceBetweenPanelsCM, false);
+
+        startY = roofTopLeftPoint.y - innerMarginHalthY + y * innerMarginY;
+
+        if (placementVertical === 'align-vertical-center') {
+          startY += maxPanels.diffY / 2;
+        }
+
+        if (placementVertical === 'align-vertical-bottom') {
+          startY += maxPanels.diffY;
+        }
+
+        result.push(new SolarPanelMinimal(panelType, startX, startY, mode));
       }
     }
+
     return result;
   }
 }

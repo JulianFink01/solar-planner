@@ -13,4 +13,10 @@ export default {
   placementHorizontal: 'Horizontale Ausrichtung',
   placementVertical: 'Vertikale Ausrichtung',
   totalPanels: 'Es sind ingessamt %s Solar Panels platiert',
+  opacity: 'Transaparenz Einstellen',
+  horizontalLeft: 'Links',
+  horizontalRight: 'Rechts',
+  verticalTop: 'Oben',
+  center: 'Mittig',
+  verticalBottom: 'Unten',
 };
