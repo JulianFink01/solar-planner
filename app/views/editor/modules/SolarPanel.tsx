@@ -6,10 +6,11 @@ import {
   useImage,
   vec,
 } from '@shopify/react-native-skia';
-import {pointsToSvg} from '../../../utils/PerspectiveHelper';
+import {pointsToSvg, transforMatrix} from '../../../utils/PerspectiveHelper';
 import {Roof} from '../../../models/Roof';
 import {SolarPanelMinimal} from '../../../mapper/SolarPanelMinimal';
 import TransformedPath from './TransformedPath';
+import {ThemeDark} from '../../../themes/ThemeDark';
 
 type Line = PointInterface[];
 const SOLAR_GRID_ROWS = 4;
@@ -24,19 +25,32 @@ interface Props {
   imageSize: {width: number; height: number};
   roof: Roof;
   opacity: number;
+  lockMode: boolean;
 }
-function SolarPanel({
-  imageSize,
-  roof,
-  allScreen,
-  solarPanel,
-  displayGrid,
-  debugView,
-  roofPoints,
-  opacity,
-}: Props) {
+function SolarPanel(
+  {
+    imageSize,
+    lockMode,
+    roof,
+    allScreen,
+    solarPanel,
+    displayGrid,
+    debugView,
+    roofPoints,
+    opacity,
+  }: Props,
+  ref: any,
+) {
   const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
   const oneZentimeterVertical = imageSize.height / roof.height / 100;
+
+  const [active, setActive] = React.useState(false);
+
+  React.useEffect(() => {
+    if (lockMode) {
+      setActive(false);
+    }
+  }, [lockMode]);
 
   const coordinates = solarPanel.getCoordinates(
     roof.distanceBetweenPanelsCM,
@@ -49,56 +63,56 @@ function SolarPanel({
     oneZentimeterVertical,
   );
 
-  const panelGrid = generateGridPoints(
-    coordinates[3],
-    coordinates[2],
-    coordinates[0],
-    coordinates[1],
-    SOLAR_GRID_ROWS,
-    SOLAR_GRID_COLS,
-  );
+  React.useImperativeHandle(ref, () => ({
+    checkForAction(x: number, y: number) {
+      if (lockMode) {
+        setActive(false);
+        return;
+      }
+      const colides = checkIfColides(x, y);
+      setActive(colides);
+    },
+  }));
 
-  function generateGridPoints(
-    bottomLeft: PointInterface,
-    bottomRight: PointInterface,
-    topRight: PointInterface,
-    topLeft: PointInterface,
-    rows: number,
-    cols: number,
-  ): Line[] {
-    const lines: Line[] = [];
+  function checkIfColides(x: number, y: number) {
+    const transformedPoints: PointInterface[] = transforMatrix(
+      allScreen,
+      coordinates,
+      roofPoints,
+    );
 
-    // Schrittgrößen berechnen
-    const horizontalStep = (topRight.x - topLeft.x) / cols;
-    const verticalStep = (bottomLeft.y - topLeft.y) / rows;
+    let inside = false;
+    const n = transformedPoints.length;
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+      const xi = transformedPoints[i].x,
+        yi = transformedPoints[i].y;
+      const xj = transformedPoints[j].x,
+        yj = transformedPoints[j].y;
 
-    // Horizontale Linien generieren
-    for (let i = 1; i <= rows - 1; i++) {
-      const y = topLeft.y + i * verticalStep;
-      const lineStart: PointInterface = {x: topLeft.x, y: y};
-      const lineEnd: PointInterface = {x: topRight.x, y: y};
-      const line: Line = [lineStart, lineEnd];
-      lines.push(line);
+      const intersect =
+        yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
     }
-
-    // Vertikale Linien generieren
-    for (let j = 1; j <= cols - 1; j++) {
-      const x = topLeft.x + j * horizontalStep;
-      const lineStart: PointInterface = {x: x, y: topLeft.y};
-      const lineEnd: PointInterface = {x: x, y: bottomLeft.y};
-      const line: Line = [lineStart, lineEnd];
-      lines.push(line);
-    }
-
-    return lines;
+    return inside;
   }
+
+  function getInnerStroke() {
+    const strokeWidth = 3;
+    return [
+      {x: coordinates[0].x + strokeWidth, y: coordinates[0].y + strokeWidth},
+      {x: coordinates[1].x - strokeWidth, y: coordinates[1].y + strokeWidth},
+      {x: coordinates[2].x - strokeWidth, y: coordinates[2].y - strokeWidth},
+      {x: coordinates[3].x + strokeWidth, y: coordinates[3].y - strokeWidth},
+    ];
+  }
+
   return (
     <>
       <TransformedPath
         pathStyle="fill"
         strokeWidth={3}
         opacity={opacity}
-        color="#4169E1"
+        color={ThemeDark.colors.background}
         useGradient
         debugView={false}
         allScreen={allScreen}
@@ -106,19 +120,19 @@ function SolarPanel({
         points={coordinates}
       />
 
-      {panelGrid.map((line, index) => (
-        <TransformedPath
-          key={'line' + index}
-          pathStyle="stroke"
-          strokeWidth={2}
-          opacity={opacity}
-          color="white"
-          debugView={false}
-          allScreen={allScreen}
-          roofPoints={roofPoints}
-          points={[...line, ...line]}
-        />
-      ))}
+      <TransformedPath
+        pathStyle="stroke"
+        strokeWidth={3}
+        opacity={opacity}
+        color={
+          active ? ThemeDark.colors.secondary : ThemeDark.colors.background
+        }
+        useGradient
+        debugView={false}
+        allScreen={allScreen}
+        roofPoints={roofPoints}
+        points={getInnerStroke()}
+      />
 
       {displayGrid && debugView && (
         <TransformedPath
@@ -133,4 +147,4 @@ function SolarPanel({
     </>
   );
 }
-export default SolarPanel;
+export default React.forwardRef(SolarPanel);

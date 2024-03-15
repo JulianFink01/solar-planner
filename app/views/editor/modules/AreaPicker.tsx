@@ -47,6 +47,8 @@ function AreaPicker(
   const pointRightTop = React.useRef<any>(null);
   const pointRightBottom = React.useRef<any>(null);
 
+  const solarPanelsRefs = React.useRef<any>([]);
+
   const width2 = imageSize.width;
   const height2 = imageSize.height;
   // Wir plazieren alles in einem Rechteck die Transformation übernimmt den Rest
@@ -91,6 +93,7 @@ function AreaPicker(
   React.useImperativeHandle(ref, () => ({
     onGestureStart(x: number, y: number) {
       checkForCollsion(x, y, 50);
+      moveSolarPanels(x, y);
     },
     onGestureEnd() {
       updatePoints();
@@ -122,6 +125,12 @@ function AreaPicker(
       return {roofPoints: roofPoints, solarPanels: solarPanels};
     },
   }));
+
+  function moveSolarPanels(x: number, y: number) {
+    for (let panel of solarPanelsRefs.current) {
+      panel.checkForAction(x, y);
+    }
+  }
 
   function getInititalRoofPoints() {
     if (roofImage.roofPoints?.length > 0) {
@@ -237,6 +246,8 @@ function AreaPicker(
 
       {solarPanels.map((sp, index) => (
         <SolarPanel
+          lockMode={lockMode}
+          ref={(el: any) => (solarPanelsRefs.current[index] = el)}
           opacity={opacity}
           key={'pane-' + index}
           displayGrid={displayGrid}

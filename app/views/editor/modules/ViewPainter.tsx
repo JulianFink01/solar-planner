@@ -16,6 +16,7 @@ import SuccessSnackbar from '../../../componentes/SuccessSnackbar';
 import {useTranslation} from 'react-i18next';
 import Realm from 'realm';
 import {CONTAINER_PADDING} from '../../../constants/GlobalConstants';
+import {TapGesture} from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
 
 interface Props {
   imageSize: Dimension;
@@ -132,13 +133,19 @@ function ViewPainter(
     areaPicker.current.onGestureEnd();
   }
 
-  const gesture = Gesture.Pan()
+  const panGesture = Gesture.Pan()
     .onChange(e => {
       runOnJS(handlePan)(e);
     })
     .onEnd(() => {
       runOnJS(onGestureEnd)();
     });
+
+  const tabGesture = Gesture.Tap().onStart(e => {
+    runOnJS(handlePan)(e);
+  });
+
+  const gesture = Gesture.Race(panGesture, tabGesture);
 
   const shape = Skia.Path.MakeFromSVGString(pointsToSvg(areaPickerPoints))!;
 

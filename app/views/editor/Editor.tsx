@@ -164,6 +164,13 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
         />
         <Appbar.Action
+          icon={displayInfo ? 'information-off' : 'information'}
+          color={displayInfo ? activeColor : inactiveColor}
+          onPress={() => {
+            setDisplayInfo(!displayInfo);
+          }}
+        />
+        <Appbar.Action
           icon={
             displayEditorSettings
               ? 'application-settings'
@@ -174,13 +181,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
             setDisplayEditorSettings(!displayEditorSettings);
           }}
         />
-        <Appbar.Action
-          icon={displayInfo ? 'information-off' : 'information'}
-          color={displayInfo ? activeColor : inactiveColor}
-          onPress={() => {
-            setDisplayInfo(!displayInfo);
-          }}
-        />
+
         <Appbar.Action
           icon={!lockMode ? 'lock' : 'lock-open'}
           color={lockMode ? activeColor : inactiveColor}
