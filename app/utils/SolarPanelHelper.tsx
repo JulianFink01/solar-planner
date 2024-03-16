@@ -14,10 +14,14 @@ export default class SolarPanelHelper {
     distanceBetweenPanelsCMY: number,
     panelWidth: number,
     panelHeight: number,
+    onlyOne = false,
   ): {x: number; y: number; diffX: number; diffY: number} {
-    const maxX = (width - panelWidth) / (panelWidth + distanceBetweenPanelsCMX);
-    const maxY =
-      (height - panelHeight) / (panelHeight + distanceBetweenPanelsCMY);
+    const maxX = onlyOne
+      ? 0
+      : (width - panelWidth) / (panelWidth + distanceBetweenPanelsCMX);
+    const maxY = onlyOne
+      ? 0
+      : (height - panelHeight) / (panelHeight + distanceBetweenPanelsCMY);
 
     const x = Math.floor(maxX);
     const y = Math.floor(maxY);
@@ -44,10 +48,10 @@ export default class SolarPanelHelper {
       | 'align-vertical-center'
       | 'align-vertical-bottom',
     mode: 'horizontal' | 'vertical',
+    onlyOne = false,
   ): SolarPanelMinimal[] {
     const oneZentimeterVertical = imageSize.height / roof.height / 100;
     const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
-    console.log(placementVertical);
     function relationize(value: number, isX = true) {
       if (isX) {
         return value * oneZentimeterHorizontal;
@@ -77,6 +81,7 @@ export default class SolarPanelHelper {
       relationize(roof.distanceBetweenPanelsCM, false),
       panelWidth,
       panelHeight,
+      onlyOne,
     );
     const result: SolarPanelMinimal[] = [];
 

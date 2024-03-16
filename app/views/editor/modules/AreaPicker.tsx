@@ -22,6 +22,7 @@ type Props = {
   lockMode: boolean;
   displayGrid: boolean;
   onUpdate: (points: PointInterface[]) => any;
+  hasActivePanel: (val: boolean) => any;
   opacity: number;
 };
 
@@ -39,6 +40,7 @@ function AreaPicker(
     displayGrid,
     onUpdate,
     opacity,
+    hasActivePanel,
   }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
@@ -82,7 +84,6 @@ function AreaPicker(
   const [solarPanels, setSolarPanels] = React.useState<SolarPanelMinimal[]>(
     getInitialSolarPanels(),
   );
-
   React.useEffect(() => {
     setRoofRect(getInnerMarginArea());
   }, [roof]);
@@ -126,14 +127,61 @@ function AreaPicker(
     getState() {
       return {
         roofPoints: roofPoints,
-        solarPanels: solarPanelsRefs.current.map(panel => panel.getState()),
+        solarPanels: solarPanelsRefs.current
+          .filter((sp: SolarPanelMinimal) => sp != null)
+          .map((panel: any) => panel.getState()),
       };
+    },
+    deleteActivePanel() {
+      let index = -1;
+      for (let i = 0; i < solarPanelsRefs.current.length; i++) {
+        if (
+          solarPanelsRefs.current[i] != null &&
+          solarPanelsRefs.current[i].isActive()
+        ) {
+          index = i;
+          break;
+        }
+      }
+      const newSolarPanels = solarPanels.filter(
+        (item: SolarPanelMinimal, indx: number) => indx != index,
+      );
+
+      setSolarPanels(newSolarPanels);
+    },
+    addNewPanel() {
+      const panelType: SolarPanelType = {width: 100, height: 200};
+
+      const panel = SolarPanelHelper.placePanelsAligned(
+        panelType,
+        imageSize,
+        roof,
+        roofRect[0],
+        'align-horizontal-center',
+        'align-vertical-center',
+        'vertical',
+        true,
+      )[0];
+      panel.active = true;
+      const maxIndex = solarPanelsRefs.current.length;
+      for (let i = 0; i < maxIndex; i++) {
+        let panel = solarPanelsRefs.current[i];
+        if (panel != null) {
+          panel.setIsActive(false);
+          panel.setDraging(false);
+        }
+      }
+      setSolarPanels((oldState: SolarPanelMinimal[]) => {
+        return [...oldState, panel];
+      });
     },
   }));
 
   function moveSolarPanels(x: number, y: number, e: any) {
     const arr: boolean[] = [];
-    let newPanels = [...solarPanelsRefs.current].reverse();
+    let newPanels = [...solarPanelsRefs.current]
+      .filter(sp => sp != null)
+      .reverse();
     setIsDraging(newPanels.filter(p => p.isDraging()).length > 0);
 
     const filteredPanels = newPanels.filter(p => p.isActive());
@@ -156,12 +204,16 @@ function AreaPicker(
         panel.movePanel(x, y, e);
       }
     }
+
+    hasActivePanel(hasFoundActive);
   }
 
   function finishDrag() {
     for (let panel of solarPanelsRefs.current) {
-      panel.onDragEnd();
-      setIsDraging(false);
+      if (panel != null) {
+        panel.onDragEnd();
+        setIsDraging(false);
+      }
     }
   }
 

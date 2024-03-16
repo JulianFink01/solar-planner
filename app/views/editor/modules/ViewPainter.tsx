@@ -27,6 +27,7 @@ interface Props {
   displayGrid: boolean;
   opacity: number;
   roof: Roof;
+  hasActivePanel: (val: boolean) => any;
 }
 
 function ViewPainter(
@@ -38,6 +39,7 @@ function ViewPainter(
     roof,
     debugView,
     opacity,
+    hasActivePanel,
   }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
@@ -76,6 +78,12 @@ function ViewPainter(
         solarPanels: SolarPanelMinimal[];
       } = areaPicker.current.getState();
       save(data);
+    },
+    deleteActivePanel() {
+      areaPicker.current.deleteActivePanel();
+    },
+    addNewPanel() {
+      areaPicker.current.addNewPanel();
     },
   }));
 
@@ -167,6 +175,7 @@ function ViewPainter(
             />
           </Group>
           <AreaPicker
+            hasActivePanel={hasActivePanel}
             opacity={opacity}
             roofImage={roofImage}
             onUpdate={points => {

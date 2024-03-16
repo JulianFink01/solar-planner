@@ -45,7 +45,7 @@ function SolarPanel(
   const oneZentimeterHorizontal = imageSize.width / roof.width / 100;
   const oneZentimeterVertical = imageSize.height / roof.height / 100;
 
-  const [active, setActive] = React.useState(false);
+  const [active, setActive] = React.useState(solarPanel.active);
   const [isDraging, setIsDraging] = React.useState(false);
 
   const [solarPanelState, setSolarPanelState] = React.useState(
@@ -216,7 +216,7 @@ function SolarPanel(
   }
 
   function getOuterContainer() {
-    const margin = 300;
+    const margin = 500;
     return [
       {x: coordinates[0].x - margin, y: coordinates[0].y - margin},
       {x: coordinates[1].x + margin, y: coordinates[1].y - margin},

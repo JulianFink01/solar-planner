@@ -20,10 +20,20 @@ type Props = {
   lockMode: boolean;
   displayGrid: boolean;
   opacity: number;
+  hasActivePanel: (val: boolean) => any;
 };
 
 function RoofImageView(
-  {user, roof, debugView, lockMode, displayGrid, roofImage, opacity}: Props,
+  {
+    user,
+    roof,
+    debugView,
+    lockMode,
+    displayGrid,
+    roofImage,
+    opacity,
+    hasActivePanel,
+  }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
   const viewPainter = React.useRef<any>(null);
@@ -64,6 +74,12 @@ function RoofImageView(
     save() {
       viewPainter.current.save();
     },
+    addNewPanel() {
+      viewPainter.current.addNewPanel();
+    },
+    deleteActivePanel() {
+      viewPainter.current.deleteActivePanel();
+    },
   }));
 
   function regenerateGrid(
@@ -96,6 +112,7 @@ function RoofImageView(
       source={{uri: roofImage.src}}>
       {imageSize != null && (
         <ViewPainter
+          hasActivePanel={hasActivePanel}
           opacity={opacity}
           key={'viewpainter'}
           roofImage={roofImage}

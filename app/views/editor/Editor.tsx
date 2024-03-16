@@ -37,6 +37,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
     roof?.roofImages[0],
   );
   const [opacity, setOpacity] = React.useState<number>(1);
+  const [hasActivePanel, setHasActivePanel] = React.useState(false);
 
   const roofImageView = React.useRef<any>(null);
   const information = React.useRef<any>(null);
@@ -156,6 +157,22 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
             }}
           />
         }>
+        {hasActivePanel && (
+          <Appbar.Action
+            color={ThemeDark.colors.error}
+            icon={'delete'}
+            onPress={() => {
+              roofImageView.current.deleteActivePanel();
+            }}
+          />
+        )}
+        <Appbar.Action
+          color={inactiveColor}
+          icon={'plus'}
+          onPress={() => {
+            roofImageView.current.addNewPanel();
+          }}
+        />
         <Appbar.Action
           icon={debugView ? 'eye-outline' : 'eye'}
           color={debugView ? activeColor : inactiveColor}
@@ -219,6 +236,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           position: 'relative',
         }}>
         <RoofImageView
+          hasActivePanel={setHasActivePanel}
           opacity={opacity}
           key={selectedImage.src}
           ref={roofImageView}

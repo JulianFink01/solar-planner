@@ -7,6 +7,7 @@ export class SolarPanelMinimal {
   startX: number;
   startY: number;
   placement: 'vertical' | 'horizontal';
+  active: boolean;
 
   public copy() {
     return new SolarPanelMinimal(
@@ -15,6 +16,7 @@ export class SolarPanelMinimal {
       this.startY,
       this.placement,
       this.uuid,
+      this.active,
     );
   }
 
@@ -24,12 +26,14 @@ export class SolarPanelMinimal {
     startY: number,
     placement: 'vertical' | 'horizontal' = 'vertical',
     uuid = new Realm.BSON.UUID().toString(),
+    active = false,
   ) {
     this.solarPanelType = solarPanelType;
     this.startX = startX;
     this.startY = startY;
     this.placement = placement;
     this.uuid = uuid;
+    this.active = false;
   }
 
   private getWidth(mode: 'vertical' | 'horizontal' = this.placement) {
