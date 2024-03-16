@@ -82,8 +82,11 @@ function ViewPainter(
     deleteActivePanel() {
       areaPicker.current.deleteActivePanel();
     },
-    addNewPanel() {
-      areaPicker.current.addNewPanel();
+    addNewPanel(panelPlacement: 'horizontal' | 'vertical') {
+      areaPicker.current.addNewPanel(panelPlacement);
+    },
+    presentSnackBar(message: string) {
+      snackbBar?.current?.present(message);
     },
   }));
 

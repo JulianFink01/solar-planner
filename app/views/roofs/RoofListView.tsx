@@ -31,6 +31,12 @@ function RoofListView({
       });
     }
   }
+  function selectRoof() {
+    navigation.navigate(ROUTES.EDITOR.HOME, {
+      roof: RoofMinimal.map(roof),
+      user: UserMinimal.map(user),
+    });
+  }
 
   return (
     <List.Item
@@ -45,6 +51,10 @@ function RoofListView({
         <ActionContainer
           deleteAction
           editAction
+          viewAction
+          onView={() => {
+            selectRoof();
+          }}
           onEdit={() => editRoof(roof)}
           onDelete={() => onOpenDelete(roof)}
           editIcon="pencil"

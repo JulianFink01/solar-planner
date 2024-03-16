@@ -74,11 +74,14 @@ function RoofImageView(
     save() {
       viewPainter.current.save();
     },
-    addNewPanel() {
-      viewPainter.current.addNewPanel();
+    addNewPanel(panelPlacement: 'horizontal' | 'vertical') {
+      viewPainter.current?.addNewPanel(panelPlacement);
     },
     deleteActivePanel() {
       viewPainter.current.deleteActivePanel();
+    },
+    presentSnackBar(message: string) {
+      viewPainter.current?.presentSnackBar(message);
     },
   }));
 

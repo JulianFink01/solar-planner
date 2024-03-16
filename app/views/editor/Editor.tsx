@@ -15,6 +15,7 @@ import Realm from 'realm';
 import RoofImageView from './modules/RoofImageView';
 import {RoofImage} from '../../models/RoofImage';
 import OpacitySlider from './OpacitySlider';
+import AddPanel from './AddPanel';
 
 function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const {t} = useTranslation();
@@ -25,17 +26,19 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const roof = useObject(Roof, new Realm.BSON.UUID(roofId));
   const user = useObject(User, new Realm.BSON.UUID(userId));
 
-  const [lockMode, setLockMode] = React.useState<boolean>(false); // prevents anything from being modified
+  const [lockMode, setLockMode] = React.useState<boolean>(true); // prevents anything from being modified
   const [displayEditorSettings, setDisplayEditorSettings] =
     React.useState<boolean>(false); // prevents anything from being modified
   const [displayOpacitySlider, setDisplayOpacitySlider] =
     React.useState<boolean>(false); // Opacity for Solar panels
-  const [displayGrid, setDisplayGrid] = React.useState<boolean>(true); // if alse also prevents anything from being modified. If true the roof wil get higliited
+  const [displayGrid, setDisplayGrid] = React.useState<boolean>(false); // if alse also prevents anything from being modified. If true the roof wil get higliited
   const [displayInfo, setDisplayInfo] = React.useState<boolean>(false); // If true displays a information modal for the roof
   const [debugView, setDebugView] = React.useState<boolean>(false); // If true displays the non transformed Matrix in color green
   const [selectedImage, setSelectedImage] = React.useState<RoofImage>(
     roof?.roofImages[0],
   );
+  const [displayAddPanel, setDisplayAddPanel] = React.useState(false);
+
   const [opacity, setOpacity] = React.useState<number>(1);
   const [hasActivePanel, setHasActivePanel] = React.useState(false);
 
@@ -43,6 +46,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const information = React.useRef<any>(null);
   const editorSettings = React.useRef<any>(null);
   const opacitySlider = React.useRef<any>(null);
+  const addPanel = React.useRef<any>(null);
 
   React.useEffect(() => {
     if (displayInfo) {
@@ -67,6 +71,14 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
       opacitySlider.current.close();
     }
   }, [displayOpacitySlider]);
+
+  React.useEffect(() => {
+    if (displayAddPanel) {
+      addPanel.current.open();
+    } else {
+      addPanel.current.close();
+    }
+  }, [displayAddPanel]);
 
   function save() {
     roofImageView.current.save();
@@ -157,7 +169,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
             }}
           />
         }>
-        {hasActivePanel && (
+        {!lockMode && hasActivePanel && (
           <Appbar.Action
             color={ThemeDark.colors.error}
             icon={'delete'}
@@ -166,13 +178,15 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
             }}
           />
         )}
-        <Appbar.Action
-          color={inactiveColor}
-          icon={'plus'}
-          onPress={() => {
-            roofImageView.current.addNewPanel();
-          }}
-        />
+        {!lockMode && (
+          <Appbar.Action
+            color={displayAddPanel ? activeColor : inactiveColor}
+            icon={'plus'}
+            onPress={() => {
+              setDisplayAddPanel(!displayAddPanel);
+            }}
+          />
+        )}
         <Appbar.Action
           icon={debugView ? 'eye-outline' : 'eye'}
           color={debugView ? activeColor : inactiveColor}
@@ -266,8 +280,20 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
           ref={opacitySlider}
         />
+        <AddPanel
+          onUpdate={(placement: string) => {
+            roofImageView.current.addNewPanel(placement);
+          }}
+          onClose={() => {
+            setDisplayAddPanel(false);
+          }}
+          ref={addPanel}
+        />
         <EditorSettings
           ref={editorSettings}
+          onSave={() => {
+            roofImageView.current?.presentSnackBar(t('common:savedChanges'));
+          }}
           regenerateGrid={regenerateGrid}
           onClose={() => {
             setDisplayEditorSettings(false);

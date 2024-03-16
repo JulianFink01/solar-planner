@@ -19,4 +19,5 @@ export default {
   verticalTop: 'Top',
   center: 'Center',
   verticalBottom: 'Bottom',
+  addNewPanel: 'Add new Solar Panel',
 };

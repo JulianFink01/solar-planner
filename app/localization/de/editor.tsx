@@ -19,4 +19,5 @@ export default {
   verticalTop: 'Oben',
   center: 'Mittig',
   verticalBottom: 'Unten',
+  addNewPanel: 'Solar Modul hinzufügen',
 };

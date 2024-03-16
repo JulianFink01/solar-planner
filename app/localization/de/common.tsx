@@ -6,6 +6,7 @@ export default {
   warning: 'Achtung!',
   submit: 'Bestätigen',
   cancel: 'Abbrechen',
+  add: 'Hinzufügen',
   more: 'Weiteres',
   vertical: 'Vertikal',
   horizontal: 'Horizontal',

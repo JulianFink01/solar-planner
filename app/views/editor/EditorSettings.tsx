@@ -16,11 +16,13 @@ import {useRealm} from '@realm/react';
 import NumberAdder from '../../componentes/NumberAdder';
 import {GlobalStyles} from '../../style/GlobalStyle';
 import ChipPicker from '../../componentes/ChipPicker';
+import SuccessSnackbar from '../../componentes/SuccessSnackbar';
 
 interface Props {
   onClose: Function;
   roof: Roof;
   user: User;
+  onSave: Function;
   regenerateGrid: (
     panelPlacement: 'horizontal' | 'vertical',
     placementHorizontal: string,
@@ -30,7 +32,7 @@ interface Props {
 }
 
 function EditorSettings(
-  {onClose, roof, user, regenerateGrid}: Props,
+  {onClose, roof, user, regenerateGrid, onSave}: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
   const {t} = useTranslation();
@@ -50,6 +52,7 @@ function EditorSettings(
   const panelDistancePicker = React.useRef<any>(null);
   const roofWidth = React.useRef<any>(null);
   const roofHeight = React.useRef<any>(null);
+  const snackbBar = React.useRef<any>(null);
 
   const placementValues = [
     {icon: 'panorama-vertical', title: t('common:vertical'), value: 'vertical'},
@@ -148,12 +151,7 @@ function EditorSettings(
         roof.height = roofHeight.current.getState();
         roof.width = roofWidth.current.getState();
       });
-      regenerateGrid(
-        panelPlacement.current.getState(),
-        horizontalPlacement.current.getState(),
-        verticalPlacement.current.getState(),
-        true,
-      );
+      onSave();
     }
   }
 

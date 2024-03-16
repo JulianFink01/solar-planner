@@ -51,6 +51,7 @@ function AreaPicker(
 
   const solarPanelsRefs = React.useRef<any>([]);
   const [isDraging, setIsDraging] = React.useState(false);
+  const [isDragingPoints, setIsDragingPoints] = React.useState(false);
 
   const width2 = imageSize.width;
   const height2 = imageSize.height;
@@ -100,6 +101,7 @@ function AreaPicker(
     onGestureEnd(e: any) {
       updatePoints();
       finishDrag();
+      setIsDragingPoints(false);
     },
     regenerateGrid(
       panelPlacement: 'horizontal' | 'vertical',
@@ -149,7 +151,7 @@ function AreaPicker(
 
       setSolarPanels(newSolarPanels);
     },
-    addNewPanel() {
+    addNewPanel(panelPlacement: 'horizontal' | 'vertical') {
       const panelType: SolarPanelType = {width: 100, height: 200};
 
       const panel = SolarPanelHelper.placePanelsAligned(
@@ -159,7 +161,7 @@ function AreaPicker(
         roofRect[0],
         'align-horizontal-center',
         'align-vertical-center',
-        'vertical',
+        panelPlacement,
         true,
       )[0];
       panel.active = true;
@@ -178,6 +180,10 @@ function AreaPicker(
   }));
 
   function moveSolarPanels(x: number, y: number, e: any) {
+    if (isDragingPoints) {
+      return;
+    }
+
     const arr: boolean[] = [];
     let newPanels = [...solarPanelsRefs.current]
       .filter(sp => sp != null)
@@ -301,13 +307,18 @@ function AreaPicker(
     }
 
     if (pointLeftTop.current.collides({x, y, radius})) {
+      setIsDragingPoints(true);
       return;
     } else if (pointLeftBottom.current.collides({x, y, radius})) {
+      setIsDragingPoints(true);
       return;
     } else if (pointRightTop.current.collides({x, y, radius})) {
+      setIsDragingPoints(true);
       return;
     }
-    pointRightBottom.current.collides({x, y, radius});
+    return pointRightBottom.current.collides({x, y, radius});
+    setIsDragingPoints(false);
+    return false;
   }
 
   function updatePoints() {

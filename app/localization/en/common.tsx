@@ -4,6 +4,7 @@ export default {
   close: 'Close',
   submit: 'Submit',
   select: 'Select',
+  add: 'Add',
   cancel: 'Cancel',
   warning: 'Warning!',
   more: 'More',
