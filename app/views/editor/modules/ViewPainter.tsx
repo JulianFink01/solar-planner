@@ -17,6 +17,7 @@ import {useTranslation} from 'react-i18next';
 import Realm from 'realm';
 import {CONTAINER_PADDING} from '../../../constants/GlobalConstants';
 import {TapGesture} from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
+import {expm} from 'mathjs';
 
 interface Props {
   imageSize: Dimension;
@@ -126,19 +127,19 @@ function ViewPainter(
     }
     const x = e.x;
     const y = e.y;
-    areaPicker.current.onGestureStart(x, y, 50);
+    areaPicker.current.onGestureStart(x, y, 50, e);
   }
 
-  function onGestureEnd() {
-    areaPicker.current.onGestureEnd();
+  function onGestureEnd(e) {
+    areaPicker.current.onGestureEnd(e);
   }
 
   const panGesture = Gesture.Pan()
     .onChange(e => {
       runOnJS(handlePan)(e);
     })
-    .onEnd(() => {
-      runOnJS(onGestureEnd)();
+    .onEnd(e => {
+      runOnJS(onGestureEnd)(e);
     });
 
   const tabGesture = Gesture.Tap().onStart(e => {

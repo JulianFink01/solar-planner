@@ -48,6 +48,7 @@ function AreaPicker(
   const pointRightBottom = React.useRef<any>(null);
 
   const solarPanelsRefs = React.useRef<any>([]);
+  const [isDraging, setIsDraging] = React.useState(false);
 
   const width2 = imageSize.width;
   const height2 = imageSize.height;
@@ -91,12 +92,13 @@ function AreaPicker(
   }, [roofPoints]);
 
   React.useImperativeHandle(ref, () => ({
-    onGestureStart(x: number, y: number) {
-      checkForCollsion(x, y, 50);
-      moveSolarPanels(x, y);
+    onGestureStart(x: number, y: number, radius: number, e: any) {
+      checkForCollsion(x, y, radius);
+      moveSolarPanels(x, y, e);
     },
-    onGestureEnd() {
+    onGestureEnd(e: any) {
       updatePoints();
+      finishDrag();
     },
     regenerateGrid(
       panelPlacement: 'horizontal' | 'vertical',
@@ -122,13 +124,43 @@ function AreaPicker(
       return {roofPoints: roofRect, solarPanels: panels};
     },
     getState() {
-      return {roofPoints: roofPoints, solarPanels: solarPanels};
+      return {
+        roofPoints: roofPoints,
+        solarPanels: solarPanelsRefs.current.map(panel => panel.getState()),
+      };
     },
   }));
 
-  function moveSolarPanels(x: number, y: number) {
+  function moveSolarPanels(x: number, y: number, e: any) {
+    const arr: boolean[] = [];
+    let newPanels = solarPanelsRefs.current;
+    setIsDraging(newPanels.filter(p => p.isDraging()).length > 0);
+
+    const filteredPanels = newPanels.filter(p => p.isDraging());
+    if (filteredPanels.length > 0) {
+      newPanels = filteredPanels;
+    }
+
+    let hasFoundActive = false;
+    for (let panel of newPanels) {
+      const collides = panel.checkIfColides(x, y, e);
+      if (collides && !hasFoundActive) {
+        hasFoundActive = true;
+        panel.setIsActive(true);
+      } else {
+        panel.setIsActive(false);
+      }
+
+      if (panel.isActive()) {
+        panel.movePanel(x, y, e);
+      }
+    }
+  }
+
+  function finishDrag() {
     for (let panel of solarPanelsRefs.current) {
-      panel.checkForAction(x, y);
+      panel.onDragEnd();
+      setIsDraging(false);
     }
   }
 
@@ -154,11 +186,11 @@ function AreaPicker(
     placementHorizontal:
       | 'align-horizontal-left'
       | 'align-horizontal-center'
-      | 'align-horizontal-right',
+      | 'align-horizontal-right' = 'align-horizontal-left',
     placementVertical:
       | 'align-vertical-top'
       | 'align-vertical-center'
-      | 'align-vertical-bottom',
+      | 'align-vertical-bottom' = 'align-vertical-top',
     roofStart: PointInterface = roofRect[0],
     isReset = false,
   ): SolarPanelMinimal[] {
@@ -211,6 +243,10 @@ function AreaPicker(
   }
 
   function checkForCollsion(x: number, y: number, radius: number) {
+    if (isDraging) {
+      return;
+    }
+
     if (pointLeftTop.current.collides({x, y, radius})) {
       return;
     } else if (pointLeftBottom.current.collides({x, y, radius})) {
@@ -249,7 +285,7 @@ function AreaPicker(
           lockMode={lockMode}
           ref={(el: any) => (solarPanelsRefs.current[index] = el)}
           opacity={opacity}
-          key={'pane-' + index}
+          key={'pane-' + sp.uuid}
           displayGrid={displayGrid}
           roof={roof}
           imageSize={imageSize}

@@ -15,6 +15,7 @@ import {ThemeDark} from '../../../themes/ThemeDark';
 type Line = PointInterface[];
 const SOLAR_GRID_ROWS = 4;
 const SOLAR_GRID_COLS = 3;
+const STROKE_WIDTH = 3;
 
 interface Props {
   allScreen: PointInterface[];
@@ -45,39 +46,127 @@ function SolarPanel(
   const oneZentimeterVertical = imageSize.height / roof.height / 100;
 
   const [active, setActive] = React.useState(false);
+  const [isDraging, setIsDraging] = React.useState(false);
+
+  const [solarPanelState, setSolarPanelState] = React.useState(
+    solarPanel.copy(),
+  );
+  const [coordinates, setCoordinates] = React.useState<PointInterface[]>(
+    solarPanelState.getCoordinates(
+      roof.distanceBetweenPanelsCM,
+      oneZentimeterHorizontal,
+      oneZentimeterVertical,
+    ),
+  );
+  const [wrapperCoordinates, setWrapperCoordinates] = React.useState<
+    PointInterface[]
+  >(
+    solarPanelState.getWrapperCoordinates(
+      roof.distanceBetweenPanelsCM,
+      oneZentimeterHorizontal,
+      oneZentimeterVertical,
+    ),
+  );
+
+  const [prevSolarPanel, setPrevSolarPanel] = React.useState(solarPanel.copy());
+
+  React.useEffect(() => {
+    setAllCoordinates(solarPanel);
+  }, [solarPanel]);
 
   React.useEffect(() => {
     if (lockMode) {
       setActive(false);
+      setIsDraging(false);
     }
   }, [lockMode]);
 
-  const coordinates = solarPanel.getCoordinates(
-    roof.distanceBetweenPanelsCM,
-    oneZentimeterHorizontal,
-    oneZentimeterVertical,
-  );
-  const wrapperCoordinates = solarPanel.getWrapperCoordinates(
-    roof.distanceBetweenPanelsCM,
-    oneZentimeterHorizontal,
-    oneZentimeterVertical,
-  );
+  function setAllCoordinates(panel: SolarPanelMinimal) {
+    setCoordinates(
+      panel.getCoordinates(
+        roof.distanceBetweenPanelsCM,
+        oneZentimeterHorizontal,
+        oneZentimeterVertical,
+      ),
+    );
+    setWrapperCoordinates(
+      panel.getWrapperCoordinates(
+        roof.distanceBetweenPanelsCM,
+        oneZentimeterHorizontal,
+        oneZentimeterVertical,
+      ),
+    );
+  }
 
   React.useImperativeHandle(ref, () => ({
-    checkForAction(x: number, y: number) {
+    isActive() {
+      return active;
+    },
+    isDraging() {
+      return isDraging;
+    },
+    getState() {
+      return solarPanelState.copy();
+    },
+    setIsActive(a: boolean) {
+      setActive(a);
+    },
+    checkIfColides(x: number, y: number, e: any): boolean {
       if (lockMode) {
-        setActive(false);
-        return;
+        return false;
       }
       const colides = checkIfColides(x, y);
-      setActive(colides);
+
+      return colides;
+    },
+    movePanel(x: number, y: number, e: any) {
+      if (isInsideRoof(e)) {
+        if (e?.translationX != undefined) {
+          setIsDraging(true);
+          const newSolarPanel = solarPanelState.copy();
+          newSolarPanel.startX = prevSolarPanel.startX + e.translationX;
+          newSolarPanel.startY = prevSolarPanel.startY + e.translationY;
+
+          setCoordinates(
+            newSolarPanel.getCoordinates(
+              roof.distanceBetweenPanelsCM,
+              oneZentimeterHorizontal,
+              oneZentimeterVertical,
+            ),
+          );
+          setWrapperCoordinates(
+            newSolarPanel.getWrapperCoordinates(
+              roof.distanceBetweenPanelsCM,
+              oneZentimeterHorizontal,
+              oneZentimeterVertical,
+            ),
+          );
+          setSolarPanelState(newSolarPanel);
+        } else {
+          setIsDraging(false);
+        }
+      }
+    },
+    onDragEnd() {
+      setPrevSolarPanel(solarPanelState.copy());
+      setIsDraging(false);
     },
   }));
 
-  function checkIfColides(x: number, y: number) {
-    const transformedPoints: PointInterface[] = transforMatrix(
+  function isInsideRoof(e: any) {
+    const transformedPoints = transforMatrix(
       allScreen,
       coordinates,
+      roofPoints,
+    );
+
+    return true;
+  }
+
+  function checkIfColides(x: number, y: number) {
+    const transformedPoints = transforMatrix(
+      allScreen,
+      active && isDraging ? getOuterContainer() : coordinates,
       roofPoints,
     );
 
@@ -97,12 +186,33 @@ function SolarPanel(
   }
 
   function getInnerStroke() {
-    const strokeWidth = 3;
     return [
-      {x: coordinates[0].x + strokeWidth, y: coordinates[0].y + strokeWidth},
-      {x: coordinates[1].x - strokeWidth, y: coordinates[1].y + strokeWidth},
-      {x: coordinates[2].x - strokeWidth, y: coordinates[2].y - strokeWidth},
-      {x: coordinates[3].x + strokeWidth, y: coordinates[3].y - strokeWidth},
+      {
+        x: coordinates[0].x + STROKE_WIDTH + 1,
+        y: coordinates[0].y + STROKE_WIDTH + 1,
+      },
+      {
+        x: coordinates[1].x - STROKE_WIDTH - 1,
+        y: coordinates[1].y + STROKE_WIDTH + 1,
+      },
+      {
+        x: coordinates[2].x - STROKE_WIDTH - 1,
+        y: coordinates[2].y - STROKE_WIDTH - 1,
+      },
+      {
+        x: coordinates[3].x + STROKE_WIDTH + 1,
+        y: coordinates[3].y - STROKE_WIDTH - 1,
+      },
+    ];
+  }
+
+  function getOuterContainer() {
+    const margin = 300;
+    return [
+      {x: coordinates[0].x - margin, y: coordinates[0].y - margin},
+      {x: coordinates[1].x + margin, y: coordinates[1].y - margin},
+      {x: coordinates[2].x + margin, y: coordinates[2].y + margin},
+      {x: coordinates[3].x - margin, y: coordinates[3].y + margin},
     ];
   }
 
@@ -110,7 +220,7 @@ function SolarPanel(
     <>
       <TransformedPath
         pathStyle="fill"
-        strokeWidth={3}
+        strokeWidth={STROKE_WIDTH}
         opacity={opacity}
         color={ThemeDark.colors.background}
         useGradient

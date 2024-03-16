@@ -1,21 +1,35 @@
 import {SolarPanelType} from './SolarPanelType';
+import Realm from 'realm';
 
 export class SolarPanelMinimal {
+  uuid: string;
   solarPanelType: SolarPanelType;
   startX: number;
   startY: number;
   placement: 'vertical' | 'horizontal';
+
+  public copy() {
+    return new SolarPanelMinimal(
+      this.solarPanelType,
+      this.startX,
+      this.startY,
+      this.placement,
+      this.uuid,
+    );
+  }
 
   constructor(
     solarPanelType: SolarPanelType,
     startX: number,
     startY: number,
     placement: 'vertical' | 'horizontal' = 'vertical',
+    uuid = new Realm.BSON.UUID().toString(),
   ) {
     this.solarPanelType = solarPanelType;
     this.startX = startX;
     this.startY = startY;
     this.placement = placement;
+    this.uuid = uuid;
   }
 
   private getWidth(mode: 'vertical' | 'horizontal' = this.placement) {
