@@ -75,6 +75,12 @@ function SolarPanel(
   }, [solarPanel]);
 
   React.useEffect(() => {
+    if (!active) {
+      setIsDraging(false);
+    }
+  }, [active]);
+
+  React.useEffect(() => {
     if (lockMode) {
       setActive(false);
       setIsDraging(false);
@@ -110,6 +116,9 @@ function SolarPanel(
     },
     setIsActive(a: boolean) {
       setActive(a);
+    },
+    setDraging(a: boolean) {
+      setIsDraging(a);
     },
     checkIfColides(x: number, y: number, e: any): boolean {
       if (lockMode) {

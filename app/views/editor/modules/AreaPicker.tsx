@@ -133,15 +133,17 @@ function AreaPicker(
 
   function moveSolarPanels(x: number, y: number, e: any) {
     const arr: boolean[] = [];
-    let newPanels = solarPanelsRefs.current;
+    let newPanels = [...solarPanelsRefs.current].reverse();
     setIsDraging(newPanels.filter(p => p.isDraging()).length > 0);
 
-    const filteredPanels = newPanels.filter(p => p.isDraging());
+    const filteredPanels = newPanels.filter(p => p.isActive());
     if (filteredPanels.length > 0) {
       newPanels = filteredPanels;
     }
 
     let hasFoundActive = false;
+    let hasFoundDraged = false;
+
     for (let panel of newPanels) {
       const collides = panel.checkIfColides(x, y, e);
       if (collides && !hasFoundActive) {
@@ -150,7 +152,6 @@ function AreaPicker(
       } else {
         panel.setIsActive(false);
       }
-
       if (panel.isActive()) {
         panel.movePanel(x, y, e);
       }
