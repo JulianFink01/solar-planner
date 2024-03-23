@@ -18,6 +18,7 @@ import OpacitySlider from './OpacitySlider';
 import AddPanel from './AddPanel';
 import {SolarPanel} from '../../models/SolarPanel';
 import {SolarPanelMinimal} from '../../mapper/SolarPanelMinimal';
+import RoofImageNote from './RoofImageNote';
 
 function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const {t} = useTranslation();
@@ -40,6 +41,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
     roof?.roofImages[0],
   );
   const [displayAddPanel, setDisplayAddPanel] = React.useState(false);
+  const [displayNotes, setDisplayNotes] = React.useState(false);
 
   const [opacity, setOpacity] = React.useState<number>(1);
   const [hasActivePanel, setHasActivePanel] = React.useState(false);
@@ -50,6 +52,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const editorSettings = React.useRef<any>(null);
   const opacitySlider = React.useRef<any>(null);
   const addPanel = React.useRef<any>(null);
+  const displayNotesPanel = React.useRef<any>(null);
 
   React.useEffect(() => {
     if (displayInfo) {
@@ -82,6 +85,14 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
       addPanel.current.close();
     }
   }, [displayAddPanel]);
+
+  React.useEffect(() => {
+    if (displayNotes) {
+      displayNotesPanel.current.open();
+    } else {
+      displayNotesPanel.current.close();
+    }
+  }, [displayNotes]);
 
   function save() {
     roofImageView.current.save();
@@ -205,6 +216,13 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
         />
         <Appbar.Action
+          icon={displayNotes ? 'note' : 'note'}
+          color={displayNotes ? activeColor : inactiveColor}
+          onPress={() => {
+            setDisplayNotes(!displayNotes);
+          }}
+        />
+        <Appbar.Action
           icon={
             displayEditorSettings
               ? 'application-settings'
@@ -294,6 +312,11 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
             setDisplayAddPanel(false);
           }}
           ref={addPanel}
+        />
+        <RoofImageNote
+          roofImage={selectedImage}
+          ref={displayNotesPanel}
+          onClose={() => setDisplayNotes(false)}
         />
         <EditorSettings
           ref={editorSettings}

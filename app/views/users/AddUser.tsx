@@ -7,7 +7,6 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  TextInput as NativeTextInput,
 } from 'react-native';
 import {GlobalStyles} from '../../style/GlobalStyle';
 import AppBar from '../../componentes/appBar/AppBar';
@@ -51,7 +50,6 @@ function AddUser({
   const [streetNumber, setStreetNumber] = React.useState(
     getOrElse(user?.streetNumber, ''),
   );
-  const [notes, setNotes] = React.useState(getOrElse(user?.notes, ''));
 
   const [appTitle, setAppTitle] = React.useState(t('users:add_user'));
   const [editMode, setEditMode] = React.useState(false);
@@ -83,7 +81,6 @@ function AddUser({
     setZipCode(user.zipCode);
     setStreet(user.street);
     setStreetNumber(user.streetNumber);
-    setNotes(user.notes);
   }
 
   function reset() {
@@ -100,7 +97,6 @@ function AddUser({
       setZipCode('');
       setStreet('');
       setStreetNumber('');
-      setNotes('');
     }
   }
 
@@ -144,7 +140,7 @@ function AddUser({
         zipCode: zipCode,
         street: street,
         streetNumber: streetNumber,
-        notes: notes,
+        notes: '',
       });
     });
     reset();
@@ -164,7 +160,7 @@ function AddUser({
           user.zipCode = zipCode;
           user.street = street;
           user.streetNumber = streetNumber;
-          user.notes = notes;
+          user.notes = '';
         });
       }
 
@@ -196,7 +192,7 @@ function AddUser({
             style={{flex: 1}}
             contentContainerStyle={styles.rowContainer}
             bounces={false}>
-            <View style={{...styles.rowContainer, width: '55%'}}>
+            <View style={{...styles.rowContainer, width: '100%'}}>
               <Text style={styles.section} variant={labelSize}>
                 {t('users:personal_data')}
               </Text>
@@ -265,17 +261,6 @@ function AddUser({
               />
             </View>
 
-            <View style={{width: '45%', alignItems: 'flex-end'}}>
-              <Text variant={labelSize}>{t('users:notes')}</Text>
-
-              <NativeTextInput
-                style={styles.notesContainer}
-                value={notes}
-                multiline
-                onChangeText={setNotes}
-              />
-            </View>
-
             <View style={styles.buttonContainer}>
               <Button
                 icon="format-clear"
@@ -311,7 +296,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: CONTAINER_PADDING,
-    width: '44%',
+    width: '49%',
   },
   inputContainer: {
     marginBottom: CONTAINER_PADDING * 2,

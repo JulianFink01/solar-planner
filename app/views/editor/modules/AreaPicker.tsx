@@ -115,7 +115,6 @@ function AreaPicker(
       }
     },
     onGestureEnd(e: any) {
-      console.log(e);
       updatePoints();
       finishDrag();
       setIsDragingPoints(false);
@@ -195,7 +194,6 @@ function AreaPicker(
       return;
     }
 
-    const arr: boolean[] = [];
     let newPanels = [...solarPanelsRefs.current]
       .filter(sp => sp != null)
       .reverse();
@@ -203,24 +201,24 @@ function AreaPicker(
     setIsDraging(newPanels.filter(p => p.isDraging()).length > 0);
 
     const filteredPanels = newPanels.filter(p => p.isActive());
-    console.log(filteredPanels.length);
     if (filteredPanels.length > 0) {
       newPanels = filteredPanels;
     }
 
     let hasFoundActive = false;
-    let hasFoundDraged = false;
 
     for (let panel of newPanels) {
       const collides = panel.checkIfColides(x, y, e);
-      if (collides && !hasFoundActive) {
-        hasFoundActive = true;
-        panel.setIsActive(true);
-      } else {
+      if (hasFoundActive) {
         panel.setIsActive(false);
-      }
-      if (panel.isActive()) {
-        panel.movePanel(x, y, e);
+      } else {
+        if (collides && !hasFoundActive) {
+          hasFoundActive = true;
+          panel.setIsActive(true);
+          panel.movePanel(x, y, e);
+        } else {
+          panel.setIsActive(false);
+        }
       }
     }
 

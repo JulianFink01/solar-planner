@@ -175,7 +175,7 @@ function SolarPanel(
   function checkIfColides(x: number, y: number) {
     const transformedPoints = transforMatrix(
       allScreen,
-      active && isDraging ? getOuterContainer() : coordinates,
+      active || isDraging ? getOuterContainer() : coordinates,
       roofPoints,
     );
 
@@ -216,7 +216,7 @@ function SolarPanel(
   }
 
   function getOuterContainer() {
-    const margin = 700;
+    const margin = isDraging ? 700 : 40;
     return [
       {x: coordinates[0].x - margin, y: coordinates[0].y - margin},
       {x: coordinates[1].x + margin, y: coordinates[1].y - margin},
@@ -243,9 +243,7 @@ function SolarPanel(
         pathStyle="stroke"
         strokeWidth={3}
         opacity={opacity}
-        color={
-          active ? ThemeDark.colors.secondary : ThemeDark.colors.background
-        }
+        color={active ? ThemeDark.colors.secondary : 'transparent'}
         useGradient
         debugView={false}
         allScreen={allScreen}
