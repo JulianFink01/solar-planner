@@ -48,23 +48,25 @@ function ListPicker(
   return (
     <Dialog visible={visible} onDismiss={cancelModal} style={styles.modal}>
       <Dialog.Title style={{}}>{inputTitle}</Dialog.Title>
-      <Dialog.Content style={{}}>
-        <ScrollView>
-          {options.map((option, index) => {
-            return (
-              <View key={option.title + index}>
-                <List.Item
-                  onPress={() => select(option.value)}
-                  left={() => <List.Icon icon={listIcon} />}
-                  key={option.value._id.toString()}
-                  style={{paddingRight: 0}}
-                  title={option.title}
-                />
-                <Divider style={{marginBottom: 20, marginTop: 20}} />
-              </View>
-            );
-          })}
-        </ScrollView>
+      <Dialog.Content>
+        <View style={{height: '95%'}}>
+          <ScrollView>
+            {options.map((option, index) => {
+              return (
+                <View key={option.title + index}>
+                  <List.Item
+                    onPress={() => select(option.value)}
+                    left={() => <List.Icon icon={listIcon} />}
+                    key={option.value._id.toString()}
+                    style={{paddingRight: 0}}
+                    title={option.title}
+                  />
+                  <Divider style={{marginBottom: 20, marginTop: 20}} />
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
       </Dialog.Content>
     </Dialog>
   );
@@ -111,5 +113,6 @@ const styles = StyleSheet.create({
     right: CONTAINER_PADDING,
     bottom: CONTAINER_PADDING,
     height: '95%',
+    display: 'flex',
   },
 });

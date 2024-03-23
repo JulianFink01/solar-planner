@@ -12,6 +12,7 @@ import {GestureEvent} from 'react-native-gesture-handler/lib/typescript/handlers
 import Value = Animated.Value;
 import {IconButton, Text} from 'react-native-paper';
 import {ThemeDark} from '../themes/ThemeDark';
+var RNFS = require('react-native-fs');
 
 interface ImageSliderProps {
   images: string[];
@@ -160,15 +161,18 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
               ...styles.viewContainer,
               transform: [{translateX: this.state.currentTranslationX}],
             }}>
-            {this.props?.images?.map((image, index) => (
-              <Image
-                onError={console.log}
-                resizeMode="cover"
-                key={image + index}
-                src={image}
-                style={{width: '100%', height: '100%'}}
-              />
-            ))}
+            {this.props?.images?.map((image, index) => {
+              console.log(image);
+              return (
+                <Image
+                  onError={e => console.log(e.nativeEvent)}
+                  resizeMode="cover"
+                  key={image + index}
+                  src={image}
+                  style={{width: '100%', height: '100%'}}
+                />
+              );
+            })}
           </Animated.View>
         </PanGestureHandler>
       </View>

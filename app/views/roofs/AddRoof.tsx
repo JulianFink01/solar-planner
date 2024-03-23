@@ -173,17 +173,11 @@ function AddRoof({
     return '';
   }
   const create = async () => {
-    const savedImages: string[] = [];
-    for (let image of imageUrls) {
-      const newImage = await saveImage(image);
-      savedImages.push(newImage);
-    }
-
     realm.write(() => {
       if (finalUser) {
         const roofImages = [];
 
-        for (let image of savedImages) {
+        for (let image of imageUrls) {
           const roofImage = realm.create(RoofImage, {
             _id: new Realm.BSON.UUID(),
             src: image,
@@ -253,15 +247,9 @@ function AddRoof({
     const userMin = UserMinimal.map(initialUser);
 
     if (roof != null) {
-      const savedImages: string[] = [];
-      for (let image of imageUrls) {
-        const newImage = await saveImage(image);
-        savedImages.push(newImage);
-      }
-      console.log(savedImages);
       realm.write(() => {
         const roofImages = [];
-        for (let image of savedImages) {
+        for (let image of imageUrls) {
           let roofImage = realm.create(RoofImage, {
             _id: new Realm.BSON.UUID(),
             src: image,
@@ -301,9 +289,18 @@ function AddRoof({
     if (!result.assets || result?.assets?.length < 1) {
       setImageUrls([...imageUrls]);
     } else {
-      const uris: string[] = result.assets
+      const filteredUris: string[] = result.assets
         .filter(a => a?.uri != undefined)
-        .map(a => a.uri) as string[];
+        .map(i => i.uri) as string[];
+
+      const uris: string[] = [];
+      for (let image of filteredUris) {
+        const uri = await saveImage(image);
+        if (uri != null) {
+          uris.push(uri);
+        }
+      }
+
       setImageUrls([...imageUrls, ...uris]);
     }
   }

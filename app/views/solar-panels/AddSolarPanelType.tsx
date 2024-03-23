@@ -96,6 +96,9 @@ function AddSolarPanelType({
       name?.length > 0 &&
       width?.length > 0 &&
       height?.length > 0 &&
+      parseInt(width) >= 0 &&
+      parseInt(height) >= 0 &&
+      parseInt(power) >= 0 &&
       power?.length > 0;
 
     if (!valid) {
