@@ -54,7 +54,19 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
   }
 
   removeImage(url: string, index: number) {
-    this.props.removeImage(url, index);
+    if (url) {
+      this.props.removeImage(url.split('/').pop(), index);
+      this.state.translationX.setValue(0);
+      Animated.timing(this.state.currentTranslationX, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      this.setState(s => ({
+        ...s,
+        currentActiveFileIndex: 0,
+      }));
+    }
   }
 
   onEnded(event: GestureEvent) {
@@ -162,7 +174,6 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
               transform: [{translateX: this.state.currentTranslationX}],
             }}>
             {this.props?.images?.map((image, index) => {
-              console.log(image);
               return (
                 <Image
                   onError={e => console.log(e.nativeEvent)}

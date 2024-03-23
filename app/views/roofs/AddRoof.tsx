@@ -420,6 +420,7 @@ function AddRoof({
                       i => `${RNFS.DocumentDirectoryPath}/${i}`,
                     )}
                     removeImage={url => {
+                      console.log(url);
                       setImageUrls(old => old.filter(o => o != url));
                     }}
                   />
