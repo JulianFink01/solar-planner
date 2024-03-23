@@ -29,6 +29,7 @@ type Props = {
   onUpdate: (points: PointInterface[]) => any;
   hasActivePanel: (val: boolean) => any;
   opacity: number;
+  onSolarPanelsUpdate: (panels: SolarPanelMinimal[]) => any;
 };
 
 type PointProps = {
@@ -46,6 +47,7 @@ function AreaPicker(
     onUpdate,
     opacity,
     hasActivePanel,
+    onSolarPanelsUpdate,
   }: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
@@ -98,6 +100,10 @@ function AreaPicker(
     onUpdate(roofPoints);
   }, [roofPoints]);
 
+  React.useEffect(() => {
+    onSolarPanelsUpdate(solarPanels);
+  }, [solarPanels]);
+
   React.useImperativeHandle(ref, () => ({
     onGestureStart(x: number, y: number, radius: number, e: any) {
       let pointsCollide = false;
@@ -109,6 +115,7 @@ function AreaPicker(
       }
     },
     onGestureEnd(e: any) {
+      console.log(e);
       updatePoints();
       finishDrag();
       setIsDragingPoints(false);
@@ -192,9 +199,11 @@ function AreaPicker(
     let newPanels = [...solarPanelsRefs.current]
       .filter(sp => sp != null)
       .reverse();
+
     setIsDraging(newPanels.filter(p => p.isDraging()).length > 0);
 
     const filteredPanels = newPanels.filter(p => p.isActive());
+    console.log(filteredPanels.length);
     if (filteredPanels.length > 0) {
       newPanels = filteredPanels;
     }

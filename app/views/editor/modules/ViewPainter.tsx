@@ -27,6 +27,7 @@ interface Props {
   opacity: number;
   roof: Roof;
   hasActivePanel: (val: boolean) => any;
+  onSolarPanelsUpdate: (panels: SolarPanelMinimal[]) => any;
 }
 
 function ViewPainter(
@@ -34,6 +35,7 @@ function ViewPainter(
     imageSize,
     lockMode,
     roofImage,
+    onSolarPanelsUpdate,
     displayGrid,
     roof,
     debugView,
@@ -152,9 +154,13 @@ function ViewPainter(
       runOnJS(onGestureEnd)(e);
     });
 
-  const tabGesture = Gesture.Tap().onStart(e => {
-    runOnJS(handlePan)(e);
-  });
+  const tabGesture = Gesture.Tap()
+    .onStart(e => {
+      runOnJS(handlePan)(e);
+    })
+    .onEnd(e => {
+      //runOnJS(onGestureEnd)(e);
+    });
 
   const gesture = Gesture.Race(panGesture, tabGesture);
 
@@ -177,6 +183,7 @@ function ViewPainter(
             />
           </Group>
           <AreaPicker
+            onSolarPanelsUpdate={onSolarPanelsUpdate}
             hasActivePanel={hasActivePanel}
             opacity={opacity}
             roofImage={roofImage}

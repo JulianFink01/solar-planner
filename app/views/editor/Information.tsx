@@ -11,17 +11,17 @@ import Animated, {
 import {Roof} from '../../models/Roof';
 import {User} from '../../models/User';
 import RoofViewContent from '../roofs/RoofViewContent';
-import {RoofImage} from '../../models/RoofImage';
+import {SolarPanelMinimal} from '../../mapper/SolarPanelMinimal';
 
 interface Props {
   onClose: Function;
   roof: Roof;
-  roofImage: RoofImage;
   user: User;
+  solarPanels: SolarPanelMinimal[];
 }
 
 function Information(
-  {onClose, roof, user, roofImage}: Props,
+  {onClose, roof, user, solarPanels}: Props,
   ref: React.Ref<any>,
 ): React.JSX.Element {
   const {t} = useTranslation();
@@ -53,7 +53,12 @@ function Information(
             <Text variant="bodyLarge">{t('editor:information')}</Text>
             <IconButton icon={'close'} onPress={() => onClose()} />
           </View>
-          <RoofViewContent roofImage={roofImage} roof={roof} user={user} />
+          <RoofViewContent
+            minimal={false}
+            roof={roof}
+            user={user}
+            solarPanels={solarPanels}
+          />
         </View>
       </View>
     </Animated.View>

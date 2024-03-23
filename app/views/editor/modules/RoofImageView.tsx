@@ -22,6 +22,7 @@ type Props = {
   displayGrid: boolean;
   opacity: number;
   hasActivePanel: (val: boolean) => any;
+  onSolarPanelsUpdate: (panels: SolarPanelMinimal[]) => any;
 };
 
 function RoofImageView(
@@ -30,6 +31,7 @@ function RoofImageView(
     roof,
     debugView,
     lockMode,
+    onSolarPanelsUpdate,
     displayGrid,
     roofImage,
     opacity,
@@ -116,6 +118,7 @@ function RoofImageView(
       source={{uri: `${RNFS.DocumentDirectoryPath}/${roofImage.src}`}}>
       {imageSize != null && (
         <ViewPainter
+          onSolarPanelsUpdate={onSolarPanelsUpdate}
           hasActivePanel={hasActivePanel}
           opacity={opacity}
           key={'viewpainter'}

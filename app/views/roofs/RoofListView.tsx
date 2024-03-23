@@ -43,7 +43,7 @@ function RoofListView({
       style={{paddingRight: 0}}
       title={
         <View>
-          <RoofViewContent roof={roof} user={user} />
+          <RoofViewContent roof={roof} user={user} minimal={true} />
         </View>
       }
       left={() => <List.Icon icon="home-roof" />}

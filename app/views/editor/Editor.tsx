@@ -16,6 +16,8 @@ import RoofImageView from './modules/RoofImageView';
 import {RoofImage} from '../../models/RoofImage';
 import OpacitySlider from './OpacitySlider';
 import AddPanel from './AddPanel';
+import {SolarPanel} from '../../models/SolarPanel';
+import {SolarPanelMinimal} from '../../mapper/SolarPanelMinimal';
 
 function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   const {t} = useTranslation();
@@ -41,6 +43,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
 
   const [opacity, setOpacity] = React.useState<number>(1);
   const [hasActivePanel, setHasActivePanel] = React.useState(false);
+  const [solarPanels, setSolarPanels] = React.useState<SolarPanelMinimal[]>([]);
 
   const roofImageView = React.useRef<any>(null);
   const information = React.useRef<any>(null);
@@ -250,6 +253,9 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           position: 'relative',
         }}>
         <RoofImageView
+          onSolarPanelsUpdate={sp => {
+            setSolarPanels(sp);
+          }}
           hasActivePanel={setHasActivePanel}
           opacity={opacity}
           key={selectedImage.src}
@@ -269,7 +275,7 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           }}
           user={user}
           roof={roof}
-          roofImage={selectedImage}
+          solarPanels={solarPanels}
         />
         <OpacitySlider
           onUpdate={(value: number) => {
