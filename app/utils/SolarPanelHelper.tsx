@@ -1,6 +1,11 @@
 import {SolarPanelMinimal} from '../mapper/SolarPanelMinimal';
 import {SolarPanelType} from '../mapper/SolarPanelType';
 import {Roof} from '../models/Roof';
+import {
+  PANEL_PLACEMENT,
+  PLACEMENT_HORIZONTAL,
+  PLACEMENT_VERTICAL,
+} from '../views/editor/models/Types';
 
 export enum POSITIONED {
   LEFT,
@@ -39,15 +44,9 @@ export default class SolarPanelHelper {
     imageSize: {width: number; height: number},
     roof: Roof,
     roofTopLeftPoint: PointInterface,
-    placementHorizontal:
-      | 'align-horizontal-left'
-      | 'align-horizontal-center'
-      | 'align-horizontal-right',
-    placementVertical:
-      | 'align-vertical-top'
-      | 'align-vertical-center'
-      | 'align-vertical-bottom',
-    mode: 'horizontal' | 'vertical',
+    placementHorizontal: PLACEMENT_HORIZONTAL,
+    placementVertical: PLACEMENT_VERTICAL,
+    mode: PANEL_PLACEMENT,
     onlyOne = false,
   ): SolarPanelMinimal[] {
     const oneZentimeterVertical = imageSize.height / roof.height / 100;
@@ -60,11 +59,11 @@ export default class SolarPanelHelper {
     }
 
     const panelWidth =
-      mode !== 'horizontal'
+      mode !== PANEL_PLACEMENT.HORIZONTAL
         ? relationize(panelType.width)
         : relationize(panelType.height);
     const panelHeight =
-      mode !== 'horizontal'
+      mode !== PANEL_PLACEMENT.HORIZONTAL
         ? relationize(panelType.height, false)
         : relationize(panelType.width, false);
 
@@ -94,11 +93,11 @@ export default class SolarPanelHelper {
           panelWidth + relationize(roof.distanceBetweenPanelsCM);
         startX = roofTopLeftPoint.x - innerMarginHalthX + x * innerMarginX;
 
-        if (placementHorizontal === 'align-horizontal-center') {
+        if (placementHorizontal === PLACEMENT_HORIZONTAL.CENTER) {
           startX += maxPanels.diffX / 2;
         }
 
-        if (placementHorizontal === 'align-horizontal-right') {
+        if (placementHorizontal === PLACEMENT_HORIZONTAL.RIGHT) {
           startX += maxPanels.diffX;
         }
 
@@ -111,11 +110,11 @@ export default class SolarPanelHelper {
 
         startY = roofTopLeftPoint.y - innerMarginHalthY + y * innerMarginY;
 
-        if (placementVertical === 'align-vertical-center') {
+        if (placementVertical === PLACEMENT_VERTICAL.CENTER) {
           startY += maxPanels.diffY / 2;
         }
 
-        if (placementVertical === 'align-vertical-bottom') {
+        if (placementVertical === PLACEMENT_VERTICAL.BOTTOM) {
           startY += maxPanels.diffY;
         }
 

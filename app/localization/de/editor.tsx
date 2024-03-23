@@ -12,7 +12,7 @@ export default {
   autoFill: 'Automatische Befüllung',
   placementHorizontal: 'Horizontale Ausrichtung',
   placementVertical: 'Vertikale Ausrichtung',
-  totalPanels: 'Es sind ingessamt %s Solar Panels platiert',
+  totalPanels: 'Es sind ingessamt %s Solar Panels platziert',
   opacity: 'Transaparenz Einstellen',
   horizontalLeft: 'Links',
   horizontalRight: 'Rechts',

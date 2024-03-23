@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import {User} from './User';
 import {RoofImage} from './RoofImage';
+import {SolarPanelType} from './SolarPanelType';
 
 export class Roof extends Realm.Object<Roof> {
   _id!: Realm.BSON.UUID;
@@ -17,6 +18,7 @@ export class Roof extends Realm.Object<Roof> {
   user!: Realm.List<User>;
   roofImages!: Realm.List<RoofImage>;
   distanceBetweenPanelsCM!: number;
+  solarPanelType?: SolarPanelType;
 
   static schema = {
     name: 'Roof',
@@ -39,6 +41,7 @@ export class Roof extends Realm.Object<Roof> {
       zipCode: {type: 'string', indexed: 'full-text'},
       street: {type: 'string', indexed: 'full-text'},
       streetNumber: {type: 'string', indexed: 'full-text'},
+      solarPanelType: 'SolarPanelType?',
     },
     primaryKey: '_id',
   };

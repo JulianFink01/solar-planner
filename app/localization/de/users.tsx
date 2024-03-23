@@ -1,6 +1,7 @@
 export default {
   title: 'Benutzer',
   add_user: 'Benutzer hinzufügen',
+  select_user: 'Benutzer auswählen',
   edit_user: 'Benutzer editieren',
   firstName: 'Vorname',
   lastName: 'Nachname',

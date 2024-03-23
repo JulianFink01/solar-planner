@@ -17,7 +17,6 @@ import {useTranslation} from 'react-i18next';
 import Realm from 'realm';
 import {CONTAINER_PADDING} from '../../../constants/GlobalConstants';
 import {TapGesture} from 'react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture';
-import {expm} from 'mathjs';
 
 interface Props {
   imageSize: Dimension;
@@ -133,7 +132,7 @@ function ViewPainter(
   >([]);
 
   function handlePan(e: any) {
-    if (lockMode || !displayGrid) {
+    if (lockMode) {
       return;
     }
     const x = e.x;

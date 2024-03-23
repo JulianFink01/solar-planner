@@ -52,8 +52,8 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
     }
   }
 
-  removeImage(url: string) {
-    this.props.removeImage(url);
+  removeImage(url: string, index: number) {
+    this.props.removeImage(url, index);
   }
 
   onEnded(event: GestureEvent) {
@@ -119,6 +119,7 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
                 onPress={() => {
                   this.removeImage(
                     this.props.images[this.state.currentActiveFileIndex],
+                    this.state.currentActiveFileIndex,
                   );
                 }}
                 icon={'delete'}
@@ -159,10 +160,11 @@ class ImageSlider extends React.Component<ImageSliderProps, ImageSliderState> {
               ...styles.viewContainer,
               transform: [{translateX: this.state.currentTranslationX}],
             }}>
-            {this.props?.images?.map(image => (
+            {this.props?.images?.map((image, index) => (
               <Image
+                onError={console.log}
                 resizeMode="cover"
-                key={image}
+                key={image + index}
                 src={image}
                 style={{width: '100%', height: '100%'}}
               />

@@ -14,7 +14,7 @@ import {Appbar, Button, Chip, Text, TextInput} from 'react-native-paper';
 import {StackScreenProps} from '@react-navigation/stack';
 import {CONTAINER_PADDING} from '../../constants/GlobalConstants';
 import {ThemeDark} from '../../themes/ThemeDark';
-import {useObject, useRealm} from '@realm/react';
+import {useObject, useQuery, useRealm} from '@realm/react';
 import {User} from '../../models/User';
 import Realm from 'realm';
 import {ROUTES} from '../../componentes/navigtation/Routes';
@@ -29,18 +29,25 @@ import {
 import ImageSlider from '../../componentes/ImageSlider';
 import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
 import {RoofImage} from '../../models/RoofImage';
+import ListPicker from '../../componentes/ListPicker';
+import {SolarPanelType} from '../../models/SolarPanelType';
+var RNFS = require('react-native-fs');
 
 function AddRoof({
   navigation,
   route,
 }: StackScreenProps<any>): React.JSX.Element {
   const errorSnackBar = React.useRef<any>(null);
+  const userPicker = React.useRef<any>(null);
+  const solarPanelTypePicker = React.useRef<any>(null);
 
   const roofId = route?.params?.roof?._id;
   const userId = route.params?.user?._id;
 
   const roof = useObject(Roof, new Realm.BSON.UUID(roofId));
   const initialUser = useObject(User, new Realm.BSON.UUID(userId));
+  const users = useQuery(User);
+  const solarPanelTypes = useQuery(SolarPanelType);
 
   const realm = useRealm();
   const {t} = useTranslation();
@@ -51,6 +58,10 @@ function AddRoof({
   );
   const [user, setUser] = React.useState<UserMinimal | null>(
     UserMinimal.map(initialUser),
+  );
+  const [finalUser, setFinalUser] = React.useState<User>(null);
+  const [solarPanelType, setSolarPanelType] = React.useState(
+    roof?.solarPanelType,
   );
   const [zipCode, setZipCode] = React.useState(getOrElse(roof?.zipCode, ''));
   const [street, setStreet] = React.useState(getOrElse(roof?.street, ''));
@@ -68,7 +79,6 @@ function AddRoof({
       [],
     ),
   );
-
   const [roofInitialState, setRoofInitialState] = React.useState<Roof>();
   const labelSize = 'labelMedium';
 
@@ -120,6 +130,8 @@ function AddRoof({
       zipCode?.length > 0 &&
       street?.length > 0 &&
       city?.length > 0 &&
+      user != null &&
+      solarPanelType != null &&
       streetNumber?.length > 0;
 
     if (!valid) {
@@ -139,16 +151,43 @@ function AddRoof({
     }
   }
 
-  const create = () => {
-    const userMin = UserMinimal.map(initialUser);
+  function getUserValue(userValue = user) {
+    if (userValue != null) {
+      return userValue.firstName + ' ' + userValue.lastName;
+    }
+    return '';
+  }
+  function getSolarPanelTypeValue(solarPanelTypeValue = solarPanelType) {
+    if (solarPanelTypeValue?.name != null) {
+      return (
+        solarPanelTypeValue.name +
+        ' (' +
+        solarPanelTypeValue.width +
+        'cm * ' +
+        solarPanelTypeValue.height +
+        'cm | ' +
+        solarPanelTypeValue.performance +
+        'kw )'
+      );
+    }
+    return '';
+  }
+  const create = async () => {
+    const savedImages: string[] = [];
+    for (let image of imageUrls) {
+      const newImage = await saveImage(image);
+      savedImages.push(newImage);
+    }
+
     realm.write(() => {
-      if (initialUser) {
+      if (finalUser) {
         const roofImages = [];
 
-        for (let image of imageUrls) {
+        for (let image of savedImages) {
           const roofImage = realm.create(RoofImage, {
             _id: new Realm.BSON.UUID(),
             src: image,
+            notes: '',
           });
           roofImages.push(roofImage);
         }
@@ -167,29 +206,66 @@ function AddRoof({
           innerMarginLeft: 10,
           distanceBetweenPanelsCM: 10,
           roofImages: roofImages,
+          solarPanelType: solarPanelType,
         });
-        initialUser.roofs.push(roof);
+        finalUser.roofs.push(roof);
       }
     });
 
     reset();
     navigation.navigate(ROUTES.ROOF.HOME, {
       prevEvent: PAGE_EVENTS.ROOF.ADD_ROOF_SUCCESS,
-      user: userMin,
+      user: user,
     });
   };
 
-  function edit() {
+  function openSelectUserList() {
+    userPicker.current.present();
+  }
+  function openSelectSolarPanelTypeList() {
+    solarPanelTypePicker.current.present();
+  }
+
+  async function saveImage(src: string) {
+    try {
+      const imageName = src.split('/').pop(); // Extrahiere den Dateinamen aus der URL
+      const path = `${RNFS.DocumentDirectoryPath}/${imageName}`; // Definiere den Pfad zum Speichern des Bildes
+      console.log(path); //47EFB986-AB71-4A1C-9865-B66207AE71C5, 9672840C-2BB5-49C3-B933-58B3570CCBFC
+      const result = await RNFS.downloadFile({
+        fromUrl: src,
+        toFile: path,
+      }).promise; // Starte den Download
+
+      if (result.statusCode === 200) {
+        console.log('Bild erfolgreich gespeichert:', path);
+        return imageName; // Gebe den Pfad des gespeicherten Bildes zurück
+      } else {
+        console.log('Fehler beim Herunterladen des Bildes');
+        return '';
+      }
+    } catch (error) {
+      console.error('Download-Fehler:', error);
+      return '';
+    }
+  }
+
+  async function edit() {
     const userMin = UserMinimal.map(initialUser);
 
     if (roof != null) {
+      const savedImages: string[] = [];
+      for (let image of imageUrls) {
+        const newImage = await saveImage(image);
+        savedImages.push(newImage);
+      }
+      console.log(savedImages);
       realm.write(() => {
         const roofImages = [];
-
-        for (let image of imageUrls) {
-          const roofImage = realm.create(RoofImage, {
+        for (let image of savedImages) {
+          let roofImage = realm.create(RoofImage, {
             _id: new Realm.BSON.UUID(),
             src: image,
+            notes: '',
           });
           roofImages.push(roofImage);
         }
@@ -200,6 +276,7 @@ function AddRoof({
         roof.street = street;
         roof.streetNumber = streetNumber;
         roof.city = city;
+        roof.solarPanelType = solarPanelType;
 
         realm.delete(roof.roofImages);
         for (let roofImage of roofImages) {
@@ -231,25 +308,6 @@ function AddRoof({
     }
   }
 
-  function FilterRow() {
-    if (!user) {
-      return <></>;
-    }
-
-    return (
-      <View
-        style={{
-          alignSelf: 'flex-start',
-          display: 'flex',
-          marginBottom: CONTAINER_PADDING,
-        }}>
-        <Chip icon="human-male">
-          {user.firstName} {user.lastName}
-        </Chip>
-      </View>
-    );
-  }
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -266,8 +324,6 @@ function AddRoof({
             />
           }></AppBar>
         <View style={GlobalStyles.siteContainer}>
-          <FilterRow />
-
           <ScrollView
             style={{flex: 1}}
             contentContainerStyle={styles.rowContainer}
@@ -288,6 +344,22 @@ function AddRoof({
                 label={t('roofs:height')}
                 value={height}
                 onChangeText={setHeight}
+              />
+
+              <TextInput
+                style={{...styles.inputContainer}}
+                label={t('users:title')}
+                value={getUserValue()}
+                editable={false}
+                onPressIn={() => openSelectUserList()}
+              />
+
+              <TextInput
+                style={{...styles.inputContainer}}
+                label={t('solarPanels:solar_panel')}
+                value={solarPanelType?.name}
+                editable={false}
+                onPressIn={() => openSelectSolarPanelTypeList()}
               />
 
               <Text style={styles.section} variant={labelSize}>
@@ -347,7 +419,9 @@ function AddRoof({
                 {imageUrls.length > 0 && (
                   <ImageSlider
                     width={550}
-                    images={imageUrls}
+                    images={imageUrls.map(
+                      i => `${RNFS.DocumentDirectoryPath}/${i}`,
+                    )}
                     removeImage={url => {
                       setImageUrls(old => old.filter(o => o != url));
                     }}
@@ -387,6 +461,32 @@ function AddRoof({
             <View style={styles.buttonContainer}></View>
           </ScrollView>
           <ErrorSnackbar ref={errorSnackBar} />
+          <ListPicker
+            onSelect={u => {
+              setUser(UserMinimal.map(u));
+              setFinalUser(u);
+            }}
+            listIcon="account"
+            ref={userPicker}
+            inputTitle={t('users:select_user')}
+            options={users.map(u => ({
+              title: getUserValue(UserMinimal.map(u)),
+              value: u,
+            }))}
+          />
+
+          <ListPicker
+            onSelect={s => {
+              setSolarPanelType(s);
+            }}
+            listIcon="solar-panel"
+            ref={solarPanelTypePicker}
+            inputTitle={t('solarPanels:select_solar_panel')}
+            options={solarPanelTypes.map(s => ({
+              title: getSolarPanelTypeValue(s),
+              value: s,
+            }))}
+          />
         </View>
       </View>
     </KeyboardAvoidingView>

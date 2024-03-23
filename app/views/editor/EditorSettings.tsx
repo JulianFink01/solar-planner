@@ -12,11 +12,13 @@ import Animated, {
 import {Roof} from '../../models/Roof';
 import {User} from '../../models/User';
 import {CONTAINER_PADDING} from '../../constants/GlobalConstants';
-import {useRealm} from '@realm/react';
+import {useQuery, useRealm} from '@realm/react';
 import NumberAdder from '../../componentes/NumberAdder';
 import {GlobalStyles} from '../../style/GlobalStyle';
 import ChipPicker from '../../componentes/ChipPicker';
 import SuccessSnackbar from '../../componentes/SuccessSnackbar';
+import {SolarPanelType} from '../../models/SolarPanelType';
+import ListPicker from '../../componentes/ListPicker';
 
 interface Props {
   onClose: Function;
@@ -39,8 +41,12 @@ function EditorSettings(
   const width = useSharedValue(0);
   const translatePanelX = useSharedValue(0);
   const realm = useRealm();
+  const solarPanelTypes = useQuery(SolarPanelType);
 
   const [isBoxLeft, setIsBoxLeft] = React.useState<boolean>(false);
+  const [solarPanelType, setSolarPanelType] = React.useState(
+    roof?.solarPanelType,
+  );
 
   const panelPlacement = React.useRef<any>(null);
   const horizontalPlacement = React.useRef<any>(null);
@@ -53,6 +59,7 @@ function EditorSettings(
   const roofWidth = React.useRef<any>(null);
   const roofHeight = React.useRef<any>(null);
   const snackbBar = React.useRef<any>(null);
+  const solarPanelTypePicker = React.useRef<any>(null);
 
   const placementValues = [
     {icon: 'panorama-vertical', title: t('common:vertical'), value: 'vertical'},
@@ -150,6 +157,7 @@ function EditorSettings(
         roof.distanceBetweenPanelsCM = panelDistancePicker.current.getState();
         roof.height = roofHeight.current.getState();
         roof.width = roofWidth.current.getState();
+        roof.solarPanelType = solarPanelType;
       });
       onSave();
     }
@@ -170,6 +178,26 @@ function EditorSettings(
       verticalPlacement.current.getState(),
       false,
     );
+  }
+
+  function openSelectSolarPanelTypeList() {
+    solarPanelTypePicker.current.present();
+  }
+
+  function getSolarPanelTypeValue(solarPanelTypeValue = solarPanelType) {
+    if (solarPanelTypeValue?.name != null) {
+      return (
+        solarPanelTypeValue.name +
+        ' (' +
+        solarPanelTypeValue.width +
+        'cm * ' +
+        solarPanelTypeValue.height +
+        'cm | ' +
+        solarPanelTypeValue.performance +
+        'kw )'
+      );
+    }
+    return '';
   }
 
   return (
@@ -208,6 +236,17 @@ function EditorSettings(
                 borderRightWidth: 1,
                 borderRightColor: 'white',
               }}>
+              <View style={{width: '100%'}}>
+                <ListTitle text={t('solarPanels:solar_panel')} />
+                <TextInput
+                  style={{...styles.inputContainer}}
+                  label={t('solarPanels:solar_panel')}
+                  value={solarPanelType?.name}
+                  editable={false}
+                  onPressIn={() => openSelectSolarPanelTypeList()}
+                />
+              </View>
+
               <ListTitle text={t('roofs:roof_dimensions')} />
 
               <NumberAdder
@@ -317,6 +356,18 @@ function EditorSettings(
               {t('editor:regenerate')}
             </Button>
           </View>
+          <ListPicker
+            onSelect={s => {
+              setSolarPanelType(s);
+            }}
+            listIcon="solar-panel"
+            ref={solarPanelTypePicker}
+            inputTitle={t('solarPanels:select_solar_panel')}
+            options={solarPanelTypes.map(s => ({
+              title: getSolarPanelTypeValue(s),
+              value: s,
+            }))}
+          />
         </View>
       </View>
     </Animated.View>
@@ -336,6 +387,10 @@ const styles = StyleSheet.create({
   button: {
     marginTop: CONTAINER_PADDING,
     alignSelf: 'flex-end',
+  },
+  inputContainer: {
+    marginBottom: CONTAINER_PADDING * 2,
+    width: '95%',
   },
 });
 

@@ -11,6 +11,7 @@ import ViewPainter from './ViewPainter';
 import {Roof} from '../../../models/Roof';
 import {User} from '../../../models/User';
 import {RoofImage} from '../../../models/RoofImage';
+var RNFS = require('react-native-fs');
 
 type Props = {
   roof: Roof;
@@ -112,7 +113,7 @@ function RoofImageView(
       onLoad={onImageLoad}
       resizeMode="contain"
       style={{flex: 1, maxHeight: imageSize?.height}}
-      source={{uri: roofImage.src}}>
+      source={{uri: `${RNFS.DocumentDirectoryPath}/${roofImage.src}`}}>
       {imageSize != null && (
         <ViewPainter
           hasActivePanel={hasActivePanel}

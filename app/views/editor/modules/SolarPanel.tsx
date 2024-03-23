@@ -216,7 +216,7 @@ function SolarPanel(
   }
 
   function getOuterContainer() {
-    const margin = 500;
+    const margin = 700;
     return [
       {x: coordinates[0].x - margin, y: coordinates[0].y - margin},
       {x: coordinates[1].x + margin, y: coordinates[1].y - margin},

@@ -13,6 +13,11 @@ import SolarPanelHelper, {POSITIONED} from '../../../utils/SolarPanelHelper';
 import {SolarPanelMinimal} from '../../../mapper/SolarPanelMinimal';
 import {RoofImage} from '../../../models/RoofImage';
 import {SolarPanelType} from '../../../mapper/SolarPanelType';
+import {
+  PANEL_PLACEMENT,
+  PLACEMENT_HORIZONTAL,
+  PLACEMENT_VERTICAL,
+} from '../models/Types';
 
 type Props = {
   imageSize: {width: number; height: number};
@@ -95,8 +100,13 @@ function AreaPicker(
 
   React.useImperativeHandle(ref, () => ({
     onGestureStart(x: number, y: number, radius: number, e: any) {
-      checkForCollsion(x, y, radius);
-      moveSolarPanels(x, y, e);
+      let pointsCollide = false;
+      if (displayGrid) {
+        pointsCollide = checkForCollsion(x, y, radius);
+      }
+      if (!pointsCollide) {
+        moveSolarPanels(x, y, e);
+      }
     },
     onGestureEnd(e: any) {
       updatePoints();
@@ -104,15 +114,9 @@ function AreaPicker(
       setIsDragingPoints(false);
     },
     regenerateGrid(
-      panelPlacement: 'horizontal' | 'vertical',
-      placementHorizontal:
-        | 'align-horizontal-left'
-        | 'align-horizontal-center'
-        | 'align-horizontal-right',
-      placementVertical:
-        | 'align-vertical-top'
-        | 'align-vertical-center'
-        | 'align-vertical-bottom',
+      panelPlacement: PANEL_PLACEMENT,
+      placementHorizontal: PLACEMENT_HORIZONTAL,
+      placementVertical: PLACEMENT_VERTICAL,
     ) {
       const roofRect = getInnerMarginArea();
       setRoofRect(roofRect);
@@ -151,16 +155,16 @@ function AreaPicker(
 
       setSolarPanels(newSolarPanels);
     },
-    addNewPanel(panelPlacement: 'horizontal' | 'vertical') {
-      const panelType: SolarPanelType = {width: 100, height: 200};
+    addNewPanel(panelPlacement: PANEL_PLACEMENT) {
+      const panelType: SolarPanelType = roof.solarPanelType;
 
       const panel = SolarPanelHelper.placePanelsAligned(
         panelType,
         imageSize,
         roof,
         roofRect[0],
-        'align-horizontal-center',
-        'align-vertical-center',
+        PLACEMENT_HORIZONTAL.CENTER,
+        PLACEMENT_VERTICAL.CENTER,
         panelPlacement,
         true,
       )[0];
@@ -241,19 +245,13 @@ function AreaPicker(
   }
 
   function getInitialSolarPanels(
-    panelPlacement: 'vertical' | 'horizontal' = 'vertical',
-    placementHorizontal:
-      | 'align-horizontal-left'
-      | 'align-horizontal-center'
-      | 'align-horizontal-right' = 'align-horizontal-left',
-    placementVertical:
-      | 'align-vertical-top'
-      | 'align-vertical-center'
-      | 'align-vertical-bottom' = 'align-vertical-top',
+    panelPlacement: PANEL_PLACEMENT = PANEL_PLACEMENT.VERTICAL,
+    placementHorizontal: PLACEMENT_HORIZONTAL = PLACEMENT_HORIZONTAL.LEFT,
+    placementVertical: PLACEMENT_VERTICAL = PLACEMENT_VERTICAL.TOP,
     roofStart: PointInterface = roofRect[0],
     isReset = false,
   ): SolarPanelMinimal[] {
-    const panelType: SolarPanelType = {width: 100, height: 200};
+    const panelType: SolarPanelType = roof.solarPanelType;
 
     if (roofImage.solarPanels?.length > 0 && !isReset) {
       return roofImage.solarPanels.map(
@@ -303,21 +301,22 @@ function AreaPicker(
 
   function checkForCollsion(x: number, y: number, radius: number) {
     if (isDraging) {
-      return;
+      return false;
     }
 
     if (pointLeftTop.current.collides({x, y, radius})) {
       setIsDragingPoints(true);
-      return;
+      return true;
     } else if (pointLeftBottom.current.collides({x, y, radius})) {
       setIsDragingPoints(true);
-      return;
+      return true;
     } else if (pointRightTop.current.collides({x, y, radius})) {
       setIsDragingPoints(true);
-      return;
+      return true;
+    } else if (pointRightBottom.current.collides({x, y, radius})) {
+      setIsDragingPoints(true);
+      return true;
     }
-    return pointRightBottom.current.collides({x, y, radius});
-    setIsDragingPoints(false);
     return false;
   }
 

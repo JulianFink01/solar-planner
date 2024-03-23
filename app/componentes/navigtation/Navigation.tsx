@@ -7,6 +7,7 @@ import {useTranslation} from 'react-i18next';
 import {ROUTES} from './Routes';
 import {CommonActions} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import SolarPanelTypes from '../../views/solar-panels/SolarPanelTypes';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,6 +27,12 @@ const Navigation = () => {
       title: t('roofs:title'),
       focusedIcon: 'home-roof',
       component: Roofs,
+    },
+    {
+      key: ROUTES.SOLAR_PANELS.HOME,
+      title: t('solarPanels:title'),
+      focusedIcon: 'solar-panel',
+      component: SolarPanelTypes,
     },
     {
       key: ROUTES.SETTINGS.HOME,

@@ -8,6 +8,7 @@ import AddRoof from '../../views/roofs/AddRoof';
 import AddUser from '../../views/users/AddUser';
 import Navigation from './Navigation';
 import Editor from '../../views/editor/Editor';
+import AddSolarPanelType from '../../views/solar-panels/AddSolarPanelType';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,11 @@ function StackNavigator(): React.JSX.Element {
         options={{cardStyle: styles.cardStyle}}
         name={ROUTES.EDITOR.HOME}
         component={Editor}
+      />
+      <Stack.Screen
+        options={{cardStyle: styles.cardStyle}}
+        name={ROUTES.SOLAR_PANELS.ADD_SOLAR_PANEL_TYPE}
+        component={AddSolarPanelType}
       />
     </Stack.Navigator>
   );

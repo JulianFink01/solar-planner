@@ -1,6 +1,7 @@
 export default {
   title: 'Users',
   add_user: 'Add User',
+  select_user: 'Select user',
   edit_user: 'Edit User',
   firstName: 'Fist name',
   lastName: 'Last name',

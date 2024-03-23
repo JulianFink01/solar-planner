@@ -20,6 +20,7 @@ import {RoofImage} from './app/models/RoofImage';
 import {RoofPoint} from './app/models/RoofPoint';
 import {SolarPanel} from './app/models/SolarPanel';
 import SplashScreen from 'react-native-splash-screen';
+import {SolarPanelType} from './app/models/SolarPanelType';
 
 export default function Main() {
   React.useEffect(() => {
@@ -31,8 +32,15 @@ export default function Main() {
       <PaperProvider theme={ThemeDark}>
         <RealmProvider
           closeOnUnmount={false}
-          schema={[User, Roof, RoofImage, RoofPoint, SolarPanel]}
-          schemaVersion={46}>
+          schema={[
+            User,
+            Roof,
+            RoofImage,
+            RoofPoint,
+            SolarPanel,
+            SolarPanelType,
+          ]}
+          schemaVersion={49}>
           <NavigationContainer>
             <StatusBar hidden={false} />
             <StackNavigator />

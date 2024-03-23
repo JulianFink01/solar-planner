@@ -5,36 +5,27 @@ import ActionContainer from '../../componentes/ActionContainer';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ROUTES} from '../../componentes/navigtation/Routes';
 import {UserMinimal} from '../../mapper/UserMinimal';
+import {SolarPanelType} from '../../mapper/SolarPanelType';
 
-function UserListView({
+function SolarPanelListView({
   navigation,
   route,
-  user,
+  solarPanel,
   displayActions,
   onOpenDelete,
 }: StackNavigationProp<any>): React.JSX.Element {
-  function editUser(user: UserMinimal) {
-    navigation.navigate(ROUTES.USER.ADD_USER, {user: user});
+  function editSolarPanelType(sp: SolarPanelType) {
+    navigation.navigate(ROUTES.SOLAR_PANELS.ADD_SOLAR_PANEL_TYPE, {
+      solarPanelType: sp,
+    });
   }
-
-  function navigateToUserRoofs(user: UserMinimal) {
-    navigation.navigate(ROUTES.ROOF.HOME, {user: user});
-  }
-
-  const title = user.firstName + ' ' + user.lastName;
 
   return (
     <List.Item
-      key={user._id.toString()}
+      key={solarPanel._id.toString()}
       style={{paddingRight: 0}}
-      title={title}
-      onPress={() => {
-        const selectedUser = UserMinimal.map(user);
-        if (selectedUser != null) {
-          navigateToUserRoofs(selectedUser);
-        }
-      }}
-      left={() => <List.Icon icon="account" />}
+      title={solarPanel.name}
+      left={() => <List.Icon icon="solar-panel" />}
       right={() => {
         if (!displayActions) {
           return;
@@ -45,8 +36,8 @@ function UserListView({
             deleteAction
             editAction
             editIcon="pencil"
-            onDelete={() => onOpenDelete(user)}
-            onEdit={() => editUser(UserMinimal.map(user))}
+            onDelete={() => onOpenDelete(solarPanel)}
+            onEdit={() => editSolarPanelType(SolarPanelType.map(solarPanel))}
           />
         );
       }}
@@ -55,7 +46,7 @@ function UserListView({
 }
 
 const styles = StyleSheet.create({});
-UserListView.defaultProps = {
+SolarPanelListView.defaultProps = {
   displayActions: true,
 };
-export default UserListView;
+export default SolarPanelListView;

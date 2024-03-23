@@ -179,7 +179,7 @@ function Roofs({navigation, route}: StackScreenProps<any>): React.JSX.Element {
   return (
     <View style={GlobalStyles.pageWrapper}>
       <AppBar title={t('roofs:title')}>
-        {user != null && <Appbar.Action icon={'plus'} onPress={addRoof} />}
+        <Appbar.Action icon={'plus'} onPress={addRoof} />
       </AppBar>
 
       <View style={GlobalStyles.siteContainer}>

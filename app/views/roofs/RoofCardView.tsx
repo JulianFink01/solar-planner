@@ -9,6 +9,7 @@ import {Roof} from '../../models/Roof';
 import {RoofMinimal} from '../../mapper/RoofMinimal';
 import {User} from '../../models/User';
 import RoofViewContent from './RoofViewContent';
+var RNFS = require('react-native-fs');
 
 interface Props {
   roof: Roof;
@@ -47,7 +48,11 @@ function RoofCardView({
   return (
     <Card>
       <Card.Cover
-        source={{uri: roof.roofImages[randomIndex(roof.roofImages.length)].src}}
+        source={{
+          uri: `${RNFS.DocumentDirectoryPath}/${
+            roof.roofImages[randomIndex(roof.roofImages.length)].src
+          }`,
+        }}
       />
       <View style={{flexDirection: 'row'}}>
         <Card.Content style={{marginBottom: 10, marginTop: 10, flex: 1}}>
