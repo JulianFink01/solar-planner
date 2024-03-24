@@ -59,7 +59,7 @@ function AddRoof({
   const [user, setUser] = React.useState<UserMinimal | null>(
     UserMinimal.map(initialUser),
   );
-  const [finalUser, setFinalUser] = React.useState<User>(null);
+  const [finalUser, setFinalUser] = React.useState<User>(initialUser);
   const [solarPanelType, setSolarPanelType] = React.useState(
     roof?.solarPanelType,
   );
@@ -244,8 +244,6 @@ function AddRoof({
   }
 
   async function edit() {
-    const userMin = UserMinimal.map(initialUser);
-
     if (roof != null) {
       realm.write(() => {
         const roofImages = [];
@@ -275,7 +273,7 @@ function AddRoof({
       reset();
       navigation.navigate(ROUTES.ROOF.HOME, {
         prevEvent: PAGE_EVENTS.ROOF.EDIT_ROOF_SUCCESS,
-        user: userMin,
+        user: UserMinimal.map(initialUser),
       });
     }
   }
@@ -347,8 +345,13 @@ function AddRoof({
                 style={{...styles.inputContainer}}
                 label={t('users:title')}
                 value={getUserValue()}
+                disabled={editMode}
                 editable={false}
-                onPressIn={() => openSelectUserList()}
+                onPressIn={() => {
+                  if (!editMode) {
+                    openSelectUserList();
+                  }
+                }}
               />
 
               <TextInput
@@ -420,7 +423,6 @@ function AddRoof({
                       i => `${RNFS.DocumentDirectoryPath}/${i}`,
                     )}
                     removeImage={url => {
-                      console.log(url);
                       setImageUrls(old => old.filter(o => o != url));
                     }}
                   />

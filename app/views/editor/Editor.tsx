@@ -202,13 +202,6 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           />
         )}
         <Appbar.Action
-          icon={debugView ? 'eye-outline' : 'eye'}
-          color={debugView ? activeColor : inactiveColor}
-          onPress={() => {
-            setDebugView(!debugView);
-          }}
-        />
-        <Appbar.Action
           icon={displayInfo ? 'information-off' : 'information'}
           color={displayInfo ? activeColor : inactiveColor}
           onPress={() => {
@@ -246,6 +239,13 @@ function Editor({navigation, route}: StackScreenProps<any>): React.JSX.Element {
           color={displayGrid ? inactiveColor : activeColor}
           onPress={() => {
             setDisplayGrid(!displayGrid);
+          }}
+        />
+        <Appbar.Action
+          icon={debugView ? 'eye-outline' : 'eye'}
+          color={debugView ? activeColor : inactiveColor}
+          onPress={() => {
+            setDebugView(!debugView);
           }}
         />
         <Appbar.Action

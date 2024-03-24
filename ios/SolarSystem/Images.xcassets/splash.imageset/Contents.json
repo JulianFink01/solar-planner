@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "ezgif-5-a4e80419ac.jpg",
+      "filename" : "splash.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "ezgif-5-a4e80419ac@2x.jpg",
+      "filename" : "splash@2x.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "ezgif-5-a4e80419ac@3x.jpg",
+      "filename" : "splash@3x.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }

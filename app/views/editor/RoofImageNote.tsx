@@ -34,6 +34,10 @@ function RoofImageNote(
   const screenWidth = Dimensions.get('screen').width;
   const panelWidth = 500;
 
+  React.useEffect(() => {
+    setNote(roofImage?.notes);
+  }, [roofImage]);
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
       position: 'absolute',
