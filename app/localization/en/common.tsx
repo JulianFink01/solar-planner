@@ -22,4 +22,5 @@ export default {
   view: {
     change: 'Change View',
   },
+  picture: 'Capture',
 };

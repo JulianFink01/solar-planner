@@ -31,6 +31,8 @@ import NoDataPlaceholder from '../../componentes/NoDataPlaceholder';
 import {RoofImage} from '../../models/RoofImage';
 import ListPicker from '../../componentes/ListPicker';
 import {SolarPanelType} from '../../models/SolarPanelType';
+import {RoofMinimal} from '../../mapper/RoofMinimal';
+import GoogleMapsImagePicker from './GoogleMapsImagePicker';
 var RNFS = require('react-native-fs');
 
 function AddRoof({
@@ -40,6 +42,7 @@ function AddRoof({
   const errorSnackBar = React.useRef<any>(null);
   const userPicker = React.useRef<any>(null);
   const solarPanelTypePicker = React.useRef<any>(null);
+  const googleMapsImagePicker = React.useRef<any>(null);
 
   const roofId = route?.params?.roof?._id;
   const userId = route.params?.user?._id;
@@ -278,6 +281,23 @@ function AddRoof({
     }
   }
 
+  function navigateToMaps() {
+    const roof = RoofMinimal.mapAddressData(
+      zipCode,
+      street,
+      streetNumber,
+      city,
+    );
+
+    googleMapsImagePicker.current.present(roof);
+  }
+
+  async function onGoogleMapsSelected(imageUri: string) {
+    const uri = await saveImage('file://' + imageUri);
+
+    setImageUrls([...imageUrls, uri]);
+  }
+
   async function openImageLibrary() {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
@@ -440,6 +460,16 @@ function AddRoof({
               </Button>
 
               <Button
+                icon="google-maps"
+                mode="contained"
+                textColor="white"
+                style={{...styles.button, alignSelf: 'flex-start'}}
+                buttonColor={ThemeDark.colors.elevation.level5}
+                onPress={navigateToMaps}>
+                {t('roofs:get_from_maps')}
+              </Button>
+
+              <Button
                 icon="format-clear"
                 mode="contained"
                 style={styles.button}
@@ -461,6 +491,12 @@ function AddRoof({
             <View style={styles.buttonContainer}></View>
           </ScrollView>
           <ErrorSnackbar ref={errorSnackBar} />
+
+          <GoogleMapsImagePicker
+            onSelect={onGoogleMapsSelected}
+            ref={googleMapsImagePicker}
+          />
+
           <ListPicker
             onSelect={u => {
               setUser(UserMinimal.map(u));

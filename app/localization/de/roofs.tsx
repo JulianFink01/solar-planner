@@ -23,4 +23,5 @@ export default {
   selectImages: 'Bilder auswählen',
   roof: 'Dach',
   image: 'Bild',
+  get_from_maps: 'Maps',
 };

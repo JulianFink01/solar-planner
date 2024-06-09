@@ -2,12 +2,14 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h"
-
+#import <GoogleMaps/GoogleMaps.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSServices provideAPIKey:@"AIzaSyCkeW4Nlz6tIBDBA9NJbYH3HMqerKBcsaA"]; // add this line using the api key obtained from Google Console
+
   self.moduleName = @"SolarSystem";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.

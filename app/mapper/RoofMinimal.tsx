@@ -7,6 +7,8 @@ export class RoofMinimal {
   _id: string;
   city: string;
   street: string;
+  streetNumber: string;
+  zipCode: string;
   width: number;
   height: number;
   userId: string;
@@ -39,5 +41,20 @@ export class RoofMinimal {
       roof.height,
       'roof.user._objectKey.toString()',
     );
+  }
+
+  static mapAddressData(
+    zipCode: string,
+    street: string,
+    streetNumber: string,
+    city: string,
+  ): RoofMinimal {
+    const roofMinimal = new RoofMinimal(null, null, null, null, null, null);
+    roofMinimal.zipCode = zipCode;
+    roofMinimal.street = street;
+    roofMinimal.streetNumber = streetNumber;
+    roofMinimal.city = city;
+
+    return roofMinimal;
   }
 }

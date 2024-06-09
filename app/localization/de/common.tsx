@@ -22,4 +22,5 @@ export default {
   view: {
     change: 'Ansicht ändern',
   },
+  picture: 'Aufnehmen',
 };

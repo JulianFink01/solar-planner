@@ -9,6 +9,7 @@ import AddUser from '../../views/users/AddUser';
 import Navigation from './Navigation';
 import Editor from '../../views/editor/Editor';
 import AddSolarPanelType from '../../views/solar-panels/AddSolarPanelType';
+import GoogleMapsImagePicker from '../../views/roofs/GoogleMapsImagePicker';
 
 const Stack = createStackNavigator();
 
