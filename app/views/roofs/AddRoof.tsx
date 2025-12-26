@@ -458,7 +458,7 @@ function AddRoof({
                 onPress={openImageLibrary}>
                 {t('roofs:selectImages')}
               </Button>
-
+              {/*
               <Button
                 icon="google-maps"
                 mode="contained"
@@ -468,7 +468,7 @@ function AddRoof({
                 onPress={navigateToMaps}>
                 {t('roofs:get_from_maps')}
               </Button>
-
+              */}
               <Button
                 icon="format-clear"
                 mode="contained"
