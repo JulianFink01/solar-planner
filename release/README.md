@@ -65,7 +65,7 @@ Wesentliche Felder:
 2. Installationslink aufrufen:
 
 ```
-itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/JulianFink01/solar-planner/tree/main/release/manifest.plist
+itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/JulianFink01/solar-planner/main/release/manifest.plist
 ```
 3. Installation bestätigen
 4. App erscheint auf dem Home Screen
