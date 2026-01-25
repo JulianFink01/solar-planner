@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SolarSystem.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>51A967D0554F2C91A065223014A95E0E546B881E</string>
+				<key>dateExpires</key>
+				<string>25.01.2027</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>F7X4N8AXKY.de.solarteck.solar.app</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>F7X4N8AXKY</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>SolarSystem.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>116a2a60-cbcd-447b-8d73-1b015ab4009e</string>
+				<key>dateExpires</key>
+				<string>25.01.2027</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: de.solarteck.solar.app</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>F7X4N8AXKY</string>
+				<key>name</key>
+				<string>Volkan Aslandogan</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>
