@@ -2,6 +2,9 @@
 
 Eine React-Native-App zur Planung von Solardächern: verwalte Dächer und Solarmodultypen, platziere Module im Editor und erhalte eine schnelle Leistungsübersicht.
 
+## ✨ Preview
+<img src="./local/slider.gif" alt="roof"/>
+
 ## ✨ Highlights
 
 - **Dachverwaltung**: Dächer anlegen, bearbeiten und löschen.
