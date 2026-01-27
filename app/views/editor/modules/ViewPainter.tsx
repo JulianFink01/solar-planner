@@ -167,7 +167,7 @@ function ViewPainter(
   const shape = Skia.Path.MakeFromSVGString(pointsToSvg(areaPickerPoints))!;
 
   return (
-    <View style={{width: imageSize.width, height: imageSize.height}}>
+    <View style={{width: '100%', height: '100%'}}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{width: '100%', height: '100%'}}>
           <Group
@@ -200,12 +200,12 @@ function ViewPainter(
         </Canvas>
       </GestureDetector>
       <View
-        style={{
-          marginLeft: CONTAINER_PADDING,
-          paddingRight: CONTAINER_PADDING,
-        }}>
-        <SuccessSnackbar ref={snackbBar} />
-      </View>
+            style={{
+              marginLeft: CONTAINER_PADDING,
+              paddingRight: CONTAINER_PADDING,
+            }}>
+            <SuccessSnackbar ref={snackbBar} />
+          </View>
     </View>
   );
 }

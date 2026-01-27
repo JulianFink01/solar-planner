@@ -246,8 +246,8 @@ function AreaPicker(
     return [
       {x: startX, y: startY, radius: POINT_RADIUS}, // leftTop
       {x: startX + width, y: startY, radius: POINT_RADIUS}, // rightTop
-      {x: startX + width, y: startY + height, radius: POINT_RADIUS}, // rightBottom
-      {x: startX, y: startY + height, radius: POINT_RADIUS},
+      {x: startX + width, y: startY + height - 150, radius: POINT_RADIUS}, // rightBottom
+      {x: startX, y: startY + height - 150, radius: POINT_RADIUS},
     ];
   }
 
